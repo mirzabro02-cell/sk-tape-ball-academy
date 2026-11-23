@@ -147,7 +147,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                   onClick={onClose}
                   className="font-medium hover:text-[#071A36]"
                 >
-                  Admin Placeholder
+                  Admin Panel
                 </NavLink>
               </div>
             </div>

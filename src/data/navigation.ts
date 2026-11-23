@@ -28,13 +28,14 @@ export const ACTION_NAV_ITEMS: NavItem[] = [
 ];
 
 export const ADMIN_NAV_ITEMS: NavItem[] = [
-  { label: 'Admin Overview', path: '/admin', group: 'admin' },
+  { label: 'Admin Dashboard', path: '/admin', group: 'admin' },
   { label: 'Students', path: '/admin/students', group: 'admin' },
-  { label: 'Programs', path: '/admin/programs', group: 'admin' },
   { label: 'Coaches', path: '/admin/coaches', group: 'admin' },
-  { label: 'Schedule', path: '/admin/schedule', group: 'admin' },
+  { label: 'Programs', path: '/admin/programs', group: 'admin' },
+  { label: 'Batches', path: '/admin/batches', group: 'admin' },
+  { label: 'Schedules', path: '/admin/schedules', group: 'admin' },
   { label: 'Admissions', path: '/admin/admissions', group: 'admin' },
-  { label: 'Trial Requests', path: '/admin/trials', group: 'admin' },
+  { label: 'Trial Bookings', path: '/admin/trial-bookings', group: 'admin' },
   { label: 'Settings', path: '/admin/settings', group: 'admin' },
 ];
 

@@ -1,10 +1,9 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { AdminLayout } from '@/src/components/layout/AdminLayout';
 import { MainLayout } from '@/src/components/layout/MainLayout';
 import { AboutPage } from '@/src/pages/AboutPage';
 import { AcademyPlaceholderPage } from '@/src/pages/AcademyPlaceholderPage';
 import { AchievementsPage } from '@/src/pages/AchievementsPage';
-import { AdminPlaceholderPage } from '@/src/pages/AdminPlaceholderPage';
 import { AdmissionsPage } from '@/src/pages/AdmissionsPage';
 import { ApplicationStatusPage } from '@/src/pages/ApplicationStatusPage';
 import { BookTrialPage } from '@/src/pages/BookTrialPage';
@@ -29,7 +28,25 @@ import { RegisterPage } from '@/src/pages/RegisterPage';
 import { RegistrationConfirmationPage } from '@/src/pages/RegistrationConfirmationPage';
 import { ResetPasswordPage } from '@/src/pages/ResetPasswordPage';
 import { SchedulePage } from '@/src/pages/SchedulePage';
-import { ADMIN_PLACEHOLDER_ROUTES, PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
+import { AdminAchievementsPage } from '@/src/pages/admin/AdminAchievementsPage';
+import { AdminAdmissionsPage } from '@/src/pages/admin/AdminAdmissionsPage';
+import { AdminAttendancePage } from '@/src/pages/admin/AdminAttendancePage';
+import { AdminBatchesPage } from '@/src/pages/admin/AdminBatchesPage';
+import { AdminBlogPage } from '@/src/pages/admin/AdminBlogPage';
+import { AdminCoachesPage } from '@/src/pages/admin/AdminCoachesPage';
+import { AdminDashboardPage } from '@/src/pages/admin/AdminDashboardPage';
+import { AdminFeesPage } from '@/src/pages/admin/AdminFeesPage';
+import { AdminGalleryPage } from '@/src/pages/admin/AdminGalleryPage';
+import { AdminMatchesPage } from '@/src/pages/admin/AdminMatchesPage';
+import { AdminProgramsPage } from '@/src/pages/admin/AdminProgramsPage';
+import { AdminReportsPage } from '@/src/pages/admin/AdminReportsPage';
+import { AdminSchedulesPage } from '@/src/pages/admin/AdminSchedulesPage';
+import { AdminSettingsPage } from '@/src/pages/admin/AdminSettingsPage';
+import { AdminStudentsPage } from '@/src/pages/admin/AdminStudentsPage';
+import { AdminTestimonialsPage } from '@/src/pages/admin/AdminTestimonialsPage';
+import { AdminTrialBookingsPage } from '@/src/pages/admin/AdminTrialBookingsPage';
+import { AdminWebsiteContentPage } from '@/src/pages/admin/AdminWebsiteContentPage';
+import { PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
 
 export function AppRoutes() {
   return (
@@ -91,34 +108,28 @@ export function AppRoutes() {
         <Route path="*" element={<NotFoundPage />} />
       </Route>
 
+      {/* Complete Admin Panel Frontend (Part 7) */}
       <Route path="/admin" element={<AdminLayout />}>
-        {ADMIN_PLACEHOLDER_ROUTES.map((adminRoute) =>
-          adminRoute.index ? (
-            <Route
-              key={adminRoute.path}
-              index
-              element={
-                <AdminPlaceholderPage
-                  routePath={adminRoute.path}
-                  title={adminRoute.title}
-                  description={adminRoute.description}
-                />
-              }
-            />
-          ) : (
-            <Route
-              key={adminRoute.path}
-              path={adminRoute.path.replace('/admin/', '')}
-              element={
-                <AdminPlaceholderPage
-                  routePath={adminRoute.path}
-                  title={adminRoute.title}
-                  description={adminRoute.description}
-                />
-              }
-            />
-          ),
-        )}
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="students" element={<AdminStudentsPage />} />
+        <Route path="coaches" element={<AdminCoachesPage />} />
+        <Route path="programs" element={<AdminProgramsPage />} />
+        <Route path="batches" element={<AdminBatchesPage />} />
+        <Route path="schedules" element={<AdminSchedulesPage />} />
+        <Route path="schedule" element={<Navigate to="/admin/schedules" replace />} />
+        <Route path="admissions" element={<AdminAdmissionsPage />} />
+        <Route path="trial-bookings" element={<AdminTrialBookingsPage />} />
+        <Route path="trials" element={<Navigate to="/admin/trial-bookings" replace />} />
+        <Route path="fees" element={<AdminFeesPage />} />
+        <Route path="attendance" element={<AdminAttendancePage />} />
+        <Route path="matches" element={<AdminMatchesPage />} />
+        <Route path="achievements" element={<AdminAchievementsPage />} />
+        <Route path="gallery" element={<AdminGalleryPage />} />
+        <Route path="testimonials" element={<AdminTestimonialsPage />} />
+        <Route path="blog" element={<AdminBlogPage />} />
+        <Route path="website-content" element={<AdminWebsiteContentPage />} />
+        <Route path="reports" element={<AdminReportsPage />} />
+        <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
     </Routes>
   );
