@@ -35,7 +35,12 @@ export function WhatsAppCta({ variant = 'inline', className }: WhatsAppCtaProps)
         <div
           role="dialog"
           aria-label="WhatsApp CTA Placeholder Details"
-          className="mt-2 rounded-[14px] border border-[#E2E8F0] bg-white p-4 text-left shadow-lg max-w-sm"
+          className={cn(
+            'rounded-[14px] border border-[#E2E8F0] bg-white p-4 text-left shadow-xl',
+            variant === 'inline'
+              ? 'absolute left-0 bottom-full mb-2 z-30 w-72 sm:w-80'
+              : 'mt-2 w-full',
+          )}
         >
           <div className="flex items-start justify-between gap-3">
             <div>

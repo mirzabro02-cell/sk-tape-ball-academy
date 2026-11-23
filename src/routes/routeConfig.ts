@@ -158,6 +158,30 @@ export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
       'Fees & Attendance Policies',
     ],
   },
+  {
+    path: '/privacy',
+    title: 'Privacy Policy',
+    sectionLabel: 'Legal',
+    description:
+      'Placeholder route for the official SK Tape Ball Academy privacy policy covering player and guardian registration data.',
+    plannedModules: [
+      'Data Collection & Consent Notice',
+      'Guardian & Minor Privacy Standards',
+      'Contact for Privacy Inquiries',
+    ],
+  },
+  {
+    path: '/terms',
+    title: 'Terms of Use',
+    sectionLabel: 'Legal',
+    description:
+      'Placeholder route for the official SK Tape Ball Academy website terms, ground conduct rules, and enrollment policies.',
+    plannedModules: [
+      'Website & Portal Usage Terms',
+      'Ground Safety & Code of Conduct',
+      'Trial & Registration Policies',
+    ],
+  },
 ];
 
 export const ADMIN_PLACEHOLDER_ROUTES: AdminPlaceholderConfig[] = [

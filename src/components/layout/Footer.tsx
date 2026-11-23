@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Globe, Share2 } from 'lucide-react';
 import { ACADEMY_BRAND } from '@/src/data/brand';
 import { FOOTER_LINK_GROUPS } from '@/src/data/navigation';
 import { Button } from '@/src/components/ui/Button';
@@ -6,8 +8,15 @@ import { OfficialLogo } from '@/src/components/ui/OfficialLogo';
 import { WhatsAppCta } from '@/src/components/ui/WhatsAppCta';
 import { PageContainer } from './PageContainer';
 
+const SOCIAL_PLACEHOLDERS = [
+  { id: 'instagram', label: 'Instagram (Placeholder)' },
+  { id: 'facebook', label: 'Facebook (Placeholder)' },
+  { id: 'youtube', label: 'YouTube (Placeholder)' },
+] as const;
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const [socialNotice, setSocialNotice] = useState<string | null>(null);
 
   return (
     <footer className="border-t border-[#071A36] bg-[#050D1B] text-white">
@@ -19,24 +28,53 @@ export function Footer() {
               {ACADEMY_BRAND.tagline}
             </p>
             <p className="max-w-md text-sm leading-relaxed text-white/75">
-              Official foundation platform for {ACADEMY_BRAND.name}. All contact numbers, ground locations, and academy records remain placeholders until officially confirmed.
+              Dedicated tape ball cricket coaching focused on structured drills, match intelligence, athletic fitness, and team discipline. Official ground address and contact channels are marked as placeholders until verified.
             </p>
 
             <div className="rounded-[14px] border border-white/10 bg-[#071A36] p-4 space-y-2 text-xs text-white/75">
-              <p className="font-semibold text-white">Official Contact Details (Placeholders)</p>
+              <p className="font-semibold text-white">Academy &amp; Contact Information (Placeholders)</p>
               <p>{ACADEMY_BRAND.contactPlaceholders.addressPlaceholder}</p>
               <p>{ACADEMY_BRAND.contactPlaceholders.phonePlaceholder}</p>
               <p>{ACADEMY_BRAND.contactPlaceholders.emailPlaceholder}</p>
+              <p>{ACADEMY_BRAND.contactPlaceholders.hoursPlaceholder}</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 pt-1">
-              <Button to="/book-trial" variant="primary" size="sm">
-                Book Free Trial
-              </Button>
-              <Button to="/register" variant="outlineLight" size="sm">
-                Register Now
-              </Button>
-              <WhatsAppCta variant="inline" />
+            <div className="space-y-3 pt-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button to="/book-trial" variant="primary" size="sm">
+                  Book Free Trial
+                </Button>
+                <Button to="/register" variant="outlineLight" size="sm">
+                  Register Now
+                </Button>
+                <WhatsAppCta variant="inline" />
+              </div>
+
+              <div className="pt-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-white/60 mb-2">
+                  Social Channels (Placeholders)
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {SOCIAL_PLACEHOLDERS.map((social) => (
+                    <button
+                      key={social.id}
+                      type="button"
+                      onClick={() =>
+                        setSocialNotice(
+                          `${social.label}: Official social profile URL pending academy configuration.`,
+                        )
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-[8px] border border-white/15 bg-[#071A36] px-3 py-1.5 text-xs font-medium text-white/80 hover:border-[#D9A52E]/60 hover:text-white transition-colors cursor-pointer"
+                    >
+                      <Share2 className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
+                      <span>{social.label}</span>
+                    </button>
+                  ))}
+                </div>
+                {socialNotice && (
+                  <p className="mt-2 text-xs text-[#D9A52E]">{socialNotice}</p>
+                )}
+              </div>
             </div>
           </div>
 
@@ -67,7 +105,18 @@ export function Footer() {
           <p>
             &copy; {currentYear} {ACADEMY_BRAND.name}. All rights reserved.
           </p>
-          <p>Part 1 Foundation · Ready for Official Content &amp; Supabase Integration</p>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link to="/privacy" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-white transition-colors">
+              Terms of Use
+            </Link>
+            <Link to="/admin" className="inline-flex items-center gap-1 hover:text-[#D9A52E] transition-colors">
+              <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Admin Portal</span>
+            </Link>
+          </div>
         </div>
       </PageContainer>
     </footer>

@@ -2,22 +2,22 @@ import type { FooterLinkGroup, NavItem } from '@/src/types/navigation';
 
 export const PRIMARY_NAV_ITEMS: NavItem[] = [
   { label: 'Home', path: '/', group: 'primary' },
-  { label: 'Programs', path: '/programs', group: 'primary' },
+  { label: 'About', path: '/about', group: 'primary' },
+  { label: 'Training', path: '/programs', group: 'primary' },
   { label: 'Coaches', path: '/coaches', group: 'primary' },
   { label: 'Schedule', path: '/schedule', group: 'primary' },
-  { label: 'Admissions', path: '/admissions', group: 'primary' },
+  { label: 'Achievements', path: '/achievements', group: 'primary' },
+  { label: 'Gallery', path: '/gallery', group: 'primary' },
+  { label: 'Contact', path: '/contact', group: 'primary' },
 ];
 
 export const SECONDARY_NAV_ITEMS: NavItem[] = [
-  { label: 'About Academy', path: '/about', group: 'academy' },
+  { label: 'Admissions', path: '/admissions', group: 'academy' },
   { label: 'Fees & Plans', path: '/fees', group: 'academy' },
   { label: 'Facilities', path: '/facilities', group: 'academy' },
-  { label: 'Matches', path: '/matches', group: 'academy' },
-  { label: 'Achievements', path: '/achievements', group: 'academy' },
-  { label: 'Gallery', path: '/gallery', group: 'academy' },
+  { label: 'Matches & Events', path: '/matches', group: 'academy' },
   { label: 'Blog & Updates', path: '/blog', group: 'academy' },
   { label: 'FAQs', path: '/faqs', group: 'academy' },
-  { label: 'Contact', path: '/contact', group: 'academy' },
 ];
 
 export const ACTION_NAV_ITEMS: NavItem[] = [
@@ -45,35 +45,37 @@ export const ALL_PUBLIC_ROUTES: NavItem[] = [
 
 export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
-    heading: 'Academy',
+    heading: 'Quick Links',
     links: [
-      { label: 'About Us', path: '/about' },
+      { label: 'Home', path: '/' },
+      { label: 'About Academy', path: '/about' },
       { label: 'Training Programs', path: '/programs' },
-      { label: 'Coaching Staff', path: '/coaches' },
-      { label: 'Facilities', path: '/facilities' },
+      { label: 'Coaches', path: '/coaches' },
+      { label: 'Training Schedule', path: '/schedule' },
       { label: 'Achievements', path: '/achievements' },
     ],
   },
   {
-    heading: 'Training & Admissions',
+    heading: 'Academy & Admissions',
     links: [
-      { label: 'Weekly Schedule', path: '/schedule' },
       { label: 'Admissions', path: '/admissions' },
       { label: 'Fee Structure', path: '/fees' },
+      { label: 'Facilities', path: '/facilities' },
+      { label: 'Matches & Events', path: '/matches' },
+      { label: 'Gallery', path: '/gallery' },
       { label: 'Book Free Trial', path: '/book-trial' },
-      { label: 'Register Now', path: '/register' },
     ],
   },
   {
-    heading: 'Community & Access',
+    heading: 'Support & Legal',
     links: [
-      { label: 'Matches & Fixtures', path: '/matches' },
-      { label: 'Media Gallery', path: '/gallery' },
-      { label: 'Blog & News', path: '/blog' },
-      { label: 'FAQs', path: '/faqs' },
       { label: 'Contact', path: '/contact' },
+      { label: 'FAQs', path: '/faqs' },
+      { label: 'Blog & Updates', path: '/blog' },
+      { label: 'Register Now', path: '/register' },
       { label: 'Member Login', path: '/login' },
-      { label: 'Admin Portal (Placeholder)', path: '/admin' },
+      { label: 'Privacy Policy', path: '/privacy' },
+      { label: 'Terms of Use', path: '/terms' },
     ],
   },
 ];
