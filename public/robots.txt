@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /reset-password
+
+# Replace placeholder domain with official production domain before launch
+Sitemap: https://sktapeballacademy.example.com/sitemap.xml

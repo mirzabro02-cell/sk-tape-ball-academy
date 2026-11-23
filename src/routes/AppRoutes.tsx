@@ -1,136 +1,273 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AdminLayout } from '@/src/components/layout/AdminLayout';
 import { MainLayout } from '@/src/components/layout/MainLayout';
-import { AboutPage } from '@/src/pages/AboutPage';
-import { AcademyPlaceholderPage } from '@/src/pages/AcademyPlaceholderPage';
-import { AchievementsPage } from '@/src/pages/AchievementsPage';
-import { AdmissionsPage } from '@/src/pages/AdmissionsPage';
-import { ApplicationStatusPage } from '@/src/pages/ApplicationStatusPage';
-import { BookTrialPage } from '@/src/pages/BookTrialPage';
-import { CoachesPage } from '@/src/pages/CoachesPage';
-import { CoachProfilePage } from '@/src/pages/CoachProfilePage';
-import { ContactPage } from '@/src/pages/ContactPage';
-import { FacilitiesPage } from '@/src/pages/FacilitiesPage';
-import { FaqsPage } from '@/src/pages/FaqsPage';
-import { FeesPage } from '@/src/pages/FeesPage';
-import { ForgotPasswordPage } from '@/src/pages/ForgotPasswordPage';
-import { GalleryPage } from '@/src/pages/GalleryPage';
+import { RouteLoadingFallback } from '@/src/components/ui/RouteLoadingFallback';
 import { HomePage } from '@/src/pages/HomePage';
-import { LegalPage } from '@/src/pages/LegalPage';
-import { LoginPage } from '@/src/pages/LoginPage';
-import { MatchDetailPage } from '@/src/pages/MatchDetailPage';
-import { MatchesPage } from '@/src/pages/MatchesPage';
-import { NotFoundPage } from '@/src/pages/NotFoundPage';
-import { PlayerProfilePage } from '@/src/pages/PlayerProfilePage';
-import { ProgramDetailPage } from '@/src/pages/ProgramDetailPage';
-import { ProgramsPage } from '@/src/pages/ProgramsPage';
-import { RegisterPage } from '@/src/pages/RegisterPage';
-import { RegistrationConfirmationPage } from '@/src/pages/RegistrationConfirmationPage';
-import { ResetPasswordPage } from '@/src/pages/ResetPasswordPage';
-import { SchedulePage } from '@/src/pages/SchedulePage';
-import { AdminAchievementsPage } from '@/src/pages/admin/AdminAchievementsPage';
-import { AdminAdmissionsPage } from '@/src/pages/admin/AdminAdmissionsPage';
-import { AdminAttendancePage } from '@/src/pages/admin/AdminAttendancePage';
-import { AdminBatchesPage } from '@/src/pages/admin/AdminBatchesPage';
-import { AdminBlogPage } from '@/src/pages/admin/AdminBlogPage';
-import { AdminCoachesPage } from '@/src/pages/admin/AdminCoachesPage';
-import { AdminDashboardPage } from '@/src/pages/admin/AdminDashboardPage';
-import { AdminFeesPage } from '@/src/pages/admin/AdminFeesPage';
-import { AdminGalleryPage } from '@/src/pages/admin/AdminGalleryPage';
-import { AdminMatchesPage } from '@/src/pages/admin/AdminMatchesPage';
-import { AdminProgramsPage } from '@/src/pages/admin/AdminProgramsPage';
-import { AdminReportsPage } from '@/src/pages/admin/AdminReportsPage';
-import { AdminSchedulesPage } from '@/src/pages/admin/AdminSchedulesPage';
-import { AdminSettingsPage } from '@/src/pages/admin/AdminSettingsPage';
-import { AdminStudentsPage } from '@/src/pages/admin/AdminStudentsPage';
-import { AdminTestimonialsPage } from '@/src/pages/admin/AdminTestimonialsPage';
-import { AdminTrialBookingsPage } from '@/src/pages/admin/AdminTrialBookingsPage';
-import { AdminWebsiteContentPage } from '@/src/pages/admin/AdminWebsiteContentPage';
 import { PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
+
+const AboutPage = lazy(() =>
+  import('@/src/pages/AboutPage').then((m) => ({ default: m.AboutPage })),
+);
+const AcademyPlaceholderPage = lazy(() =>
+  import('@/src/pages/AcademyPlaceholderPage').then((m) => ({
+    default: m.AcademyPlaceholderPage,
+  })),
+);
+const AchievementsPage = lazy(() =>
+  import('@/src/pages/AchievementsPage').then((m) => ({ default: m.AchievementsPage })),
+);
+const AdmissionsPage = lazy(() =>
+  import('@/src/pages/AdmissionsPage').then((m) => ({ default: m.AdmissionsPage })),
+);
+const ApplicationStatusPage = lazy(() =>
+  import('@/src/pages/ApplicationStatusPage').then((m) => ({
+    default: m.ApplicationStatusPage,
+  })),
+);
+const BookTrialPage = lazy(() =>
+  import('@/src/pages/BookTrialPage').then((m) => ({ default: m.BookTrialPage })),
+);
+const CoachesPage = lazy(() =>
+  import('@/src/pages/CoachesPage').then((m) => ({ default: m.CoachesPage })),
+);
+const CoachProfilePage = lazy(() =>
+  import('@/src/pages/CoachProfilePage').then((m) => ({ default: m.CoachProfilePage })),
+);
+const ContactPage = lazy(() =>
+  import('@/src/pages/ContactPage').then((m) => ({ default: m.ContactPage })),
+);
+const FacilitiesPage = lazy(() =>
+  import('@/src/pages/FacilitiesPage').then((m) => ({ default: m.FacilitiesPage })),
+);
+const FaqsPage = lazy(() =>
+  import('@/src/pages/FaqsPage').then((m) => ({ default: m.FaqsPage })),
+);
+const FeesPage = lazy(() =>
+  import('@/src/pages/FeesPage').then((m) => ({ default: m.FeesPage })),
+);
+const ForgotPasswordPage = lazy(() =>
+  import('@/src/pages/ForgotPasswordPage').then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
+);
+const GalleryPage = lazy(() =>
+  import('@/src/pages/GalleryPage').then((m) => ({ default: m.GalleryPage })),
+);
+const LegalPage = lazy(() =>
+  import('@/src/pages/LegalPage').then((m) => ({ default: m.LegalPage })),
+);
+const LoginPage = lazy(() =>
+  import('@/src/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
+);
+const MatchDetailPage = lazy(() =>
+  import('@/src/pages/MatchDetailPage').then((m) => ({ default: m.MatchDetailPage })),
+);
+const MatchesPage = lazy(() =>
+  import('@/src/pages/MatchesPage').then((m) => ({ default: m.MatchesPage })),
+);
+const NotFoundPage = lazy(() =>
+  import('@/src/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
+);
+const PlayerProfilePage = lazy(() =>
+  import('@/src/pages/PlayerProfilePage').then((m) => ({ default: m.PlayerProfilePage })),
+);
+const ProgramDetailPage = lazy(() =>
+  import('@/src/pages/ProgramDetailPage').then((m) => ({ default: m.ProgramDetailPage })),
+);
+const ProgramsPage = lazy(() =>
+  import('@/src/pages/ProgramsPage').then((m) => ({ default: m.ProgramsPage })),
+);
+const RegisterPage = lazy(() =>
+  import('@/src/pages/RegisterPage').then((m) => ({ default: m.RegisterPage })),
+);
+const RegistrationConfirmationPage = lazy(() =>
+  import('@/src/pages/RegistrationConfirmationPage').then((m) => ({
+    default: m.RegistrationConfirmationPage,
+  })),
+);
+const ResetPasswordPage = lazy(() =>
+  import('@/src/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage })),
+);
+const SchedulePage = lazy(() =>
+  import('@/src/pages/SchedulePage').then((m) => ({ default: m.SchedulePage })),
+);
+
+const AdminAchievementsPage = lazy(() =>
+  import('@/src/pages/admin/AdminAchievementsPage').then((m) => ({
+    default: m.AdminAchievementsPage,
+  })),
+);
+const AdminAdmissionsPage = lazy(() =>
+  import('@/src/pages/admin/AdminAdmissionsPage').then((m) => ({
+    default: m.AdminAdmissionsPage,
+  })),
+);
+const AdminAttendancePage = lazy(() =>
+  import('@/src/pages/admin/AdminAttendancePage').then((m) => ({
+    default: m.AdminAttendancePage,
+  })),
+);
+const AdminBatchesPage = lazy(() =>
+  import('@/src/pages/admin/AdminBatchesPage').then((m) => ({
+    default: m.AdminBatchesPage,
+  })),
+);
+const AdminBlogPage = lazy(() =>
+  import('@/src/pages/admin/AdminBlogPage').then((m) => ({ default: m.AdminBlogPage })),
+);
+const AdminCoachesPage = lazy(() =>
+  import('@/src/pages/admin/AdminCoachesPage').then((m) => ({
+    default: m.AdminCoachesPage,
+  })),
+);
+const AdminDashboardPage = lazy(() =>
+  import('@/src/pages/admin/AdminDashboardPage').then((m) => ({
+    default: m.AdminDashboardPage,
+  })),
+);
+const AdminFeesPage = lazy(() =>
+  import('@/src/pages/admin/AdminFeesPage').then((m) => ({ default: m.AdminFeesPage })),
+);
+const AdminGalleryPage = lazy(() =>
+  import('@/src/pages/admin/AdminGalleryPage').then((m) => ({
+    default: m.AdminGalleryPage,
+  })),
+);
+const AdminMatchesPage = lazy(() =>
+  import('@/src/pages/admin/AdminMatchesPage').then((m) => ({
+    default: m.AdminMatchesPage,
+  })),
+);
+const AdminProgramsPage = lazy(() =>
+  import('@/src/pages/admin/AdminProgramsPage').then((m) => ({
+    default: m.AdminProgramsPage,
+  })),
+);
+const AdminReportsPage = lazy(() =>
+  import('@/src/pages/admin/AdminReportsPage').then((m) => ({
+    default: m.AdminReportsPage,
+  })),
+);
+const AdminSchedulesPage = lazy(() =>
+  import('@/src/pages/admin/AdminSchedulesPage').then((m) => ({
+    default: m.AdminSchedulesPage,
+  })),
+);
+const AdminSettingsPage = lazy(() =>
+  import('@/src/pages/admin/AdminSettingsPage').then((m) => ({
+    default: m.AdminSettingsPage,
+  })),
+);
+const AdminStudentsPage = lazy(() =>
+  import('@/src/pages/admin/AdminStudentsPage').then((m) => ({
+    default: m.AdminStudentsPage,
+  })),
+);
+const AdminTestimonialsPage = lazy(() =>
+  import('@/src/pages/admin/AdminTestimonialsPage').then((m) => ({
+    default: m.AdminTestimonialsPage,
+  })),
+);
+const AdminTrialBookingsPage = lazy(() =>
+  import('@/src/pages/admin/AdminTrialBookingsPage').then((m) => ({
+    default: m.AdminTrialBookingsPage,
+  })),
+);
+const AdminWebsiteContentPage = lazy(() =>
+  import('@/src/pages/admin/AdminWebsiteContentPage').then((m) => ({
+    default: m.AdminWebsiteContentPage,
+  })),
+);
 
 export function AppRoutes() {
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/programs" element={<ProgramsPage />} />
-        <Route path="/programs/:slug" element={<ProgramDetailPage />} />
-        <Route path="/coaches" element={<CoachesPage />} />
-        <Route path="/coaches/:slug" element={<CoachProfilePage />} />
-        <Route path="/facilities" element={<FacilitiesPage />} />
-        <Route path="/schedule" element={<SchedulePage />} />
-        <Route path="/matches" element={<MatchesPage />} />
-        <Route path="/matches/:slug" element={<MatchDetailPage />} />
-        <Route path="/achievements" element={<AchievementsPage />} />
-        <Route path="/players/:slug" element={<PlayerProfilePage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/admissions" element={<AdmissionsPage />} />
-        <Route path="/fees" element={<FeesPage />} />
-        <Route path="/faqs" element={<FaqsPage />} />
+    <Suspense fallback={<RouteLoadingFallback />}>
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/programs" element={<ProgramsPage />} />
+          <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+          <Route path="/coaches" element={<CoachesPage />} />
+          <Route path="/coaches/:slug" element={<CoachProfilePage />} />
+          <Route path="/facilities" element={<FacilitiesPage />} />
+          <Route path="/schedule" element={<SchedulePage />} />
+          <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/matches/:slug" element={<MatchDetailPage />} />
+          <Route path="/achievements" element={<AchievementsPage />} />
+          <Route path="/players/:slug" element={<PlayerProfilePage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/admissions" element={<AdmissionsPage />} />
+          <Route path="/fees" element={<FeesPage />} />
+          <Route path="/faqs" element={<FaqsPage />} />
 
-        {/* Legal Routes */}
-        <Route path="/privacy-policy" element={<LegalPage slug="privacy-policy" />} />
-        <Route path="/privacy" element={<LegalPage slug="privacy-policy" />} />
-        <Route path="/terms" element={<LegalPage slug="terms" />} />
-        <Route path="/admission-policy" element={<LegalPage slug="admission-policy" />} />
-        <Route path="/refund-policy" element={<LegalPage slug="refund-policy" />} />
-        <Route path="/child-safety" element={<LegalPage slug="child-safety" />} />
-        <Route
-          path="/photography-consent"
-          element={<LegalPage slug="photography-consent" />}
-        />
-
-        {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
+          {/* Legal Routes */}
+          <Route path="/privacy-policy" element={<LegalPage slug="privacy-policy" />} />
+          <Route path="/privacy" element={<LegalPage slug="privacy-policy" />} />
+          <Route path="/terms" element={<LegalPage slug="terms" />} />
+          <Route path="/admission-policy" element={<LegalPage slug="admission-policy" />} />
+          <Route path="/refund-policy" element={<LegalPage slug="refund-policy" />} />
+          <Route path="/child-safety" element={<LegalPage slug="child-safety" />} />
           <Route
-            key={route.path}
-            path={route.path}
-            element={
-              <AcademyPlaceholderPage
-                routePath={route.path}
-                title={route.title}
-                sectionLabel={route.sectionLabel}
-                description={route.description}
-                plannedModules={route.plannedModules}
-              />
-            }
+            path="/photography-consent"
+            element={<LegalPage slug="photography-consent" />}
           />
-        ))}
 
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/registration-confirmation" element={<RegistrationConfirmationPage />} />
-        <Route path="/application-status" element={<ApplicationStatusPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/book-trial" element={<BookTrialPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
+          {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <AcademyPlaceholderPage
+                  routePath={route.path}
+                  title={route.title}
+                  sectionLabel={route.sectionLabel}
+                  description={route.description}
+                  plannedModules={route.plannedModules}
+                />
+              }
+            />
+          ))}
 
-      {/* Complete Admin Panel Frontend (Part 7) */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminDashboardPage />} />
-        <Route path="students" element={<AdminStudentsPage />} />
-        <Route path="coaches" element={<AdminCoachesPage />} />
-        <Route path="programs" element={<AdminProgramsPage />} />
-        <Route path="batches" element={<AdminBatchesPage />} />
-        <Route path="schedules" element={<AdminSchedulesPage />} />
-        <Route path="schedule" element={<Navigate to="/admin/schedules" replace />} />
-        <Route path="admissions" element={<AdminAdmissionsPage />} />
-        <Route path="trial-bookings" element={<AdminTrialBookingsPage />} />
-        <Route path="trials" element={<Navigate to="/admin/trial-bookings" replace />} />
-        <Route path="fees" element={<AdminFeesPage />} />
-        <Route path="attendance" element={<AdminAttendancePage />} />
-        <Route path="matches" element={<AdminMatchesPage />} />
-        <Route path="achievements" element={<AdminAchievementsPage />} />
-        <Route path="gallery" element={<AdminGalleryPage />} />
-        <Route path="testimonials" element={<AdminTestimonialsPage />} />
-        <Route path="blog" element={<AdminBlogPage />} />
-        <Route path="website-content" element={<AdminWebsiteContentPage />} />
-        <Route path="reports" element={<AdminReportsPage />} />
-        <Route path="settings" element={<AdminSettingsPage />} />
-      </Route>
-    </Routes>
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/registration-confirmation"
+            element={<RegistrationConfirmationPage />}
+          />
+          <Route path="/application-status" element={<ApplicationStatusPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/book-trial" element={<BookTrialPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+
+        {/* Complete Admin Panel Frontend (Part 7) */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="students" element={<AdminStudentsPage />} />
+          <Route path="coaches" element={<AdminCoachesPage />} />
+          <Route path="programs" element={<AdminProgramsPage />} />
+          <Route path="batches" element={<AdminBatchesPage />} />
+          <Route path="schedules" element={<AdminSchedulesPage />} />
+          <Route path="schedule" element={<Navigate to="/admin/schedules" replace />} />
+          <Route path="admissions" element={<AdminAdmissionsPage />} />
+          <Route path="trial-bookings" element={<AdminTrialBookingsPage />} />
+          <Route path="trials" element={<Navigate to="/admin/trial-bookings" replace />} />
+          <Route path="fees" element={<AdminFeesPage />} />
+          <Route path="attendance" element={<AdminAttendancePage />} />
+          <Route path="matches" element={<AdminMatchesPage />} />
+          <Route path="achievements" element={<AdminAchievementsPage />} />
+          <Route path="gallery" element={<AdminGalleryPage />} />
+          <Route path="testimonials" element={<AdminTestimonialsPage />} />
+          <Route path="blog" element={<AdminBlogPage />} />
+          <Route path="website-content" element={<AdminWebsiteContentPage />} />
+          <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }

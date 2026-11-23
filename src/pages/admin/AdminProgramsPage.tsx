@@ -135,6 +135,8 @@ export function AdminProgramsPage() {
                 <img
                   src={prog.imagePath}
                   alt={prog.title}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                   referrerPolicy="no-referrer"
                 />

@@ -13,7 +13,14 @@ export function MainLayout() {
   const prefersReduced = useReducedMotion();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F5F7FA] text-[#071A36]">
+    <div className="min-h-screen flex flex-col overflow-x-clip bg-[#F5F7FA] text-[#071A36]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#071A36] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D9A52E] focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
+
       <Header
         isMobileMenuOpen={mobileMenuOpen}
         onOpenMobileMenu={() => setMobileMenuOpen(true)}
@@ -24,7 +31,7 @@ export function MainLayout() {
         onClose={() => setMobileMenuOpen(false)}
       />
 
-      <main className="flex-1 py-8 sm:py-12">
+      <main id="main-content" className="flex-1 py-8 sm:py-12">
         <PageContainer>
           <motion.div
             key={location.pathname}

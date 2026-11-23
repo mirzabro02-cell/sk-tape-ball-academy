@@ -151,6 +151,8 @@ export function AdminBlogPage() {
                 <img
                   src={post.featuredImage}
                   alt={post.title}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                   referrerPolicy="no-referrer"
                 />

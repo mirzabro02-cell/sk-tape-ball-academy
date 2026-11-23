@@ -19,7 +19,7 @@ export function Header({ onOpenMobileMenu, isMobileMenuOpen }: HeaderProps) {
 
         <nav
           aria-label="Primary Navigation"
-          className="hidden lg:flex items-center gap-3.5 xl:gap-5 text-[13px] xl:text-sm font-medium text-[#64748B]"
+          className="hidden xl:flex items-center gap-4 text-sm font-medium text-[#64748B]"
         >
           {PRIMARY_NAV_ITEMS.map((item) => (
             <NavLink
@@ -40,7 +40,7 @@ export function Header({ onOpenMobileMenu, isMobileMenuOpen }: HeaderProps) {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-2.5 shrink-0">
+        <div className="hidden xl:flex items-center gap-2.5 shrink-0">
           <Button to="/book-trial" variant="outline" size="sm" className="px-3.5">
             Book Free Trial
           </Button>
@@ -54,7 +54,7 @@ export function Header({ onOpenMobileMenu, isMobileMenuOpen }: HeaderProps) {
           onClick={onOpenMobileMenu}
           aria-label="Open mobile navigation menu"
           aria-expanded={isMobileMenuOpen}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white text-[#071A36] hover:bg-[#F5F7FA] lg:hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-[10px] border border-[#E2E8F0] bg-white text-[#071A36] hover:bg-[#F5F7FA] xl:hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]"
         >
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>

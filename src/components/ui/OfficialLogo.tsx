@@ -59,7 +59,7 @@ export function OfficialLogo({
 
       <span
         className={cn(
-          'font-[var(--font-heading)] text-base sm:text-lg font-bold tracking-tight whitespace-nowrap shrink-0',
+          'font-[var(--font-heading)] text-[15px] sm:text-lg font-bold tracking-tight whitespace-nowrap shrink-0',
           isDarkSurface ? 'text-white' : 'text-[#071A36]',
         )}
       >

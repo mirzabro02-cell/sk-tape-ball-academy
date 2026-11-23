@@ -40,7 +40,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+        <div className="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

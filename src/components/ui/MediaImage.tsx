@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/src/utils/cn';
 
@@ -8,6 +8,7 @@ export interface MediaImageProps {
   fallbackLabel?: string;
   className?: string;
   imgClassName?: string;
+  priority?: boolean;
 }
 
 export function MediaImage({
@@ -16,8 +17,13 @@ export function MediaImage({
   fallbackLabel = 'Cricket Visual Placeholder',
   className,
   imgClassName,
+  priority = false,
 }: MediaImageProps) {
   const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(false);
+  }, [src]);
 
   if (!src || hasError) {
     return (
@@ -44,6 +50,8 @@ export function MediaImage({
       <img
         src={src}
         alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
         referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
         className={cn('h-full w-full object-cover', imgClassName)}

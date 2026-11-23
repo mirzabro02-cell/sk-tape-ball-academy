@@ -95,7 +95,13 @@ function AdminShellInner() {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#F5F7FA] text-[#071A36]">
+    <div className="min-h-screen flex overflow-x-clip bg-[#F5F7FA] text-[#071A36]">
+      <a
+        href="#admin-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#071A36] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D9A52E] focus:shadow-lg"
+      >
+        Skip to admin content
+      </a>
       {/* Desktop Collapsible Sidebar */}
       <aside
         className={cn(
@@ -418,7 +424,10 @@ function AdminShellInner() {
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1440px] w-full mx-auto">
+        <main
+          id="admin-main-content"
+          className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1440px] w-full mx-auto"
+        >
           <Outlet />
         </main>
 

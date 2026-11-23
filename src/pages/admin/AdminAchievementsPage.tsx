@@ -124,6 +124,8 @@ export function AdminAchievementsPage() {
                 <img
                   src={item.imagePath}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   className="h-full w-full object-cover"
                   referrerPolicy="no-referrer"
                 />

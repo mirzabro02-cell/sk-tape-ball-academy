@@ -18,6 +18,7 @@ export function HeroSection() {
           src={HERO_CONTENT.imageSrc}
           alt={HERO_CONTENT.imageAlt}
           fallbackLabel="SK Tape Ball Academy Floodlit Ground"
+          priority
           className="h-full w-full"
           imgClassName="h-full w-full object-cover object-center opacity-60"
         />
