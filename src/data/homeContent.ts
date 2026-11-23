@@ -132,6 +132,7 @@ export const WHY_CHOOSE_PILLARS: WhyChoosePillar[] = [
 
 export interface CoachPlaceholderItem {
   id: string;
+  slug: string;
   namePlaceholder: string;
   rolePlaceholder: string;
   specialtyPlaceholder: string;
@@ -141,6 +142,7 @@ export interface CoachPlaceholderItem {
 export const COACHES_PREVIEW_PLACEHOLDERS: CoachPlaceholderItem[] = [
   {
     id: 'coach-1',
+    slug: 'head-coach-placeholder',
     namePlaceholder: 'Coach Name Placeholder',
     rolePlaceholder: 'Head Coach · Role Placeholder',
     specialtyPlaceholder: 'Overall Batting & Match Strategy (Placeholder)',
@@ -149,6 +151,7 @@ export const COACHES_PREVIEW_PLACEHOLDERS: CoachPlaceholderItem[] = [
   },
   {
     id: 'coach-2',
+    slug: 'fast-bowling-coach-placeholder',
     namePlaceholder: 'Coach Name Placeholder',
     rolePlaceholder: 'Bowling Specialist · Role Placeholder',
     specialtyPlaceholder: 'Tape Ball Pace & Death-Over Mechanics (Placeholder)',
@@ -157,6 +160,7 @@ export const COACHES_PREVIEW_PLACEHOLDERS: CoachPlaceholderItem[] = [
   },
   {
     id: 'coach-3',
+    slug: 'fielding-fitness-coach-placeholder',
     namePlaceholder: 'Coach Name Placeholder',
     rolePlaceholder: 'Fielding & Fitness Lead · Role Placeholder',
     specialtyPlaceholder: 'Agility, Keeping & Conditioning (Placeholder)',

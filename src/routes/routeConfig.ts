@@ -15,42 +15,6 @@ export interface AdminPlaceholderConfig {
 
 export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
   {
-    path: '/about',
-    title: 'About SK Tape Ball Academy',
-    sectionLabel: 'Academy Profile',
-    description:
-      'Placeholder route for the official academy mission, leadership overview, and tape ball cricket development philosophy.',
-    plannedModules: [
-      'Academy Mission & Vision Statement',
-      'Tape Ball Cricket Methodology',
-      'Leadership & Coaching Standards',
-    ],
-  },
-  {
-    path: '/programs',
-    title: 'Training Programs',
-    sectionLabel: 'Curriculum',
-    description:
-      'Placeholder route for age-group batches, specialized pace/spin clinics, and power-hitting programs.',
-    plannedModules: [
-      'Age & Skill Group Tracks',
-      'Bowling, Batting & Fielding Modules',
-      'Program Comparison & Enrollment Links',
-    ],
-  },
-  {
-    path: '/coaches',
-    title: 'Coaching Staff',
-    sectionLabel: 'Mentorship',
-    description:
-      'Placeholder route reserved for verified coach profiles, credentials, and specialized tape ball coaching roles.',
-    plannedModules: [
-      'Head Coach & Technical Leads',
-      'Specialist Pace & Power-Hitting Coaches',
-      'Strength & Conditioning Staff',
-    ],
-  },
-  {
     path: '/schedule',
     title: 'Training Schedule',
     sectionLabel: 'Timetable',
@@ -120,18 +84,6 @@ export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
       'Training Session Photography',
       'Tournament & Match-Day Albums',
       'Facility Showcase Media',
-    ],
-  },
-  {
-    path: '/facilities',
-    title: 'Academy Facilities',
-    sectionLabel: 'Infrastructure',
-    description:
-      'Placeholder route detailing practice pitches, floodlight setups, turf/cement surfaces, and player amenities.',
-    plannedModules: [
-      'Tape Ball Practice Pitches & Nets',
-      'Night Training & Floodlight Setup',
-      'Fitness & Recovery Area',
     ],
   },
   {

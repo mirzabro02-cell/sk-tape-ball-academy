@@ -1,4 +1,5 @@
 import { Activity, ArrowRight, Compass, Crosshair, Shield, Target, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { TRAINING_PROGRAMS_PREVIEW } from '@/src/data/homeContent';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -55,14 +56,24 @@ export function ProgramsPreviewSection() {
                 </p>
               </div>
 
-              <ul className="border-t border-[#E2E8F0] pt-4 space-y-1.5 text-xs text-[#071A36]">
-                {program.drills.map((drill) => (
-                  <li key={drill} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#D9A52E]" aria-hidden="true" />
-                    <span>{drill}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="border-t border-[#E2E8F0] pt-4 space-y-3">
+                <ul className="space-y-1.5 text-xs text-[#071A36]">
+                  {program.drills.map((drill) => (
+                    <li key={drill} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#D9A52E]" aria-hidden="true" />
+                      <span>{drill}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  to={`/programs/${program.id}`}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#071A36] hover:text-[#C8202B] transition-colors"
+                >
+                  <span>Program Details</span>
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </Link>
+              </div>
             </Card>
           );
         })}

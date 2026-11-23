@@ -1,13 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
 import { AdminLayout } from '@/src/components/layout/AdminLayout';
 import { MainLayout } from '@/src/components/layout/MainLayout';
+import { AboutPage } from '@/src/pages/AboutPage';
 import { AcademyPlaceholderPage } from '@/src/pages/AcademyPlaceholderPage';
 import { AdminPlaceholderPage } from '@/src/pages/AdminPlaceholderPage';
 import { BookTrialPage } from '@/src/pages/BookTrialPage';
+import { CoachesPage } from '@/src/pages/CoachesPage';
+import { CoachProfilePage } from '@/src/pages/CoachProfilePage';
 import { ContactPage } from '@/src/pages/ContactPage';
+import { FacilitiesPage } from '@/src/pages/FacilitiesPage';
 import { HomePage } from '@/src/pages/HomePage';
 import { LoginPage } from '@/src/pages/LoginPage';
 import { NotFoundPage } from '@/src/pages/NotFoundPage';
+import { ProgramDetailPage } from '@/src/pages/ProgramDetailPage';
+import { ProgramsPage } from '@/src/pages/ProgramsPage';
 import { RegisterPage } from '@/src/pages/RegisterPage';
 import { ADMIN_PLACEHOLDER_ROUTES, PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
 
@@ -16,6 +22,12 @@ export function AppRoutes() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/programs" element={<ProgramsPage />} />
+        <Route path="/programs/:slug" element={<ProgramDetailPage />} />
+        <Route path="/coaches" element={<CoachesPage />} />
+        <Route path="/coaches/:slug" element={<CoachProfilePage />} />
+        <Route path="/facilities" element={<FacilitiesPage />} />
 
         {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
           <Route

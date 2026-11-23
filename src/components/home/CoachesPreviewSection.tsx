@@ -43,9 +43,15 @@ export function CoachesPreviewSection() {
                   {coach.specialtyPlaceholder}
                 </p>
               </div>
-              <p className="pt-2 text-sm leading-relaxed text-[#64748B]">
-                {coach.bioPlaceholder}
-              </p>
+              <div className="pt-2 space-y-3">
+                <p className="text-sm leading-relaxed text-[#64748B]">
+                  {coach.bioPlaceholder}
+                </p>
+                <Button to={`/coaches/${coach.slug}`} variant="outline" size="sm" fullWidth>
+                  <span>View Profile</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              </div>
             </div>
           </Card>
         ))}
