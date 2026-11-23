@@ -15,30 +15,6 @@ export interface AdminPlaceholderConfig {
 
 export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
   {
-    path: '/admissions',
-    title: 'Admissions Process',
-    sectionLabel: 'Enrollment',
-    description:
-      'Placeholder route outlining trial assessments, eligibility, required documents, and onboarding steps.',
-    plannedModules: [
-      'Step-by-Step Admission Guide',
-      'Trial Assessment Criteria',
-      'Kit & Ground Guidelines',
-    ],
-  },
-  {
-    path: '/fees',
-    title: 'Fee Structure & Plans',
-    sectionLabel: 'Membership',
-    description:
-      'Placeholder route for official academy fee plans, registration charges, and billing cycles.',
-    plannedModules: [
-      'Monthly & Quarterly Training Plans',
-      'Registration & Kit Breakdown',
-      'Payment Policy & FAQ Summary',
-    ],
-  },
-  {
     path: '/blog',
     title: 'Blog & Academy Updates',
     sectionLabel: 'Editorial',
@@ -48,42 +24,6 @@ export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
       'Academy Announcements Feed',
       'Skill & Technique Articles',
       'Trial & Camp Notices',
-    ],
-  },
-  {
-    path: '/faqs',
-    title: 'Frequently Asked Questions',
-    sectionLabel: 'Support',
-    description:
-      'Placeholder route covering common questions on admissions, equipment, batch timings, and trial sessions.',
-    plannedModules: [
-      'Admissions & Trials FAQs',
-      'Equipment & Dress Code Questions',
-      'Fees & Attendance Policies',
-    ],
-  },
-  {
-    path: '/privacy',
-    title: 'Privacy Policy',
-    sectionLabel: 'Legal',
-    description:
-      'Placeholder route for the official SK Tape Ball Academy privacy policy covering player and guardian registration data.',
-    plannedModules: [
-      'Data Collection & Consent Notice',
-      'Guardian & Minor Privacy Standards',
-      'Contact for Privacy Inquiries',
-    ],
-  },
-  {
-    path: '/terms',
-    title: 'Terms of Use',
-    sectionLabel: 'Legal',
-    description:
-      'Placeholder route for the official SK Tape Ball Academy website terms, ground conduct rules, and enrollment policies.',
-    plannedModules: [
-      'Website & Portal Usage Terms',
-      'Ground Safety & Code of Conduct',
-      'Trial & Registration Policies',
     ],
   },
 ];

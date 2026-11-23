@@ -71,11 +71,13 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
     links: [
       { label: 'Contact', path: '/contact' },
       { label: 'FAQs', path: '/faqs' },
-      { label: 'Blog & Updates', path: '/blog' },
       { label: 'Register Now', path: '/register' },
-      { label: 'Member Login', path: '/login' },
-      { label: 'Privacy Policy', path: '/privacy' },
-      { label: 'Terms of Use', path: '/terms' },
+      { label: 'Privacy Policy', path: '/privacy-policy' },
+      { label: 'Terms & Conditions', path: '/terms' },
+      { label: 'Admission Policy', path: '/admission-policy' },
+      { label: 'Refund Policy', path: '/refund-policy' },
+      { label: 'Child Safety Policy', path: '/child-safety' },
+      { label: 'Photography Consent', path: '/photography-consent' },
     ],
   },
 ];

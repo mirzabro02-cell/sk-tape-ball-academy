@@ -106,11 +106,14 @@ export function Footer() {
             &copy; {currentYear} {ACADEMY_BRAND.name}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-4">
-            <Link to="/privacy" className="hover:text-white transition-colors">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">
               Privacy Policy
             </Link>
             <Link to="/terms" className="hover:text-white transition-colors">
-              Terms of Use
+              Terms
+            </Link>
+            <Link to="/child-safety" className="hover:text-white transition-colors">
+              Child Safety
             </Link>
             <Link to="/admin" className="inline-flex items-center gap-1 hover:text-[#D9A52E] transition-colors">
               <Globe className="h-3.5 w-3.5" aria-hidden="true" />

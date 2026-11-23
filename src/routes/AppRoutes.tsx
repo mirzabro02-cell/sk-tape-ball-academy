@@ -5,13 +5,17 @@ import { AboutPage } from '@/src/pages/AboutPage';
 import { AcademyPlaceholderPage } from '@/src/pages/AcademyPlaceholderPage';
 import { AchievementsPage } from '@/src/pages/AchievementsPage';
 import { AdminPlaceholderPage } from '@/src/pages/AdminPlaceholderPage';
+import { AdmissionsPage } from '@/src/pages/AdmissionsPage';
 import { BookTrialPage } from '@/src/pages/BookTrialPage';
 import { CoachesPage } from '@/src/pages/CoachesPage';
 import { CoachProfilePage } from '@/src/pages/CoachProfilePage';
 import { ContactPage } from '@/src/pages/ContactPage';
 import { FacilitiesPage } from '@/src/pages/FacilitiesPage';
+import { FaqsPage } from '@/src/pages/FaqsPage';
+import { FeesPage } from '@/src/pages/FeesPage';
 import { GalleryPage } from '@/src/pages/GalleryPage';
 import { HomePage } from '@/src/pages/HomePage';
+import { LegalPage } from '@/src/pages/LegalPage';
 import { LoginPage } from '@/src/pages/LoginPage';
 import { MatchDetailPage } from '@/src/pages/MatchDetailPage';
 import { MatchesPage } from '@/src/pages/MatchesPage';
@@ -40,6 +44,21 @@ export function AppRoutes() {
         <Route path="/achievements" element={<AchievementsPage />} />
         <Route path="/players/:slug" element={<PlayerProfilePage />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/admissions" element={<AdmissionsPage />} />
+        <Route path="/fees" element={<FeesPage />} />
+        <Route path="/faqs" element={<FaqsPage />} />
+
+        {/* Legal Routes */}
+        <Route path="/privacy-policy" element={<LegalPage slug="privacy-policy" />} />
+        <Route path="/privacy" element={<LegalPage slug="privacy-policy" />} />
+        <Route path="/terms" element={<LegalPage slug="terms" />} />
+        <Route path="/admission-policy" element={<LegalPage slug="admission-policy" />} />
+        <Route path="/refund-policy" element={<LegalPage slug="refund-policy" />} />
+        <Route path="/child-safety" element={<LegalPage slug="child-safety" />} />
+        <Route
+          path="/photography-consent"
+          element={<LegalPage slug="photography-consent" />}
+        />
 
         {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
           <Route
