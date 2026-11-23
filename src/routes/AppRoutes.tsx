@@ -3,18 +3,24 @@ import { AdminLayout } from '@/src/components/layout/AdminLayout';
 import { MainLayout } from '@/src/components/layout/MainLayout';
 import { AboutPage } from '@/src/pages/AboutPage';
 import { AcademyPlaceholderPage } from '@/src/pages/AcademyPlaceholderPage';
+import { AchievementsPage } from '@/src/pages/AchievementsPage';
 import { AdminPlaceholderPage } from '@/src/pages/AdminPlaceholderPage';
 import { BookTrialPage } from '@/src/pages/BookTrialPage';
 import { CoachesPage } from '@/src/pages/CoachesPage';
 import { CoachProfilePage } from '@/src/pages/CoachProfilePage';
 import { ContactPage } from '@/src/pages/ContactPage';
 import { FacilitiesPage } from '@/src/pages/FacilitiesPage';
+import { GalleryPage } from '@/src/pages/GalleryPage';
 import { HomePage } from '@/src/pages/HomePage';
 import { LoginPage } from '@/src/pages/LoginPage';
+import { MatchDetailPage } from '@/src/pages/MatchDetailPage';
+import { MatchesPage } from '@/src/pages/MatchesPage';
 import { NotFoundPage } from '@/src/pages/NotFoundPage';
+import { PlayerProfilePage } from '@/src/pages/PlayerProfilePage';
 import { ProgramDetailPage } from '@/src/pages/ProgramDetailPage';
 import { ProgramsPage } from '@/src/pages/ProgramsPage';
 import { RegisterPage } from '@/src/pages/RegisterPage';
+import { SchedulePage } from '@/src/pages/SchedulePage';
 import { ADMIN_PLACEHOLDER_ROUTES, PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
 
 export function AppRoutes() {
@@ -28,6 +34,12 @@ export function AppRoutes() {
         <Route path="/coaches" element={<CoachesPage />} />
         <Route path="/coaches/:slug" element={<CoachProfilePage />} />
         <Route path="/facilities" element={<FacilitiesPage />} />
+        <Route path="/schedule" element={<SchedulePage />} />
+        <Route path="/matches" element={<MatchesPage />} />
+        <Route path="/matches/:slug" element={<MatchDetailPage />} />
+        <Route path="/achievements" element={<AchievementsPage />} />
+        <Route path="/players/:slug" element={<PlayerProfilePage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
 
         {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
           <Route

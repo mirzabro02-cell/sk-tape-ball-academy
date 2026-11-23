@@ -1,4 +1,5 @@
 import { ArrowRight, CalendarDays, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { MATCHES_EVENTS_PLACEHOLDERS } from '@/src/data/homeContent';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -34,15 +35,25 @@ export function MatchesEventsSection() {
               </p>
             </div>
 
-            <div className="border-t border-[#E2E8F0] pt-4 space-y-2 text-xs text-[#64748B]">
-              <p className="flex items-center gap-2">
-                <CalendarDays className="h-3.5 w-3.5 text-[#071A36]" aria-hidden="true" />
-                <span>{eventItem.datePlaceholder}</span>
-              </p>
-              <p className="flex items-center gap-2">
-                <MapPin className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
-                <span>{eventItem.venuePlaceholder}</span>
-              </p>
+            <div className="border-t border-[#E2E8F0] pt-4 space-y-3">
+              <div className="space-y-2 text-xs text-[#64748B]">
+                <p className="flex items-center gap-2">
+                  <CalendarDays className="h-3.5 w-3.5 text-[#071A36]" aria-hidden="true" />
+                  <span>{eventItem.datePlaceholder}</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
+                  <span>{eventItem.venuePlaceholder}</span>
+                </p>
+              </div>
+
+              <Link
+                to={`/matches/${eventItem.slug}`}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#071A36] hover:text-[#C8202B] transition-colors"
+              >
+                <span>Event Details</span>
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </Link>
             </div>
           </Card>
         ))}

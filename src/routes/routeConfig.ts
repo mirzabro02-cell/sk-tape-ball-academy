@@ -15,18 +15,6 @@ export interface AdminPlaceholderConfig {
 
 export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
   {
-    path: '/schedule',
-    title: 'Training Schedule',
-    sectionLabel: 'Timetable',
-    description:
-      'Placeholder route for weekly practice slots, batch timings, and seasonal ground schedules.',
-    plannedModules: [
-      'Weekday & Weekend Batch Timings',
-      'Net Session Rotation Schedule',
-      'Match Practice & Conditioning Days',
-    ],
-  },
-  {
     path: '/admissions',
     title: 'Admissions Process',
     sectionLabel: 'Enrollment',
@@ -48,42 +36,6 @@ export const PUBLIC_PLACEHOLDER_ROUTES: PublicPlaceholderConfig[] = [
       'Monthly & Quarterly Training Plans',
       'Registration & Kit Breakdown',
       'Payment Policy & FAQ Summary',
-    ],
-  },
-  {
-    path: '/achievements',
-    title: 'Academy Achievements',
-    sectionLabel: 'Honors',
-    description:
-      'Placeholder route highlighting tournament titles, player milestones, and competitive honors.',
-    plannedModules: [
-      'Tournament Honors & Trophies',
-      'Player Selection Milestones',
-      'Season Highlights Archive',
-    ],
-  },
-  {
-    path: '/matches',
-    title: 'Matches & Fixtures',
-    sectionLabel: 'Competition',
-    description:
-      'Placeholder route for upcoming academy fixtures, practice match schedules, and match summaries.',
-    plannedModules: [
-      'Upcoming Fixtures Calendar',
-      'Recent Practice Match Results',
-      'Squad Announcements',
-    ],
-  },
-  {
-    path: '/gallery',
-    title: 'Media Gallery',
-    sectionLabel: 'Media',
-    description:
-      'Placeholder route reserved for verified training photos, match-day photography, and highlight clips.',
-    plannedModules: [
-      'Training Session Photography',
-      'Tournament & Match-Day Albums',
-      'Facility Showcase Media',
     ],
   },
   {

@@ -210,6 +210,7 @@ export const SCHEDULE_PREVIEW_PLACEHOLDERS: ScheduleSlotPlaceholder[] = [
 
 export interface AchievementPlaceholderItem {
   id: string;
+  playerSlug: string;
   categoryLabel: string;
   titlePlaceholder: string;
   playerPlaceholder: string;
@@ -219,6 +220,7 @@ export interface AchievementPlaceholderItem {
 export const ACHIEVEMENTS_PREVIEW_PLACEHOLDERS: AchievementPlaceholderItem[] = [
   {
     id: 'ach-1',
+    playerSlug: 'player-spotlight-01',
     categoryLabel: 'Tournament Honor · Placeholder',
     titlePlaceholder: 'Academy Achievement Title Placeholder',
     playerPlaceholder: 'Squad / Player Profile Placeholder',
@@ -227,6 +229,7 @@ export const ACHIEVEMENTS_PREVIEW_PLACEHOLDERS: AchievementPlaceholderItem[] = [
   },
   {
     id: 'ach-2',
+    playerSlug: 'player-spotlight-02',
     categoryLabel: 'Player Milestone · Placeholder',
     titlePlaceholder: 'Player Selection Milestone Placeholder',
     playerPlaceholder: 'Player Name Placeholder',
@@ -235,6 +238,7 @@ export const ACHIEVEMENTS_PREVIEW_PLACEHOLDERS: AchievementPlaceholderItem[] = [
   },
   {
     id: 'ach-3',
+    playerSlug: 'player-spotlight-03',
     categoryLabel: 'Season Recognition · Placeholder',
     titlePlaceholder: 'Seasonal Performance Award Placeholder',
     playerPlaceholder: 'Player Name Placeholder',
@@ -245,6 +249,7 @@ export const ACHIEVEMENTS_PREVIEW_PLACEHOLDERS: AchievementPlaceholderItem[] = [
 
 export interface MatchEventPlaceholderItem {
   id: string;
+  slug: string;
   statusLabel: string;
   titlePlaceholder: string;
   datePlaceholder: string;
@@ -255,6 +260,7 @@ export interface MatchEventPlaceholderItem {
 export const MATCHES_EVENTS_PLACEHOLDERS: MatchEventPlaceholderItem[] = [
   {
     id: 'evt-1',
+    slug: 'practice-match-fixture-placeholder',
     statusLabel: 'Upcoming Event · Placeholder',
     titlePlaceholder: 'Practice Match / Fixture Placeholder',
     datePlaceholder: 'Date & Time Pending',
@@ -264,6 +270,7 @@ export const MATCHES_EVENTS_PLACEHOLDERS: MatchEventPlaceholderItem[] = [
   },
   {
     id: 'evt-2',
+    slug: 'open-trial-camp-placeholder',
     statusLabel: 'Trial Camp · Placeholder',
     titlePlaceholder: 'Open Assessment & Trial Session Placeholder',
     datePlaceholder: 'Date & Time Pending',
@@ -273,6 +280,7 @@ export const MATCHES_EVENTS_PLACEHOLDERS: MatchEventPlaceholderItem[] = [
   },
   {
     id: 'evt-3',
+    slug: 'recent-match-recap-placeholder',
     statusLabel: 'Recent Event · Placeholder',
     titlePlaceholder: 'Match Summary / Event Recap Placeholder',
     datePlaceholder: 'Date Pending',
