@@ -131,9 +131,16 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 <WhatsAppCta variant="banner" />
               </div>
 
-              <div className="border-t border-[#E2E8F0] pt-5 flex items-center justify-between text-xs text-[#64748B]">
+              <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-[#64748B]">
                 <NavLink to="/login" onClick={onClose} className="font-medium hover:text-[#071A36]">
                   Member Login
+                </NavLink>
+                <NavLink
+                  to="/application-status"
+                  onClick={onClose}
+                  className="font-medium hover:text-[#071A36]"
+                >
+                  Track Application
                 </NavLink>
                 <NavLink
                   to={ADMIN_NAV_ITEMS[0].path}

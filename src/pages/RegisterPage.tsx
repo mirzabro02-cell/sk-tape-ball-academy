@@ -512,7 +512,7 @@ export function RegisterPage() {
           {validatedSummary && (
             <div
               role="status"
-              className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-5 space-y-2"
+              className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-5 space-y-3"
             >
               <div className="flex items-center gap-2 text-sm font-bold text-[#071A36]">
                 <CheckCircle2 className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
@@ -521,25 +521,50 @@ export function RegisterPage() {
               <p className="text-sm leading-relaxed text-[#64748B]">
                 All required inputs for <strong className="text-[#071A36]">{validatedSummary.studentName}</strong> (calculated age: <strong className="text-[#071A36]">{validatedSummary.calculatedAge}</strong>, {validatedSummary.isMinor ? 'minor guardian consent verified' : 'adult applicant'}, photography consent: {validatedSummary.photographyOptIn ? 'opted in' : 'not selected'}) passed validation. Because no backend or database is connected yet, this application has <strong>not</strong> been submitted or saved.
               </p>
+              <div className="flex flex-wrap items-center gap-3 pt-1">
+                <Button to="/registration-confirmation" variant="secondary" size="sm">
+                  Preview Confirmation Page
+                </Button>
+                <Button to="/application-status" variant="outline" size="sm">
+                  Track Application Status
+                </Button>
+              </div>
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            <Button type="submit" variant="primary" size="lg" disabled={isValidating}>
-              {isValidating ? 'Validating Registration Form...' : 'Validate Registration Form'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              onClick={() => {
-                setForm(INITIAL_STATE);
-                setErrors({});
-                setValidatedSummary(null);
-              }}
-            >
-              Clear Form
-            </Button>
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="submit" variant="primary" size="lg" disabled={isValidating}>
+                {isValidating ? 'Validating Registration Form...' : 'Validate Registration Form'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  setForm(INITIAL_STATE);
+                  setErrors({});
+                  setValidatedSummary(null);
+                }}
+              >
+                Clear Form
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 text-sm">
+              <Link
+                to="/application-status"
+                className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+              >
+                Track Application
+              </Link>
+              <Link
+                to="/login"
+                className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+              >
+                Member Login
+              </Link>
+            </div>
           </div>
         </Card>
       </form>

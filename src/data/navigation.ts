@@ -23,6 +23,7 @@ export const SECONDARY_NAV_ITEMS: NavItem[] = [
 export const ACTION_NAV_ITEMS: NavItem[] = [
   { label: 'Book Free Trial', path: '/book-trial', group: 'actions' },
   { label: 'Register Now', path: '/register', group: 'actions' },
+  { label: 'Track Application', path: '/application-status', group: 'actions' },
   { label: 'Member Login', path: '/login', group: 'actions' },
 ];
 
@@ -64,6 +65,8 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
       { label: 'Matches & Events', path: '/matches' },
       { label: 'Gallery', path: '/gallery' },
       { label: 'Book Free Trial', path: '/book-trial' },
+      { label: 'Track Application', path: '/application-status' },
+      { label: 'Member Login', path: '/login' },
     ],
   },
   {

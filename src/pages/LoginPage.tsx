@@ -1,73 +1,195 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { AlertCircle, CheckCircle2, Info, Lock } from 'lucide-react';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
+import { isValidEmailAddress, isValidPhoneNumber } from '@/src/utils/validation';
+import { AccountPageShell } from '@/src/components/account/AccountPageShell';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
-import { PlaceholderNotice } from '@/src/components/ui/PlaceholderNotice';
+import { PasswordInput } from '@/src/components/ui/PasswordInput';
+
+interface LoginErrors {
+  identifier?: string;
+  password?: string;
+}
 
 export function LoginPage() {
   useDocumentTitle('Member Login');
 
-  const [email, setEmail] = useState('');
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState<LoginErrors>({});
+  const [isChecking, setIsChecking] = useState(false);
+  const [formErrorBanner, setFormErrorBanner] = useState<string | null>(null);
+  const [validatedMessage, setValidatedMessage] = useState<string | null>(null);
+
+  function validate(): LoginErrors {
+    const nextErrors: LoginErrors = {};
+    const trimmedId = identifier.trim();
+
+    if (!trimmedId) {
+      nextErrors.identifier = 'Please enter your registered email address or phone number.';
+    } else if (!isValidEmailAddress(trimmedId) && !isValidPhoneNumber(trimmedId)) {
+      nextErrors.identifier = 'Enter a valid email address or phone number (7–15 digits).';
+    }
+
+    if (!password) {
+      nextErrors.password = 'Please enter your password.';
+    } else if (password.length < 6) {
+      nextErrors.password = 'Password must be at least 6 characters.';
+    }
+
+    return nextErrors;
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setStatusMessage(
-      'Authentication is not active in Part 1. Real Supabase Auth sign-in will be integrated in a later part.',
-    );
+    setFormErrorBanner(null);
+    setValidatedMessage(null);
+
+    const nextErrors = validate();
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      setFormErrorBanner('Please review the highlighted fields before continuing.');
+      return;
+    }
+
+    setErrors({});
+    setIsChecking(true);
+
+    window.setTimeout(() => {
+      setIsChecking(false);
+      setValidatedMessage(
+        `Input validation passed for "${identifier.trim()}"${rememberMe ? ' (Remember me selected)' : ''}. Frontend-only preview: no fake sign-in or session is created. Live account authentication will be connected once backend services are integrated.`,
+      );
+    }, 350);
   }
 
   return (
-    <PlaceholderNotice
-      routePath="/login"
-      sectionLabel="Portal Access"
-      title="Member & Portal Login"
-      description="Placeholder authentication route. No fake login or mock session state is active in Part 1."
-      plannedModules={[
-        'Supabase Auth Email/Password Sign-In',
-        'Role-Based Redirect (Player / Coach / Admin)',
-        'Password Recovery Flow',
-      ]}
+    <AccountPageShell
+      kicker="Member Portal"
+      title="Academy Member Login"
+      description="Sign in to access your SK Tape Ball Academy player or guardian account once portal authentication is connected."
+      maxWidth="md"
     >
-      <Card className="max-w-lg" padding="lg">
-        <h2 className="text-xl font-bold text-[#071A36]">Sign-In Form Placeholder</h2>
-        <p className="mt-1 text-sm text-[#64748B]">
-          No fake authentication is performed here; submitting displays integration status.
-        </p>
+      <Card padding="lg" className="space-y-6">
+        <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-[#F5F7FA] p-4 text-xs leading-relaxed text-[#071A36]">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+          <p>
+            <strong>Frontend Interface Only:</strong> Form validation is active, and no fake
+            authentication or mock session is stored. Backend sign-in will be enabled in a later
+            phase.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <Input
-            label="Account Email"
-            type="email"
-            placeholder="Enter account email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            label="Email or Phone Number"
+            type="text"
+            autoComplete="username"
+            placeholder="player@example.com or +92 300 0000000"
+            value={identifier}
+            onChange={(e) => {
+              setIdentifier(e.target.value);
+              if (errors.identifier) {
+                setErrors((prev) => ({ ...prev, identifier: undefined }));
+              }
+              setFormErrorBanner(null);
+              setValidatedMessage(null);
+            }}
+            error={errors.identifier}
             required
           />
-          <Input
+
+          <PasswordInput
             label="Password"
-            type="password"
-            placeholder="Password field placeholder"
+            autoComplete="current-password"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (errors.password) {
+                setErrors((prev) => ({ ...prev, password: undefined }));
+              }
+              setFormErrorBanner(null);
+              setValidatedMessage(null);
+            }}
+            error={errors.password}
             required
           />
 
-          {statusMessage && (
-            <div className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-4 py-3 text-sm text-[#071A36]">
-              {statusMessage}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-[#E2E8F0] accent-[#071A36]"
+              />
+              <span>Remember me on this device</span>
+            </label>
+
+            <Link
+              to="/forgot-password"
+              className="text-sm font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+            >
+              Forgot password?
+            </Link>
+          </div>
+
+          {formErrorBanner && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{formErrorBanner}</span>
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <Button type="submit" variant="secondary">
-              Check Auth Status
-            </Button>
-            <Button to="/register" variant="outline">
-              Go to Register
-            </Button>
-          </div>
+          {validatedMessage && (
+            <div
+              role="status"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#071A36]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#071A36]"
+            >
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+              <span>{validatedMessage}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            fullWidth
+            disabled={isChecking}
+            className="gap-2"
+          >
+            <Lock className="h-4 w-4" aria-hidden="true" />
+            <span>{isChecking ? 'Validating Credentials...' : 'Login to Portal'}</span>
+          </Button>
         </form>
+
+        <div className="border-t border-[#E2E8F0] pt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm">
+          <p className="text-[#64748B]">
+            New to SK Tape Ball Academy?{' '}
+            <Link
+              to="/register"
+              className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+            >
+              Register Now
+            </Link>
+          </p>
+          <Link
+            to="/application-status"
+            className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+          >
+            Track Application Status
+          </Link>
+        </div>
       </Card>
-    </PlaceholderNotice>
+    </AccountPageShell>
   );
 }
