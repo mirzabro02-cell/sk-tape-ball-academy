@@ -36,8 +36,10 @@ export interface ImageManagerProps {
   label: string;
   value: ManagedMediaValue;
   onChange: (next: ManagedMediaValue) => void;
-  aspectRatio?: 'square' | '4/3' | '16/9';
+  aspectRatio?: 'square' | '4/3' | '4/5' | '16/9';
   helperText?: string;
+  emptyPlaceholderLabel?: string;
+  defaultTransform?: Partial<ImageTransformConfig>;
   allowRemove?: boolean;
   presetAssets?: ImageManagerPresetAsset[];
   storageFolder?: string;
@@ -93,6 +95,8 @@ export function ImageManager({
   onChange,
   aspectRatio = '16/9',
   helperText,
+  emptyPlaceholderLabel = 'No image selected',
+  defaultTransform,
   allowRemove = true,
   presetAssets,
   storageFolder = 'academy-media',
@@ -106,12 +110,16 @@ export function ImageManager({
   const [statusNote, setStatusNote] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
 
+  const resolvedDefaultTransform = normalizeImageTransform(defaultTransform ?? DEFAULT_IMAGE_TRANSFORM);
+
   const aspectClass =
     aspectRatio === 'square'
       ? 'aspect-square max-w-[240px]'
-      : aspectRatio === '4/3'
-        ? 'aspect-[4/3] max-w-[340px]'
-        : 'aspect-video max-w-[440px]';
+      : aspectRatio === '4/5'
+        ? 'aspect-[4/5] max-w-[280px]'
+        : aspectRatio === '4/3'
+          ? 'aspect-[4/3] max-w-[340px]'
+          : 'aspect-video max-w-[440px]';
 
   function updateTransform(patch: Partial<ImageTransformConfig>) {
     onChange({
@@ -163,7 +171,7 @@ export function ImageManager({
 
         onChange({
           src: urlData.publicUrl,
-          transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
+          transform: { ...resolvedDefaultTransform, fit: value.transform.fit },
         });
         setStatusNote(`Uploaded "${file.name}" to Supabase Storage.`);
         return;
@@ -179,7 +187,7 @@ export function ImageManager({
 
       onChange({
         src: optimizedDataUrl,
-        transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
+        transform: { ...resolvedDefaultTransform, fit: value.transform.fit },
       });
       setStatusNote(`Loaded "${file.name}" into local preview.`);
     } catch (err) {
@@ -213,7 +221,7 @@ export function ImageManager({
 
       onChange({
         src: cleanUrl,
-        transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
+        transform: { ...resolvedDefaultTransform, fit: value.transform.fit },
       });
       setUrlInput('');
       setStatusNote('Image URL applied.');
@@ -230,7 +238,7 @@ export function ImageManager({
     setStatusNote(null);
     onChange({
       src: null,
-      transform: DEFAULT_IMAGE_TRANSFORM,
+      transform: resolvedDefaultTransform,
     });
   }
 
@@ -276,20 +284,44 @@ export function ImageManager({
 
       {/* Bounded Live Preview */}
       <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 dark:border-white/10 dark:bg-[#0F213B]">
-        <div
-          className={cn(
-            'mx-auto w-full overflow-hidden rounded-[10px] border border-[#E2E8F0] bg-[#07152C] dark:border-white/10 dark:bg-[#050D1B]',
-            aspectClass,
-          )}
-        >
-          <MediaImage
-            src={value.src}
-            alt={label}
-            fallbackLabel="No image selected"
-            transform={value.transform}
-            className="h-full w-full"
-          />
-        </div>
+        {value.src ? (
+          <div
+            className={cn(
+              'mx-auto w-full overflow-hidden rounded-[10px] border border-[#E2E8F0] bg-[#07152C] dark:border-white/10 dark:bg-[#050D1B]',
+              aspectClass,
+            )}
+          >
+            <MediaImage
+              src={value.src}
+              alt={label}
+              fallbackLabel={emptyPlaceholderLabel}
+              transform={value.transform}
+              className="h-full w-full"
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={isBusy}
+            onClick={() => {
+              setSourceMode('upload');
+              fileInputRef.current?.click();
+            }}
+            className={cn(
+              'mx-auto block w-full overflow-hidden rounded-[10px] border border-dashed border-[#07152C]/25 bg-[#07152C] text-left transition-colors hover:border-[#D5A52B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B] dark:border-white/20 dark:bg-[#050D1B] cursor-pointer',
+              aspectClass,
+            )}
+            aria-label={emptyPlaceholderLabel}
+          >
+            <MediaImage
+              src={null}
+              alt={emptyPlaceholderLabel}
+              fallbackLabel={emptyPlaceholderLabel}
+              transform={value.transform}
+              className="h-full w-full"
+            />
+          </button>
+        )}
       </div>
 
       {/* Hidden-by-default Image Adjustment Controller */}
@@ -302,7 +334,7 @@ export function ImageManager({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => updateTransform(DEFAULT_IMAGE_TRANSFORM)}
+                onClick={() => updateTransform(resolvedDefaultTransform)}
                 className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
               >
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />

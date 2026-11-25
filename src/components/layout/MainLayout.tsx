@@ -17,7 +17,10 @@ export function MainLayout() {
     return <MaintenancePage />;
   }
 
-  const isEdgeToEdgePage = location.pathname === '/' || location.pathname === '/about';
+  const isEdgeToEdgePage =
+    location.pathname === '/' ||
+    location.pathname === '/about' ||
+    location.pathname === '/programs';
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-clip bg-[var(--bg-canvas)] text-[var(--text-primary)] transition-colors duration-200">

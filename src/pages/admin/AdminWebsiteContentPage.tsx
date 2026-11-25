@@ -15,6 +15,7 @@ import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 import { Textarea } from '@/src/components/ui/Textarea';
 
 export function AdminWebsiteContentPage() {
@@ -334,13 +335,15 @@ export function AdminWebsiteContentPage() {
               {activeSection.id === 'about' && (
                 <div className="space-y-5 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
                   <ImageManager
-                    label="Owner Photo (Sami Khan)"
-                    helperText="Upload an actual portrait of Founder / Owner Sami Khan for the public About page. When empty, no portrait or placeholder frame is shown."
+                    label="Owner Photo"
+                    emptyPlaceholderLabel="Add Owner Photo"
+                    helperText="Upload an actual portrait of Founder / Owner Sami Khan for the public About page. Adjust framing to keep the subject visible on desktop and mobile; leave empty to hide the photo area publicly."
                     value={state.siteSettings.ownerMedia}
                     onChange={(ownerMedia) =>
                       updateSiteSettings((prev) => ({ ...prev, ownerMedia }))
                     }
-                    aspectRatio="4/3"
+                    aspectRatio="4/5"
+                    defaultTransform={{ fit: 'cover', posX: 50, posY: 25, scale: 1 }}
                     storageFolder="owner"
                   />
 
@@ -516,6 +519,26 @@ export function AdminWebsiteContentPage() {
                   <p className="text-sm leading-relaxed text-[#C2D0E3]">
                     {activeSection.bodyNotes}
                   </p>
+                )}
+                {activeSection.id === 'about' && state.siteSettings.ownerMedia.src && (
+                  <div className="mx-auto max-w-[240px] overflow-hidden rounded-[14px] border border-white/15 bg-[#07152C]">
+                    <div className="aspect-[4/5] w-full overflow-hidden">
+                      <MediaImage
+                        src={state.siteSettings.ownerMedia.src}
+                        alt={`${state.siteSettings.founderName || 'Sami Khan'} — ${state.siteSettings.founderRole || 'Founder / Owner'}`}
+                        transform={state.siteSettings.ownerMedia.transform}
+                        className="h-full w-full"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-2 border-t border-white/10 px-3.5 py-2 text-xs">
+                      <span className="font-bold text-white">
+                        {state.siteSettings.founderName || 'Sami Khan'}
+                      </span>
+                      <span className="font-semibold text-[#D5A52B]">
+                        {state.siteSettings.founderRole || 'Founder / Owner'}
+                      </span>
+                    </div>
+                  </div>
                 )}
                 {activeSection.ctaLabel && (
                   <div className="pt-1">

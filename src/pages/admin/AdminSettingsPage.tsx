@@ -320,11 +320,13 @@ export function AdminSettingsPage() {
                   />
                 </div>
                 <ImageManager
-                  label="Owner Photo (Sami Khan)"
-                  helperText="Featured portrait on the public About page. Leave empty when no photo is uploaded."
+                  label="Owner Photo"
+                  emptyPlaceholderLabel="Add Owner Photo"
+                  helperText="Featured portrait of Founder / Owner Sami Khan on the public About page. Leave empty when no photo is uploaded."
                   value={ownerMedia}
                   onChange={setOwnerMedia}
-                  aspectRatio="4/3"
+                  aspectRatio="4/5"
+                  defaultTransform={{ fit: 'cover', posX: 50, posY: 25, scale: 1 }}
                   storageFolder="owner"
                 />
               </div>

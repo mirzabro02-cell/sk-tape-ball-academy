@@ -193,7 +193,7 @@ export function AboutPage() {
 
                 {hasOwnerPhoto && ownerPhotoSrc && (
                   <div className="lg:col-span-5">
-                    <figure className="overflow-hidden rounded-[18px] border border-[#E2E8F0] bg-white shadow-[0_18px_40px_-24px_rgba(5,13,27,0.28)] dark:border-white/12 dark:bg-[#0B1B36]">
+                    <figure className="mx-auto max-w-sm overflow-hidden rounded-[18px] border border-[#E2E8F0] bg-white shadow-[0_18px_40px_-24px_rgba(5,13,27,0.28)] dark:border-white/12 dark:bg-[#0B1B36] lg:max-w-none">
                       <div className="aspect-[4/5] w-full overflow-hidden bg-[#07152C]">
                         <img
                           src={ownerPhotoSrc}

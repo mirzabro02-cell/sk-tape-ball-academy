@@ -1,142 +1,219 @@
-import { useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
-import {
-  PROGRAM_BENEFITS,
-  TRAINING_PROGRAMS_DATA,
-  type ProgramCategory,
-} from '@/src/data/academyInfo';
+import { Activity, Crosshair, Target, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
+import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
+import battingImg from '@/src/assets/images/drill_power_batting_1795439224792.jpg';
+import paceImg from '@/src/assets/images/drill_pace_bowling_1795439224452.jpg';
+import fieldingImg from '@/src/assets/images/drill_fielding_agility_1795439226739.jpg';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import { cn } from '@/src/utils/cn';
-import { ProgramCard } from '@/src/components/academy/ProgramCard';
-import { RevealSection, StaggerGrid, StaggerItem } from '@/src/components/motion/MotionPrimitives';
-import { Button } from '@/src/components/ui/Button';
+import { sanitizeConfirmedText } from '@/src/utils/validation';
+import { PageContainer } from '@/src/components/layout/PageContainer';
 import { Card } from '@/src/components/ui/Card';
-import { CtaBanner } from '@/src/components/ui/CtaBanner';
-import { PageHero } from '@/src/components/ui/PageHero';
-import { SectionHeader } from '@/src/components/ui/SectionHeader';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 
-const CATEGORY_FILTERS: Array<'All' | ProgramCategory> = [
-  'All',
-  'Skill Track',
-  'Level Track',
-  'Individual Coaching',
+interface ConfirmedProgramDefinition {
+  id: string;
+  code: string;
+  title: string;
+  legacyDefaultTitle: string;
+  description: string;
+  legacyDefaultDescriptionPrefix: string;
+  imagePath: string;
+  imageAlt: string;
+  icon: typeof Activity;
+}
+
+const CONFIRMED_PROGRAMS: ConfirmedProgramDefinition[] = [
+  {
+    id: 'prog-fitness',
+    code: '01',
+    title: 'Fitness',
+    legacyDefaultTitle: 'Athletic Fitness & Conditioning',
+    description:
+      'Athletic conditioning for stamina, power, speed, mobility, flexibility, and elasticity.',
+    legacyDefaultDescriptionPrefix: 'Around 200 structured exercises',
+    imagePath: lanesImg,
+    imageAlt: 'Cricket conditioning and fitness drill lanes',
+    icon: Activity,
+  },
+  {
+    id: 'prog-batting',
+    code: '02',
+    title: 'Tape Ball Batting',
+    legacyDefaultTitle: 'Tape Ball Batting',
+    description:
+      'Player assessment and focused practice to develop shot technique, timing, control, and consistency.',
+    legacyDefaultDescriptionPrefix: 'Individual strengths and weaknesses assessment',
+    imagePath: battingImg,
+    imageAlt: 'Tape ball batting stance and shot practice visual',
+    icon: Target,
+  },
+  {
+    id: 'prog-bowling',
+    code: '03',
+    title: 'Tape Ball Bowling',
+    legacyDefaultTitle: 'Tape Ball Bowling',
+    description: 'Drills focused on bowling speed, accuracy, line, and length.',
+    legacyDefaultDescriptionPrefix: 'Targeted drills to build raw pace',
+    imagePath: paceImg,
+    imageAlt: 'Tape ball bowling delivery and target accuracy visual',
+    icon: Zap,
+  },
+  {
+    id: 'prog-fielding',
+    code: '04',
+    title: 'Fielding',
+    legacyDefaultTitle: 'Fielding & Catching',
+    description: 'Catching and ground-fielding drills for movement, reaction, and control.',
+    legacyDefaultDescriptionPrefix: 'Complete fielding routines covering',
+    imagePath: fieldingImg,
+    imageAlt: 'Cricket fielding and catching agility visual',
+    icon: Crosshair,
+  },
 ];
 
 export function ProgramsPage() {
   useDocumentTitle('Training Programs');
-  const [selectedCategory, setSelectedCategory] = useState<'All' | ProgramCategory>('All');
+  const { state } = useAcademyState();
+  const { siteSettings } = state;
 
-  const filteredPrograms =
-    selectedCategory === 'All'
-      ? TRAINING_PROGRAMS_DATA
-      : TRAINING_PROGRAMS_DATA.filter((program) => program.category === selectedCategory);
+  const academyName = sanitizeConfirmedText(siteSettings.academyName) || 'SK Tape Ball Academy';
+
+  const visiblePrograms = CONFIRMED_PROGRAMS.filter((item) => {
+    const cmsRecord = state.programs.find((p) => p.id === item.id);
+    return cmsRecord ? cmsRecord.published !== false : true;
+  }).map((item) => {
+    const cmsRecord = state.programs.find((p) => p.id === item.id);
+    const cmsTitle = sanitizeConfirmedText(cmsRecord?.title);
+    const cmsDesc = sanitizeConfirmedText(cmsRecord?.description);
+
+    const resolvedTitle =
+      cmsTitle && cmsTitle !== item.legacyDefaultTitle ? cmsTitle : item.title;
+
+    const usesLegacyDefaultDescription =
+      cmsDesc.startsWith(item.legacyDefaultDescriptionPrefix);
+
+    const resolvedDescription =
+      cmsDesc && !usesLegacyDefaultDescription ? cmsDesc : item.description;
+
+    const resolvedImage = cmsRecord?.imagePath?.trim() || item.imagePath;
+
+    return {
+      ...item,
+      title: resolvedTitle,
+      description: resolvedDescription,
+      imageSrc: resolvedImage,
+      imageTransform: cmsRecord?.imageTransform,
+    };
+  });
 
   return (
-    <div className="space-y-14 sm:space-y-16">
-      <PageHero
-        breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Training Programs' }]}
-        kicker="Curriculum & Coaching Tracks"
-        title="Training Programs Built for Every Stage of Tape Ball Cricket"
-        description="Explore athletic conditioning (~200 exercises), diagnostic tape ball batting (20–25 methods per shot), speed and accuracy bowling, complete fielding, wicket keeping, and 1-on-1 coaching."
-        actions={
-          <>
-            <Button to="/register" variant="primary" size="lg">
-              Register Now
-            </Button>
-            <Button to="/admissions" variant="outlineLight" size="lg">
-              Admissions Guide
-            </Button>
-          </>
-        }
-      />
-
-      {/* Introduction & Interactive Category Filter */}
-      <RevealSection>
-        <section aria-labelledby="programs-listing-heading" className="space-y-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <SectionHeader
-              id="programs-listing-heading"
-              kicker="9 Structured Programs"
-              title="Choose Your Training Track"
-              description="Select any program card below to inspect skills covered, training objectives, suitable players, and coaching approach."
-            />
-
-            <div
-              role="tablist"
-              aria-label="Filter programs by category"
-              className="flex flex-wrap items-center gap-1.5 rounded-[12px] border border-[#E2E8F0] bg-white p-1.5 w-fit dark:border-white/10 dark:bg-[#0F213B]"
-            >
-              {CATEGORY_FILTERS.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  role="tab"
-                  aria-selected={selectedCategory === category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={cn(
-                    'rounded-[8px] px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap',
-                    selectedCategory === category
-                      ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#07152C]'
-                      : 'text-[#64748B] hover:text-[#07152C] hover:bg-[#F5F7FA] dark:text-[#B4C4DC] dark:hover:text-white dark:hover:bg-white/5',
-                  )}
-                >
-                  {category === 'All' ? 'All Programs (9)' : category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <StaggerGrid key={selectedCategory} className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredPrograms.map((program) => (
-              <StaggerItem key={program.slug}>
-                <ProgramCard program={program} />
-              </StaggerItem>
-            ))}
-          </StaggerGrid>
-        </section>
-      </RevealSection>
-
-      {/* Training Benefits */}
-      <RevealSection>
-        <section aria-labelledby="training-benefits-heading" className="space-y-8">
-          <SectionHeader
-            id="training-benefits-heading"
-            kicker="Why Structured Programs Work"
-            title="Key Training Benefits"
-            description="Every track combines athletic preparation with structured technical repetition and competitive match readiness."
+    <div>
+      {/* Full-Bleed Edge-to-Edge Hero Directly Beneath Navigation */}
+      <section
+        aria-labelledby="programs-hero-heading"
+        className="relative w-full overflow-hidden border-b border-white/10 bg-[#07152C] text-white"
+      >
+        <div className="absolute inset-0">
+          <MediaImage
+            src={heroImg}
+            alt="Evening floodlit cricket training ground"
+            transform={{ fit: 'cover', posX: 50, posY: 45, scale: 1 }}
+            fallbackLabel={academyName}
+            priority
+            className="h-full w-full"
           />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-[#050D1B]/95 via-[#07152C]/82 to-[#07152C]/45 sm:via-[#07152C]/72 sm:to-[#07152C]/30"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-[#050D1B]/80 via-transparent to-[#07152C]/35"
+          />
+        </div>
 
-          <StaggerGrid className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PROGRAM_BENEFITS.map((benefit) => (
-              <StaggerItem key={benefit.code}>
-                <Card padding="lg" className="h-full space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                      {benefit.code}
-                    </span>
-                    <CheckCircle2 className="h-4 w-4 text-[#D5A52E]" aria-hidden="true" />
-                  </div>
-                  <h3 className="text-lg font-bold text-[#07152C] dark:text-white">
-                    {benefit.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
-                    {benefit.description}
-                  </p>
-                </Card>
-              </StaggerItem>
-            ))}
-          </StaggerGrid>
-        </section>
-      </RevealSection>
+        <PageContainer className="relative z-10 flex min-h-[300px] sm:min-h-[360px] lg:min-h-[390px] items-center py-12 sm:py-16">
+          <div className="max-w-2xl space-y-4">
+            <nav
+              aria-label="Breadcrumb"
+              className="flex items-center gap-2 text-xs font-medium text-[#C8D5E8]"
+            >
+              <Link to="/" className="hover:text-[#D5A83C] transition-colors">
+                Home
+              </Link>
+              <span aria-hidden="true" className="text-white/40">
+                /
+              </span>
+              <span className="text-[#D5A83C] font-semibold">Training Programs</span>
+            </nav>
 
-      <CtaBanner
-        title="Ready to Start Your Training Track?"
-        description="Submit an online enrollment application for batch placement guidance, or review our fee structure."
-        primaryLabel="Register Now"
-        primaryTo="/register"
-        secondaryLabel="Fees & Plans"
-        secondaryTo="/fees"
-      />
+            <h1
+              id="programs-hero-heading"
+              className="font-display text-4xl sm:text-5xl lg:text-[3.75rem] font-extrabold uppercase leading-[0.98] tracking-tight text-white [text-wrap:balance] drop-shadow-[0_2px_14px_rgba(5,13,27,0.65)]"
+            >
+              Training Programs
+            </h1>
+
+            <p className="max-w-xl text-sm sm:text-base lg:text-[17px] leading-relaxed text-[#E2E8F0] drop-shadow-[0_1px_8px_rgba(5,13,27,0.6)]">
+              Four core tape-ball cricket development areas at {academyName}.
+            </p>
+          </div>
+        </PageContainer>
+      </section>
+
+      {/* Four Confirmed Program Cards: 4 cols desktop, 2 cols tablet, 1 col mobile */}
+      {visiblePrograms.length > 0 && (
+        <PageContainer className="mt-10 sm:mt-14">
+          <section aria-label="Core Training Areas">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+              {visiblePrograms.map((program) => {
+                const Icon = program.icon;
+
+                return (
+                  <Card
+                    key={program.id}
+                    padding="none"
+                    className="h-full overflow-hidden flex flex-col"
+                  >
+                    <div className="aspect-[16/10] w-full overflow-hidden border-b border-[#E2E8F0] bg-[#07152C] dark:border-white/10">
+                      <MediaImage
+                        src={program.imageSrc}
+                        alt={program.imageAlt}
+                        transform={program.imageTransform}
+                        fallbackLabel={program.title}
+                        className="h-full w-full"
+                      />
+                    </div>
+
+                    <div className="flex flex-1 flex-col gap-3 p-6">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono text-xs font-bold tracking-wider text-[#C8202B] dark:text-[#D5A83C] tabular-nums">
+                          {program.code}
+                        </span>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#07152C] text-[#D5A83C] dark:border dark:border-white/10 dark:bg-[#162B4D]">
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                        </div>
+                      </div>
+
+                      <h2 className="text-xl font-bold tracking-tight text-[#07152C] dark:text-white">
+                        {program.title}
+                      </h2>
+
+                      {program.description && (
+                        <p className="text-sm leading-relaxed text-[#475569] dark:text-[#C8D5E8]">
+                          {program.description}
+                        </p>
+                      )}
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </section>
+        </PageContainer>
+      )}
     </div>
   );
 }
