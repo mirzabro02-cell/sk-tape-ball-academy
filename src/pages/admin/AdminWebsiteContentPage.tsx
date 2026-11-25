@@ -1,10 +1,12 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowDown, ArrowUp, CheckCircle2, Eye, EyeOff, Globe, Save, X } from 'lucide-react';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 import { HERO_STADIUM_VISUAL } from '@/src/assets/branding';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
+import { useScrollLock } from '@/src/hooks/useScrollLock';
 import type { AdminWebsiteContentSection } from '@/src/types/admin';
 import { containsUnsafeHtml } from '@/src/utils/validation';
 import { AdminPageHeader, AdminStatusBadge } from '@/src/components/admin/AdminPrimitives';
@@ -23,6 +25,19 @@ export function AdminWebsiteContentPage() {
   const sections = state.websiteSections;
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? 'hero');
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+
+  useScrollLock(previewModalOpen);
+
+  useEffect(() => {
+    if (!previewModalOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setPreviewModalOpen(false);
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [previewModalOpen]);
 
   const activeSection = sections.find((s) => s.id === selectedId) ?? sections[0];
   const activeIndex = sections.findIndex((s) => s.id === activeSection?.id);
@@ -342,63 +357,70 @@ export function AdminWebsiteContentPage() {
       </div>
 
       {/* Live Preview Modal */}
-      {previewModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/80 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Website Section Live Preview"
-        >
-          <div className="w-full max-w-2xl rounded-[20px] border border-white/15 bg-[#07152C] p-6 sm:p-8 text-white shadow-2xl space-y-5">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
-                  Live Section Preview
-                </p>
-                <p className="text-sm font-bold text-white">{activeSection.label}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setPreviewModalOpen(false)}
-                aria-label="Close preview"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/15 text-white hover:bg-white/10 cursor-pointer"
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="rounded-[16px] border border-white/10 bg-[#0F213B] p-6 space-y-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-[#D5A52B]">
-                {activeSection.subheadline}
-              </p>
-              <h3 className="font-display text-3xl font-extrabold uppercase tracking-tight text-white">
-                {activeSection.headline}
-              </h3>
-              {activeSection.bodyNotes && (
-                <p className="text-sm leading-relaxed text-[#C2D0E3]">
-                  {activeSection.bodyNotes}
-                </p>
-              )}
-              {activeSection.ctaLabel && (
-                <div className="pt-1">
-                  <span className="inline-flex h-11 items-center rounded-[10px] bg-[#D5A52B] px-6 text-xs font-bold text-[#050D1B]">
-                    {activeSection.ctaLabel}
-                  </span>
+      {previewModalOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/80 p-3 sm:p-6 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Website Section Live Preview"
+            onClick={() => setPreviewModalOpen(false)}
+          >
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className="max-h-[calc(100dvh-2rem)] w-full max-w-2xl overflow-y-auto rounded-[20px] border border-white/15 bg-[#07152C] p-5 sm:p-8 text-white shadow-2xl space-y-5"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
+                    Live Section Preview
+                  </p>
+                  <p className="text-sm font-bold text-white">{activeSection.label}</p>
                 </div>
-              )}
-            </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewModalOpen(false)}
+                  aria-label="Close preview"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-white/15 text-white hover:bg-white/10 cursor-pointer"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
 
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outlineLight" size="sm" onClick={() => setPreviewModalOpen(false)}>
-                Close Preview
-              </Button>
-              <Button to="/" variant="primary" size="sm">
-                Open Live Homepage
-              </Button>
+              <div className="rounded-[16px] border border-white/10 bg-[#0F213B] p-6 space-y-4">
+                <p className="text-xs font-bold uppercase tracking-wider text-[#D5A52B]">
+                  {activeSection.subheadline}
+                </p>
+                <h3 className="font-display text-3xl font-extrabold uppercase tracking-tight text-white">
+                  {activeSection.headline}
+                </h3>
+                {activeSection.bodyNotes && (
+                  <p className="text-sm leading-relaxed text-[#C2D0E3]">
+                    {activeSection.bodyNotes}
+                  </p>
+                )}
+                {activeSection.ctaLabel && (
+                  <div className="pt-1">
+                    <span className="inline-flex h-11 items-center rounded-[10px] bg-[#D5A52B] px-6 text-xs font-bold text-[#050D1B]">
+                      {activeSection.ctaLabel}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outlineLight" size="sm" onClick={() => setPreviewModalOpen(false)}>
+                  Close Preview
+                </Button>
+                <Button to="/" variant="primary" size="sm">
+                  Open Live Homepage
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

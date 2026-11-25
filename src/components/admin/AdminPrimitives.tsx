@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AlertCircle,
   CheckCircle2,
@@ -186,26 +187,28 @@ export function AdminModal({
     return () => document.removeEventListener('keydown', handleEsc);
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!open || typeof document === 'undefined') return null;
 
   const widthClass =
     maxWidth === 'md' ? 'max-w-lg' : maxWidth === 'xl' ? 'max-w-3xl' : 'max-w-2xl';
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/70 p-4 backdrop-blur-[3px]"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/70 p-3 sm:p-6 backdrop-blur-[3px]"
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      onClick={onClose}
     >
       <div
+        onClick={(e) => e.stopPropagation()}
         className={cn(
-          'flex max-h-[90vh] w-full flex-col overflow-hidden rounded-[16px] border border-[#E2E8F0] bg-white shadow-2xl dark:border-white/15 dark:bg-[#0F213B]',
+          'flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden rounded-[16px] border border-[#E2E8F0] bg-white shadow-2xl dark:border-white/15 dark:bg-[#0F213B]',
           widthClass,
         )}
       >
-        <div className="flex items-start justify-between gap-4 border-b border-[#E2E8F0] px-6 py-4 dark:border-white/10">
-          <div className="space-y-0.5">
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-[#E2E8F0] px-6 py-4 dark:border-white/10">
+          <div className="min-w-0 space-y-0.5">
             <h2 className="text-lg font-bold text-[#07152C] dark:text-white">{title}</h2>
             {subtitle && (
               <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">{subtitle}</p>
@@ -215,7 +218,7 @@ export function AdminModal({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -225,7 +228,8 @@ export function AdminModal({
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

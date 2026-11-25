@@ -40,7 +40,7 @@ export function MainLayout() {
 
       <main
         id="main-content"
-        className={isHomePage ? 'flex-1 pb-12 sm:pb-16' : 'flex-1 py-6 sm:py-10'}
+        className={isHomePage ? 'flex-1 pb-12 sm:pb-16' : 'flex-1 pt-5 pb-12 sm:pt-8 sm:pb-16'}
       >
         {isHomePage ? (
           <PageTransition key={location.pathname}>

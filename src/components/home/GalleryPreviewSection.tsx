@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { ArrowRight, Expand, X } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { ArrowRight, Expand } from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { GALLERY_CATEGORIES } from '@/src/data/activitiesContent';
-import { useScrollLock } from '@/src/hooks/useScrollLock';
 import type { AdminMediaItem } from '@/src/types/admin';
 import { cn } from '@/src/utils/cn';
 import { RevealSection } from '@/src/components/motion/MotionPrimitives';
 import { Button } from '@/src/components/ui/Button';
+import { ImageLightboxModal } from '@/src/components/ui/ImageLightboxModal';
 import { MediaImage } from '@/src/components/ui/MediaImage';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
@@ -15,32 +15,34 @@ export function GalleryPreviewSection() {
   const [activeFilter, setActiveFilter] = useState<(typeof GALLERY_CATEGORIES)[number]>('All');
   const [selectedItem, setSelectedItem] = useState<AdminMediaItem | null>(null);
 
-  useScrollLock(Boolean(selectedItem));
-
-  useEffect(() => {
-    if (!selectedItem) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedItem(null);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedItem]);
-
   const publishedImages = state.gallery.filter(
     (item) => item.published && item.mediaType === 'image',
   );
-
-  if (publishedImages.length === 0) {
-    return null;
-  }
 
   const visibleItems = (
     activeFilter === 'All'
       ? publishedImages
       : publishedImages.filter((item) => item.category === activeFilter)
   ).slice(0, 6);
+
+  const selectedIndex = selectedItem
+    ? visibleItems.findIndex((item) => item.id === selectedItem.id)
+    : -1;
+
+  const stepSelected = useCallback(
+    (direction: -1 | 1) => {
+      if (!selectedItem || visibleItems.length <= 1) return;
+      const currentIdx = visibleItems.findIndex((item) => item.id === selectedItem.id);
+      if (currentIdx === -1) return;
+      const nextIdx = (currentIdx + direction + visibleItems.length) % visibleItems.length;
+      setSelectedItem(visibleItems[nextIdx]);
+    },
+    [selectedItem, visibleItems],
+  );
+
+  if (publishedImages.length === 0) {
+    return null;
+  }
 
   return (
     <RevealSection>
@@ -115,63 +117,36 @@ export function GalleryPreviewSection() {
           ))}
         </div>
 
-        {selectedItem && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={selectedItem.title}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
-            onClick={() => setSelectedItem(null)}
-          >
-            <div
-              onClick={(event) => event.stopPropagation()}
-              className="w-full max-w-3xl overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
+        <ImageLightboxModal
+          item={
+            selectedItem
+              ? {
+                  src: selectedItem.assetPath,
+                  alt: selectedItem.title,
+                  title: selectedItem.title,
+                  category: selectedItem.category,
+                  caption: selectedItem.caption,
+                }
+              : null
+          }
+          onClose={() => setSelectedItem(null)}
+          onStep={stepSelected}
+          canNavigate={visibleItems.length > 1}
+          counterLabel={
+            selectedIndex >= 0 ? `${selectedIndex + 1} / ${visibleItems.length}` : undefined
+          }
+          closeLabel="Close gallery preview"
+          footerAction={
+            <Button
+              to="/gallery"
+              variant="secondary"
+              size="sm"
+              onClick={() => setSelectedItem(null)}
             >
-              <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4 dark:border-white/10">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                    {selectedItem.category}
-                  </p>
-                  <h3 className="text-lg font-bold text-[#07152C] dark:text-white">
-                    {selectedItem.title}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedItem(null)}
-                  aria-label="Close gallery preview"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
-                >
-                  <X className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </div>
-
-              <div className="aspect-[16/10] w-full bg-[#07152C]">
-                <MediaImage
-                  src={selectedItem.assetPath}
-                  alt={selectedItem.title}
-                  transform={selectedItem.imageTransform}
-                  fallbackLabel={selectedItem.title}
-                  className="h-full w-full"
-                />
-              </div>
-
-              <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-[#475569] dark:text-[#B4C4DC]">
-                  {selectedItem.caption}
-                </p>
-                <Button
-                  to="/gallery"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => setSelectedItem(null)}
-                >
-                  Open Gallery Page
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+              Open Gallery Page
+            </Button>
+          }
+        />
       </section>
     </RevealSection>
   );

@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Expand, Play, X } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { Expand, Play, X } from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { GALLERY_CATEGORIES, type GalleryCategory } from '@/src/data/activitiesContent';
 import type { AdminMediaItem } from '@/src/types/admin';
@@ -11,6 +12,7 @@ import { RevealSection } from '@/src/components/motion/MotionPrimitives';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { CtaBanner } from '@/src/components/ui/CtaBanner';
+import { ImageLightboxModal } from '@/src/components/ui/ImageLightboxModal';
 import { MediaImage } from '@/src/components/ui/MediaImage';
 import { PageHero } from '@/src/components/ui/PageHero';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
@@ -39,36 +41,33 @@ export function GalleryPage() {
       ? publishedVideos
       : publishedVideos.filter((item) => item.category === selectedCategory);
 
-  useScrollLock(Boolean(lightboxItem) || Boolean(activeVideo));
+  useScrollLock(Boolean(activeVideo));
 
   useEffect(() => {
+    if (!activeVideo) return;
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setLightboxItem(null);
         setActiveVideo(null);
-      } else if (lightboxItem && filteredImages.length > 1) {
-        const currentIndex = filteredImages.findIndex((m) => m.id === lightboxItem.id);
-        if (currentIndex === -1) return;
-        if (event.key === 'ArrowRight') {
-          setLightboxItem(filteredImages[(currentIndex + 1) % filteredImages.length]);
-        } else if (event.key === 'ArrowLeft') {
-          setLightboxItem(
-            filteredImages[(currentIndex - 1 + filteredImages.length) % filteredImages.length],
-          );
-        }
       }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxItem, activeVideo, filteredImages]);
+  }, [activeVideo]);
 
-  function stepLightbox(direction: 1 | -1) {
-    if (!lightboxItem || filteredImages.length === 0) return;
-    const currentIndex = filteredImages.findIndex((m) => m.id === lightboxItem.id);
-    if (currentIndex === -1) return;
-    const nextIndex = (currentIndex + direction + filteredImages.length) % filteredImages.length;
-    setLightboxItem(filteredImages[nextIndex]);
-  }
+  const stepLightbox = useCallback(
+    (direction: -1 | 1) => {
+      if (!lightboxItem || filteredImages.length <= 1) return;
+      const currentIndex = filteredImages.findIndex((m) => m.id === lightboxItem.id);
+      if (currentIndex === -1) return;
+      const nextIndex = (currentIndex + direction + filteredImages.length) % filteredImages.length;
+      setLightboxItem(filteredImages[nextIndex]);
+    },
+    [lightboxItem, filteredImages],
+  );
+
+  const selectedIndex = lightboxItem
+    ? filteredImages.findIndex((m) => m.id === lightboxItem.id)
+    : -1;
 
   return (
     <div className="space-y-14 sm:space-y-16">
@@ -229,117 +228,83 @@ export function GalleryPage() {
         </RevealSection>
       )}
 
-      {/* Image Lightbox Modal */}
-      {lightboxItem && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={lightboxItem.title}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
-          onClick={() => setLightboxItem(null)}
-        >
-          <div
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-4xl overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
-          >
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4 dark:border-white/10">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                  {lightboxItem.category}
-                </p>
-                <h3 className="text-lg font-bold text-[#07152C] dark:text-white">
-                  {lightboxItem.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setLightboxItem(null)}
-                aria-label="Close image lightbox"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="relative aspect-[16/10] w-full bg-[#07152C]">
-              <MediaImage
-                src={lightboxItem.assetPath}
-                alt={lightboxItem.title}
-                transform={lightboxItem.imageTransform}
-                fallbackLabel={lightboxItem.title}
-                className="h-full w-full"
-              />
-            </div>
-
-            <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-[#475569] dark:text-[#B4C4DC]">{lightboxItem.caption}</p>
-              {filteredImages.length > 1 && (
-                <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="outline" size="sm" onClick={() => stepLightbox(-1)}>
-                    <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-                    <span>Previous</span>
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => stepLightbox(1)}>
-                    <span>Next</span>
-                    <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Full Uncropped Image Lightbox */}
+      <ImageLightboxModal
+        item={
+          lightboxItem
+            ? {
+                src: lightboxItem.assetPath,
+                alt: lightboxItem.title,
+                title: lightboxItem.title,
+                category: lightboxItem.category,
+                caption: lightboxItem.caption,
+              }
+            : null
+        }
+        onClose={() => setLightboxItem(null)}
+        onStep={stepLightbox}
+        canNavigate={filteredImages.length > 1}
+        counterLabel={
+          selectedIndex >= 0 ? `${selectedIndex + 1} / ${filteredImages.length}` : undefined
+        }
+        closeLabel="Close image lightbox"
+      />
 
       {/* Video Modal */}
-      {activeVideo && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={activeVideo.title}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
-          onClick={() => setActiveVideo(null)}
-        >
+      {activeVideo &&
+        typeof document !== 'undefined' &&
+        createPortal(
           <div
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-3xl overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={activeVideo.title}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-3 sm:p-6 backdrop-blur-xs"
+            onClick={() => setActiveVideo(null)}
           >
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4 dark:border-white/10">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                  {activeVideo.category}
-                </p>
-                <h3 className="text-lg font-bold text-[#07152C] dark:text-white">
-                  {activeVideo.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveVideo(null)}
-                aria-label="Close video modal"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              {activeVideo.caption && (
-                <p className="text-sm text-[#475569] dark:text-[#B4C4DC]">{activeVideo.caption}</p>
-              )}
-              {sanitizeExternalUrl(activeVideo.assetPath) && (
-                <a
-                  href={sanitizeExternalUrl(activeVideo.assetPath) ?? '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-[10px] bg-[#07152C] px-4 py-2.5 text-xs font-semibold text-white hover:bg-[#162B4D] dark:bg-[#D5A52B] dark:text-[#07152C]"
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className="flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
+            >
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[#E2E8F0] px-5 py-4 dark:border-white/10">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B] truncate">
+                    {activeVideo.category}
+                  </p>
+                  <h3 className="text-lg font-bold text-[#07152C] dark:text-white truncate">
+                    {activeVideo.title}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveVideo(null)}
+                  aria-label="Close video modal"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#CBD5E1] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/20 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
                 >
-                  Open Video Link
-                </a>
-              )}
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto p-6 space-y-4">
+                {activeVideo.caption && (
+                  <p className="text-sm text-[#475569] dark:text-[#B4C4DC]">
+                    {activeVideo.caption}
+                  </p>
+                )}
+                {sanitizeExternalUrl(activeVideo.assetPath) && (
+                  <a
+                    href={sanitizeExternalUrl(activeVideo.assetPath) ?? '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-[10px] bg-[#07152C] px-4 py-2.5 text-xs font-semibold text-white hover:bg-[#162B4D] dark:bg-[#D5A52B] dark:text-[#07152C]"
+                  >
+                    Open Video Link
+                  </a>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
 
       <CtaBanner
         title="See Our Training Sessions in Person"

@@ -1,7 +1,6 @@
 import { Compass, Target } from 'lucide-react';
 import { MISSION_VISION_VALUES } from '@/src/data/homeContent';
 import { RevealSection } from '@/src/components/motion/MotionPrimitives';
-import { Button } from '@/src/components/ui/Button';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
 export function WhyChooseSection() {
@@ -17,11 +16,6 @@ export function WhyChooseSection() {
             tone="dark"
             kicker={MISSION_VISION_VALUES.kicker}
             title={MISSION_VISION_VALUES.title}
-            action={
-              <Button to="/about" variant="outlineLight" shape="pill">
-                About Academy
-              </Button>
-            }
           />
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-2">

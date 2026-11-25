@@ -2,7 +2,6 @@ import { ArrowRight } from 'lucide-react';
 import { ACADEMY_BRAND } from '@/src/data/brand';
 import { RevealSection } from '@/src/components/motion/MotionPrimitives';
 import { Button } from '@/src/components/ui/Button';
-import { WhatsAppCta } from '@/src/components/ui/WhatsAppCta';
 
 export function FinalCtaSection() {
   return (
@@ -39,7 +38,6 @@ export function FinalCtaSection() {
             <Button to="/programs" variant="outlineLight" size="lg" shape="pill">
               Explore Programs
             </Button>
-            <WhatsAppCta variant="inline" />
           </div>
         </div>
       </section>

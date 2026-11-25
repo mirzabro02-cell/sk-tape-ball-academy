@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { CheckCircle2, Expand, ShieldAlert, Wrench, X } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { CheckCircle2, Expand, ShieldAlert, Wrench } from 'lucide-react';
 import { FACILITIES_PAGE_CONTENT } from '@/src/data/academyInfo';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import { useScrollLock } from '@/src/hooks/useScrollLock';
 import { RevealSection, StaggerGrid, StaggerItem } from '@/src/components/motion/MotionPrimitives';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { CtaBanner } from '@/src/components/ui/CtaBanner';
+import { ImageLightboxModal } from '@/src/components/ui/ImageLightboxModal';
 import { MediaImage } from '@/src/components/ui/MediaImage';
 import { PageHero } from '@/src/components/ui/PageHero';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
@@ -17,18 +17,21 @@ export function FacilitiesPage() {
   useDocumentTitle('Facilities');
   const [selectedPhoto, setSelectedPhoto] = useState<FacilityGalleryItem | null>(null);
 
-  useScrollLock(Boolean(selectedPhoto));
+  const items = FACILITIES_PAGE_CONTENT.galleryItems;
+  const selectedIndex = selectedPhoto
+    ? items.findIndex((item) => item.id === selectedPhoto.id)
+    : -1;
 
-  useEffect(() => {
-    if (!selectedPhoto) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedPhoto(null);
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [selectedPhoto]);
+  const stepPhoto = useCallback(
+    (direction: -1 | 1) => {
+      if (!selectedPhoto || items.length <= 1) return;
+      const currentIdx = items.findIndex((item) => item.id === selectedPhoto.id);
+      if (currentIdx === -1) return;
+      const nextIdx = (currentIdx + direction + items.length) % items.length;
+      setSelectedPhoto(items[nextIdx]);
+    },
+    [selectedPhoto, items],
+  );
 
   return (
     <div className="space-y-14 sm:space-y-16">
@@ -168,7 +171,7 @@ export function FacilitiesPage() {
           />
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {FACILITIES_PAGE_CONTENT.galleryItems.map((item) => (
+            {items.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -202,50 +205,24 @@ export function FacilitiesPage() {
         </section>
       </RevealSection>
 
-      {selectedPhoto && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={selectedPhoto.title}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <div
-            onClick={(event) => event.stopPropagation()}
-            className="w-full max-w-3xl overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
-          >
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4 dark:border-white/10">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                  Facility Preview
-                </p>
-                <h3 className="text-lg font-bold text-[#07152C] dark:text-white">
-                  {selectedPhoto.title}
-                </h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedPhoto(null)}
-                aria-label="Close facility photo preview"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="aspect-[16/10] w-full bg-[#07152C]">
-              <MediaImage
-                src={selectedPhoto.imageSrc}
-                alt={selectedPhoto.imageAlt}
-                fallbackLabel={selectedPhoto.title}
-                className="h-full w-full"
-              />
-            </div>
-            <div className="px-5 py-4 text-sm text-[#475569] dark:text-[#B4C4DC]">
-              {selectedPhoto.caption}
-            </div>
-          </div>
-        </div>
-      )}
+      <ImageLightboxModal
+        item={
+          selectedPhoto
+            ? {
+                src: selectedPhoto.imageSrc,
+                alt: selectedPhoto.imageAlt,
+                title: selectedPhoto.title,
+                category: 'Facility Preview',
+                caption: selectedPhoto.caption,
+              }
+            : null
+        }
+        onClose={() => setSelectedPhoto(null)}
+        onStep={stepPhoto}
+        canNavigate={items.length > 1}
+        counterLabel={selectedIndex >= 0 ? `${selectedIndex + 1} / ${items.length}` : undefined}
+        closeLabel="Close facility photo preview"
+      />
 
       <CtaBanner
         title="Questions About Ground Location or Training Setup?"

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar, Newspaper, Tag, X } from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import type { AdminBlogPost } from '@/src/types/admin';
@@ -185,76 +186,80 @@ export function UpdatesPage() {
         </section>
       </RevealSection>
 
-      {activePost && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={activePost.title}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
-          onClick={() => setActivePost(null)}
-        >
+      {activePost &&
+        typeof document !== 'undefined' &&
+        createPortal(
           <div
-            onClick={(event) => event.stopPropagation()}
-            className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
+            role="dialog"
+            aria-modal="true"
+            aria-label={activePost.title}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-3 sm:p-6 backdrop-blur-xs"
+            onClick={() => setActivePost(null)}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#E2E8F0] bg-white/95 px-6 py-4 backdrop-blur-sm dark:border-white/10 dark:bg-[#0F213B]/95">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
-                  {activePost.category}
-                  {activePost.updatedLabel ? ` · ${activePost.updatedLabel}` : ''}
-                </p>
-                <h2 className="text-xl font-bold text-[#07152C] dark:text-white">
-                  {activePost.title}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActivePost(null)}
-                aria-label="Close update article"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-            </div>
-
-            {activePost.featuredImage && (
-              <div className="aspect-[16/9] w-full bg-[#07152C]">
-                <MediaImage
-                  src={activePost.featuredImage}
-                  alt={activePost.title}
-                  transform={activePost.imageTransform}
-                  fallbackLabel={activePost.title}
-                  className="h-full w-full"
-                />
-              </div>
-            )}
-
-            <div className="p-6 space-y-4">
-              {activePost.bodyText
-                .split(/\n+/)
-                .map((paragraph) => paragraph.trim())
-                .filter(Boolean)
-                .map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="text-sm sm:text-base leading-relaxed text-[#475569] dark:text-[#B4C4DC]"
-                  >
-                    {paragraph}
+            <div
+              onClick={(event) => event.stopPropagation()}
+              className="flex max-h-[calc(100dvh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[18px] border border-white/15 bg-white shadow-2xl dark:bg-[#0F213B]"
+            >
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-[#E2E8F0] bg-white px-5 py-4 sm:px-6 dark:border-white/10 dark:bg-[#0F213B]">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B] truncate">
+                    {activePost.category}
+                    {activePost.updatedLabel ? ` · ${activePost.updatedLabel}` : ''}
                   </p>
-                ))}
-
-              {activePost.tags.length > 0 && (
-                <div className="border-t border-[#E2E8F0] pt-4 flex flex-wrap items-center gap-2 dark:border-white/10">
-                  <Tag className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
-                  <span className="text-xs text-[#64748B] dark:text-[#7F95B8]">
-                    {activePost.tags.join(' · ')}
-                  </span>
+                  <h2 className="text-lg sm:text-xl font-bold text-[#07152C] dark:text-white truncate">
+                    {activePost.title}
+                  </h2>
                 </div>
-              )}
+                <button
+                  type="button"
+                  onClick={() => setActivePost(null)}
+                  aria-label="Close update article"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] border border-[#CBD5E1] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/20 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto">
+                {activePost.featuredImage && (
+                  <div className="flex items-center justify-center bg-[#050D1B] p-2 sm:p-4">
+                    <img
+                      src={activePost.featuredImage}
+                      alt={activePost.title}
+                      referrerPolicy="no-referrer"
+                      className="block max-h-[45dvh] w-auto max-w-full object-contain"
+                    />
+                  </div>
+                )}
+
+                <div className="p-5 sm:p-6 space-y-4">
+                  {activePost.bodyText
+                    .split(/\n+/)
+                    .map((paragraph) => paragraph.trim())
+                    .filter(Boolean)
+                    .map((paragraph, index) => (
+                      <p
+                        key={index}
+                        className="text-sm sm:text-base leading-relaxed text-[#475569] dark:text-[#B4C4DC]"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+
+                  {activePost.tags.length > 0 && (
+                    <div className="border-t border-[#E2E8F0] pt-4 flex flex-wrap items-center gap-2 dark:border-white/10">
+                      <Tag className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                      <span className="text-xs text-[#64748B] dark:text-[#7F95B8]">
+                        {activePost.tags.join(' · ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
 
       <CtaBanner
         title="Join SK Tape Ball Academy"

@@ -28,7 +28,7 @@ export function HomePage() {
     <div>
       {isSectionVisible('hero') && <HeroSection />}
 
-      <PageContainer className="mt-12 sm:mt-16 space-y-14 sm:space-y-20">
+      <PageContainer className="mt-10 sm:mt-14 space-y-12 sm:space-y-16">
         {isSectionVisible('programs') && <ProgramsPreviewSection />}
         {isSectionVisible('about') && <AcademyIntroSection />}
         <WhyChooseSection />
