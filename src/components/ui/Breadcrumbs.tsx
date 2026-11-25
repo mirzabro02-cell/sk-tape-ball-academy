@@ -40,12 +40,12 @@ export function Breadcrumbs({ items, tone = 'dark', className }: BreadcrumbsProp
               <Link
                 to={item.to}
                 className={cn(
-                  'font-medium transition-colors',
+                  'font-medium transition-colors rounded-[4px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A83C]',
                   isForcedDark
-                    ? 'text-white/75 hover:text-[#D5A52B]'
+                    ? 'text-white/75 hover:text-[#D5A83C]'
                     : isForcedLight
                       ? 'text-[#64748B] hover:text-[#07152C]'
-                      : 'text-[#64748B] hover:text-[#07152C] dark:text-white/70 dark:hover:text-[#D5A52B]',
+                      : 'text-[#64748B] hover:text-[#07152C] dark:text-white/75 dark:hover:text-[#D5A83C]',
                 )}
               >
                 {item.label}
@@ -56,10 +56,10 @@ export function Breadcrumbs({ items, tone = 'dark', className }: BreadcrumbsProp
                 className={cn(
                   'font-semibold',
                   isForcedDark
-                    ? 'text-[#D5A52B]'
+                    ? 'text-[#D5A83C]'
                     : isForcedLight
                       ? 'text-[#07152C]'
-                      : 'text-[#07152C] dark:text-[#D5A52B]',
+                      : 'text-[#07152C] dark:text-[#D5A83C]',
                 )}
               >
                 {item.label}

@@ -1,5 +1,6 @@
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
+import { PageContainer } from '@/src/components/layout/PageContainer';
 import { HeroSection } from '@/src/components/home/HeroSection';
 import { AcademyIntroSection } from '@/src/components/home/AcademyIntroSection';
 import { ProgramsPreviewSection } from '@/src/components/home/ProgramsPreviewSection';
@@ -24,20 +25,23 @@ export function HomePage() {
   };
 
   return (
-    <div className="space-y-14 sm:space-y-20">
+    <div>
       {isSectionVisible('hero') && <HeroSection />}
-      {isSectionVisible('about') && <AcademyIntroSection />}
-      {isSectionVisible('programs') && <ProgramsPreviewSection />}
-      <WhyChooseSection />
-      {isSectionVisible('coaches') && <CoachesPreviewSection />}
-      <SchedulePreviewSection />
-      {isSectionVisible('achievements') && <AchievementsPreviewSection />}
-      {isSectionVisible('matches') && <MatchesEventsSection />}
-      {isSectionVisible('gallery') && <GalleryPreviewSection />}
-      {isSectionVisible('testimonials') && <TestimonialsSection />}
-      {isSectionVisible('blog') && <UpdatesPreviewSection />}
-      {isSectionVisible('contact') && <ContactPreviewSection />}
-      <FinalCtaSection />
+
+      <PageContainer className="mt-12 sm:mt-16 space-y-14 sm:space-y-20">
+        {isSectionVisible('programs') && <ProgramsPreviewSection />}
+        {isSectionVisible('about') && <AcademyIntroSection />}
+        <WhyChooseSection />
+        {isSectionVisible('coaches') && <CoachesPreviewSection />}
+        <SchedulePreviewSection />
+        {isSectionVisible('achievements') && <AchievementsPreviewSection />}
+        {isSectionVisible('matches') && <MatchesEventsSection />}
+        {isSectionVisible('gallery') && <GalleryPreviewSection />}
+        {isSectionVisible('testimonials') && <TestimonialsSection />}
+        {isSectionVisible('blog') && <UpdatesPreviewSection />}
+        {isSectionVisible('contact') && <ContactPreviewSection />}
+        <FinalCtaSection />
+      </PageContainer>
     </div>
   );
 }

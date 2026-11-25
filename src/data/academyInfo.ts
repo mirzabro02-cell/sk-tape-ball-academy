@@ -2,112 +2,56 @@ import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg'
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 
 export const ABOUT_PAGE_CONTENT = {
-  kicker: 'About SK Tape Ball Academy',
-  title: 'Structured Tape Ball Cricket Coaching With Purpose',
+  kicker: 'About Us',
+  title: 'SK Tape Ball Academy',
   heroDescription:
-    'Guided by our motto — WHERE DREAMS MEET OPPORTUNITIES. — SK Tape Ball Academy in Sabzazar, Lahore provides disciplined training across athletic fitness, tape ball batting, bowling, and fielding.',
+    'WHERE DREAMS MEET OPPORTUNITIES. Structured fitness, batting, bowling, and fielding development in Sabzazar, Lahore.',
   overview: [
-    'Founded by Sami Khan and launched on 18 August 2024 in Faisalabad before establishing operations in Sabzazar, Lahore, SK Tape Ball Academy brings organized coaching methodology to competitive tape ball cricket.',
-    'Rather than unstructured net hits, every player trains across four dedicated coaching pillars: athletic conditioning (~200 structured exercises), individual batting strengths and weaknesses assessment with 20–25 drill methods per shot, pace and line-and-length bowling mastery, and comprehensive catching and ground fielding routines.',
+    'SK Tape Ball Academy was established from founder Sami Khan’s personal cricket journey. Through the ups and downs of his career, he experienced limited resources, fewer opportunities, and a lack of proper cricket awareness and guidance.',
+    'These challenges inspired him to create a platform where young cricketers can access quality training, professional coaching, and meaningful opportunities.',
+    'Launched in Faisalabad on 18 August 2024 and operating in Sabzazar, Lahore, the academy aims to help talented players develop so their dreams are not held back simply because they lack guidance or resources.',
   ],
   mission: {
     title: 'Our Mission',
     description:
-      'To deliver structured, disciplined tape ball cricket coaching that elevates athletic fitness, sharpens repeatable shot and bowling mechanics, and prepares players for competitive league and single-wicket match play.',
+      'To provide players with organized, quality tape-ball cricket training; improve their fitness and cricketing skills; build discipline, confidence, and sportsmanship; and create a pathway through which committed players can develop their potential and access cricket opportunities.',
   },
   vision: {
     title: 'Our Vision',
     description:
-      'To build a trusted training pathway in Lahore where passionate tape ball cricketers turn raw talent into match-winning skill, leadership, and sportsmanship.',
+      'To develop SK Tape Ball Academy into a recognized, modern, and professionally managed cricket training platform; introduce structured coaching and player-development systems; identify and nurture emerging talent; and provide players with platforms to compete, improve, and progress.',
   },
+  values: [
+    'Discipline',
+    'Hard Work',
+    'Consistency',
+    'Fitness',
+    'Teamwork',
+    'Respect',
+    'Sportsmanship',
+    'Commitment',
+    'Equal Opportunity',
+  ],
   philosophy: [
     {
       code: '01',
-      title: 'Athletic Fitness & Conditioning',
-      description:
-        'Around 200 structured exercises focused on stamina, explosive power, sprint speed, mobility, flexibility, and elasticity.',
+      title: 'Assess the Player',
+      description: 'Evaluate each player and identify technical strengths and weaknesses.',
     },
     {
       code: '02',
-      title: 'Diagnostic Batting Methods',
-      description:
-        'Each batter’s strengths and weaknesses are assessed first, followed by 20–25 structured practice methods per cricket shot.',
+      title: 'Focused Practice',
+      description: 'Work on specific areas across fitness, batting, bowling, and fielding.',
     },
     {
       code: '03',
-      title: 'Speed, Accuracy & Line Discipline',
-      description:
-        'Bowling modules focus systematically on generating speed, hitting target lengths, and executing deceptive pace variations.',
+      title: 'Structured Drills',
+      description: 'Apply targeted drills and practice methods suited to each skill.',
     },
     {
       code: '04',
-      title: 'Complete Fielding & Game Readiness',
-      description:
-        'Structured short catches, fast reaction catches, long/high boundary catches, and clean ground pickups transfer directly to matches.',
-    },
-  ],
-  values: [
-    {
-      title: 'Passion',
-      description: 'Bringing energy, commitment, and genuine love for tape ball cricket to every session.',
-    },
-    {
-      title: 'Sportsmanship',
-      description: 'Respecting teammates, opponents, officials, and the spirit of fair competition.',
-    },
-    {
-      title: 'Leadership',
-      description: 'Taking initiative, communicating clearly on the pitch, and setting strong examples.',
-    },
-    {
-      title: 'Integrity',
-      description: 'Honesty in effort, accountability in feedback, and principled conduct on and off the field.',
-    },
-    {
-      title: 'Teamwork',
-      description: 'Backing partners, sharing responsibilities, and executing collective match plans.',
-    },
-    {
-      title: 'Discipline',
-      description: 'Punctuality, attentive preparation, and consistent execution of coaching routines.',
-    },
-    {
-      title: 'Excellence',
-      description: 'Striving for clean mechanics, high standards, and continuous technical refinement.',
-    },
-    {
-      title: 'Resilience',
-      description: 'Staying composed under scoreboard pressure and bouncing back stronger from setbacks.',
-    },
-    {
-      title: 'Continuous Improvement',
-      description: 'Reviewing strengths and weaknesses regularly to achieve measurable growth every week.',
-    },
-  ],
-  developmentApproach: [
-    {
-      step: 'Stage 01',
-      title: 'Player Diagnostic Assessment',
-      description:
-        'Initial onboarding evaluation identifying natural strengths, technical weaknesses, movement baseline, and athletic fitness level.',
-    },
-    {
-      step: 'Stage 02',
-      title: 'Structured Skill Methods',
-      description:
-        'Targeted drill blocks including 20–25 structured practice progressions per shot, pace/line bowling work, and catching circuits.',
-    },
-    {
-      step: 'Stage 03',
-      title: 'Athletic Conditioning Integration',
-      description:
-        'Tailored selection from ~200 fitness exercises developing speed, stamina, power, mobility, flexibility, and elasticity.',
-    },
-    {
-      step: 'Stage 04',
-      title: 'League & Single-Wicket Play',
-      description:
-        'Testing practiced skills inside academy-organized tape ball leagues and single-wicket competitive formats.',
+      title: 'Progressive Repetition',
+      description: 'Build timing, accuracy, control, and consistency step by step.',
     },
   ],
 } as const;

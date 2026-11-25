@@ -23,19 +23,19 @@ export function PageHero({
   const prefersReduced = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#07152C] via-[#0F213B] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/14 shadow-[var(--shadow-card)]">
-      {/* Subtle stadium floodlight & diagonal pitch accent */}
+    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#07152C] via-[#101D35] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/14 shadow-[var(--shadow-card)]">
+      {/* Subtle stadium floodlight accent */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#D5A52B]/14 blur-3xl"
+        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#D5A83C]/14 blur-3xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-24 -bottom-24 h-52 w-52 rounded-full bg-[#1E3F73]/28 blur-3xl"
+        className="pointer-events-none absolute -left-24 -bottom-24 h-52 w-52 rounded-full bg-[#1E3F73]/30 blur-3xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D5A52B]/55 to-transparent"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D5A83C]/60 to-transparent"
       />
 
       <motion.div
@@ -49,7 +49,7 @@ export function PageHero({
             <Breadcrumbs items={breadcrumbs} tone="dark" />
           )}
 
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D5A83C]">
             {kicker}
           </p>
 

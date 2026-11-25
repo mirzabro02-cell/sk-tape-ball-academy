@@ -13,11 +13,11 @@ export interface CardProps {
 
 const TONE_CLASSES: Record<NonNullable<CardProps['tone']>, string> = {
   light:
-    'bg-white border border-[#E2E8F0] text-[#07152C] shadow-[var(--shadow-card)] dark:bg-gradient-to-b dark:from-[#112647] dark:to-[#0A1933] dark:border-white/12 dark:text-white',
+    'bg-white border border-[#E2E8F0] text-[#07152C] shadow-[var(--shadow-card)] dark:bg-gradient-to-b dark:from-[#102342] dark:to-[#09172E] dark:border-white/12 dark:text-white',
   navy:
-    'bg-gradient-to-b from-[#0F213B] to-[#07152C] border border-white/14 text-white shadow-[var(--shadow-card)] dark:from-[#0C1D38] dark:to-[#050D1B] dark:border-white/14',
+    'bg-gradient-to-b from-[#101D35] to-[#07152C] border border-white/14 text-white shadow-[var(--shadow-card)] dark:from-[#0C1D38] dark:to-[#050D1B] dark:border-white/14',
   muted:
-    'bg-[#F5F7FA] border border-[#E2E8F0] text-[#07152C] dark:bg-[#132645]/85 dark:border-white/10 dark:text-white',
+    'bg-[#F4F6FA] border border-[#E2E8F0] text-[#07152C] dark:bg-[#122645]/85 dark:border-white/10 dark:text-white',
   elevated:
     'bg-white border border-[#CBD5E1] text-[#07152C] shadow-[var(--shadow-card-hover)] dark:bg-gradient-to-b dark:from-[#162B4D] dark:to-[#0D1E3A] dark:border-[#2B599E]/45 dark:text-white',
 };
@@ -43,7 +43,7 @@ export function Card({
     TONE_CLASSES[tone],
     PADDING_CLASSES[padding],
     interactive &&
-      'hover:border-[#D5A52B]/65 hover:shadow-[var(--shadow-card-hover)] dark:hover:border-[#D5A52B]/60',
+      'hover:border-[#D5A83C]/70 hover:shadow-[var(--shadow-card-hover)] dark:hover:border-[#D5A83C]/65',
     className,
   );
 

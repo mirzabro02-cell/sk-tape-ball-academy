@@ -2,12 +2,11 @@ import { HERO_STADIUM_VISUAL } from '@/src/assets/branding';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 
 export const HERO_CONTENT = {
-  tagline: 'Train · Play · Excel',
-  motto: 'WHERE DREAMS MEET OPPORTUNITIES.',
-  headlineTop: 'SK Tape Ball',
-  headlineAccent: 'Academy',
+  tagline: 'WHERE DREAMS MEET OPPORTUNITIES.',
+  headlineTop: 'Where Dreams Meet',
+  headlineAccent: 'Opportunities.',
   supportingText:
-    'Building disciplined tape ball cricketers in Sabzazar, Lahore through ~200 athletic fitness exercises, structured batting methods, pace & spin mastery, and competitive league play.',
+    'SK Tape Ball Academy in Sabzazar, Lahore focuses on structured fitness, batting, bowling, and fielding development.',
   imageSrc: HERO_STADIUM_VISUAL,
   imageAlt: 'SK Tape Ball Academy player in dark navy kit hitting a taped cricket ball under floodlights',
   primaryCta: { label: 'Register Now', to: '/register' },
@@ -15,122 +14,104 @@ export const HERO_CONTENT = {
 } as const;
 
 export const ACADEMY_INTRO_CONTENT = {
-  kicker: 'Academy Introduction',
-  title: 'Developing Complete Tape Ball Cricketers',
+  kicker: 'Training Approach',
+  title: 'Structured, Skill-Based & Repetition-Focused',
   overview:
-    'Founded by Sami Khan and launched on 18 August 2024 in Faisalabad before establishing operations in Sabzazar, Lahore, SK Tape Ball Academy transforms raw cricket passion into structured, match-winning execution.',
-  philosophyTitle: 'Our Coaching Pillars',
-  philosophyPoints: [
-    'Fitness first: ~200 structured exercises building stamina, power, speed, mobility, flexibility, and elasticity.',
-    'Batting precision: personal strengths and weaknesses assessment followed by 20–25 drill methods per shot.',
-    'Bowling & fielding mastery: targeted speed, accuracy, line-and-length work paired with short, fast, high catching, and ground fielding.',
+    'Founded by Sami Khan and launched on 18 August 2024 in Faisalabad (operating in Sabzazar, Lahore), the academy builds complete players through progressive practice.',
+  approachTitle: 'How Every Session Works',
+  approachSteps: [
+    {
+      code: '01',
+      title: 'Assessment',
+      description: 'Assess each player and identify strengths and weaknesses.',
+    },
+    {
+      code: '02',
+      title: 'Focused Practice',
+      description: 'Work directly on targeted batting, bowling, fielding, and fitness areas.',
+    },
+    {
+      code: '03',
+      title: 'Drills',
+      description: 'Apply structured drills and specific practice methods per skill.',
+    },
+    {
+      code: '04',
+      title: 'Repetition',
+      description: 'Develop technique, timing, control, and consistency progressively.',
+    },
   ],
   imageSrc: lanesImg,
   imageAlt: 'Outdoor cricket academy practice lanes with agility ladder and training cones',
-  cta: { label: 'Learn More About Us', to: '/about' },
+  cta: { label: 'About Academy', to: '/about' },
 } as const;
 
 export interface TrainingProgramPreviewItem {
   id: string;
+  programId: string;
   code: string;
   title: string;
-  focusLabel: string;
   description: string;
-  drills: string[];
 }
 
 export const TRAINING_PROGRAMS_PREVIEW: TrainingProgramPreviewItem[] = [
   {
     id: 'fitness-agility',
+    programId: 'prog-fitness',
     code: '01',
-    title: 'Athletic Fitness & Conditioning',
-    focusLabel: 'Stamina · Power · Speed · Mobility · Elasticity',
+    title: 'Fitness',
     description:
-      'Around 200 structured exercises engineered to build cricket stamina, sprint speed, power, flexibility, and joint elasticity.',
-    drills: ['Speed & agility conditioning blocks', 'Mobility & injury-prevention warm-ups'],
+      'Builds stamina, power, speed, mobility, flexibility, and elasticity using approximately 200 athletic exercises.',
   },
   {
     id: 'batting',
+    programId: 'prog-batting',
     code: '02',
     title: 'Tape Ball Batting',
-    focusLabel: 'Strength Assessment · 20–25 Methods Per Shot',
     description:
-      'Diagnostic review of individual strengths and weaknesses followed by 20–25 structured practice methods per shot.',
-    drills: ['Progressive shot mechanics drills', 'Power hitting & match chase execution'],
+      'Begins with assessing each player’s strengths and weaknesses, followed by roughly 20–25 practice methods per shot.',
   },
   {
     id: 'fast-bowling',
+    programId: 'prog-bowling',
     code: '03',
     title: 'Tape Ball Bowling',
-    focusLabel: 'Speed · Accuracy · Line & Length',
     description:
-      'Focused coaching on generating pace safely, hitting yorker and good-length targets, and controlling line and length.',
-    drills: ['Target-cone line & length grids', 'Speed rhythm & death-over variations'],
+      'Improves bowling speed, accuracy, line, and length through specific drills and repeated practice.',
   },
   {
     id: 'fielding',
+    programId: 'prog-fielding',
     code: '04',
-    title: 'Fielding & Catching',
-    focusLabel: 'Short · Fast · Long Catches · Ground Work',
+    title: 'Fielding',
     description:
-      'Complete fielding sessions covering short catches, fast reaction catches, long/high catches, and sharp ground pickups.',
-    drills: ['Close & fast reflex catching circuits', 'High-ball tracking & flat throws'],
-  },
-  {
-    id: 'wicket-keeping',
-    code: '05',
-    title: 'Wicket Keeping',
-    focusLabel: 'Footwork · Glovework · Stumpings',
-    description:
-      'Low crouch balance, soft hands against sharp tape ball bounce, lateral footwork, and rapid stumping reflexes.',
-    drills: ['Standing-up glove reactions', 'Lateral step & wide-ball takes'],
-  },
-  {
-    id: 'spin-bowling',
-    code: '06',
-    title: 'Spin Bowling',
-    focusLabel: 'Grip · Flight · Tactical Control',
-    description:
-      'Revolutions, subtle pace changes, and disciplined stump-to-stump control designed for competitive tape ball matches.',
-    drills: ['Stump-to-stump target drills', 'Flight & arm-ball variations'],
+      'Covers short catches, fast catches, long/high catches, and ground-fielding drills for sharper reaction and control.',
   },
 ];
 
-export interface WhyChoosePillar {
-  code: string;
-  title: string;
-  description: string;
-}
-
-export const WHY_CHOOSE_PILLARS: WhyChoosePillar[] = [
-  {
-    code: '01',
-    title: 'Structured Methods',
-    description:
-      'Systematic training featuring ~200 fitness exercises and 20–25 structured drill methods per batting shot.',
+export const MISSION_VISION_VALUES = {
+  kicker: 'Mission, Vision & Values',
+  title: 'Purpose & Core Standards',
+  mission: {
+    title: 'Our Mission',
+    summary:
+      'Provide organized, quality tape-ball cricket training to improve fitness and skills, build discipline, confidence, and sportsmanship, and create a pathway to cricket opportunities.',
   },
-  {
-    code: '02',
-    title: 'Diagnostic Assessment',
-    description:
-      'Individual evaluation of batting strengths, weaknesses, bowling control, and movement baseline before batch placement.',
+  vision: {
+    title: 'Our Vision',
+    summary:
+      'Develop into a recognized, modern, professionally managed cricket training platform that introduces structured coaching systems and helps emerging talent compete and progress.',
   },
-  {
-    code: '03',
-    title: 'Discipline & Resilience',
-    description:
-      'Built on passion, sportsmanship, leadership, integrity, teamwork, discipline, excellence, resilience, and continuous growth.',
-  },
-  {
-    code: '04',
-    title: 'Complete Conditioning',
-    description:
-      'Dedicated focus on stamina, power, speed, mobility, flexibility, and elasticity for full-match endurance.',
-  },
-  {
-    code: '05',
-    title: 'Competitive Exposure',
-    description:
-      'Academy-organized tape ball leagues and single-wicket events give players real pressure-tested experience.',
-  },
-];
+  valuesTitle: 'Core Values',
+  values: [
+    'Discipline',
+    'Hard Work',
+    'Consistency',
+    'Fitness',
+    'Teamwork',
+    'Respect',
+    'Sportsmanship',
+    'Commitment',
+    'Equal Opportunity',
+  ],
+} as const;

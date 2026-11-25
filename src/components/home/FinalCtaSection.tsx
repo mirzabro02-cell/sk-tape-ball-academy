@@ -27,16 +27,16 @@ export function FinalCtaSection() {
               Join {ACADEMY_BRAND.name}
             </h2>
             <p className="text-sm sm:text-base leading-relaxed text-[#B4C4DC]">
-              Take the next step toward sharper technique, disciplined net sessions, and confident match-day execution. Explore our coaching tracks or submit your online registration application today.
+              Explore our confirmed training tracks or submit your online registration application.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
-            <Button to="/register" variant="primary" size="lg">
+            <Button to="/register" variant="primary" size="lg" shape="pill">
               <span>Register Now</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button to="/programs" variant="outlineLight" size="lg">
+            <Button to="/programs" variant="outlineLight" size="lg" shape="pill">
               Explore Programs
             </Button>
             <WhatsAppCta variant="inline" />

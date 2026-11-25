@@ -5,10 +5,12 @@ import { cn } from '@/src/utils/cn';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost' | 'outlineLight';
 export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonShape = 'default' | 'pill';
 
 interface BaseButtonProps {
   variant?: ButtonVariant;
   size?: ButtonSize;
+  shape?: ButtonShape;
   className?: string;
   children: ReactNode;
   fullWidth?: boolean;
@@ -32,17 +34,17 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-gradient-to-b from-[#E0B136] to-[#D5A52B] text-[#050D1B] hover:from-[#EAC04F] hover:to-[#E2B84A] active:from-[#C99A22] active:to-[#BD8E1C] border border-[#F3D174]/35 shadow-[var(--shadow-gold)] hover:shadow-[var(--shadow-gold-hover)]',
+    'bg-gradient-to-b from-[#E4BC54] to-[#D5A83C] text-[#050D1B] hover:from-[#ECC96B] hover:to-[#E0B347] active:from-[#C7992D] active:to-[#B88B21] border border-[#F5D988]/45 shadow-[var(--shadow-gold)] hover:shadow-[var(--shadow-gold-hover)]',
   secondary:
-    'bg-[#07152C] text-white hover:bg-[#0F213B] active:bg-[#050D1B] border border-[#07152C] shadow-sm dark:bg-[#0F213B] dark:text-white dark:border-[#D5A52B]/75 dark:hover:border-[#D5A52B] dark:hover:bg-[#162B4D] dark:hover:shadow-[0_10px_24px_-10px_rgba(213,165,43,0.42)]',
+    'bg-[#07152C] text-white hover:bg-[#101D35] active:bg-[#050D1B] border border-[#07152C] shadow-sm dark:bg-[#0F213B] dark:text-white dark:border-[#D5A83C]/65 dark:hover:border-[#D5A83C] dark:hover:bg-[#162B4D] dark:hover:shadow-[0_10px_24px_-10px_rgba(213,168,60,0.42)]',
   accent:
-    'bg-[#C8202B] text-white hover:bg-[#B01A24] active:bg-[#99151E] border border-[#E03A45]/30 shadow-sm',
+    'bg-[#C8202B] text-white hover:bg-[#B01A24] active:bg-[#99151E] border border-[#E03A45]/35 shadow-sm',
   outline:
-    'bg-white text-[#07152C] border border-[#CBD5E1] hover:border-[#07152C]/45 hover:bg-[#F5F7FA] dark:bg-[#0F213B]/90 dark:text-white dark:border-white/15 dark:hover:border-[#D5A52B]/65 dark:hover:bg-[#162B4D]',
+    'bg-white text-[#07152C] border border-[#CBD5E1] hover:border-[#07152C]/45 hover:bg-[#F4F6FA] dark:bg-[#0F213B]/90 dark:text-white dark:border-white/16 dark:hover:border-[#D5A83C]/65 dark:hover:bg-[#162B4D]',
   outlineLight:
-    'bg-white/6 text-white border border-white/25 hover:bg-white/12 hover:border-[#D5A52B]/70',
+    'bg-white/8 text-white border border-white/25 hover:bg-white/14 hover:border-[#D5A83C]/75',
   ghost:
-    'bg-transparent text-[#07152C] border border-[#E2E8F0]/80 hover:border-[#07152C]/25 hover:bg-[#07152C]/5 dark:bg-[#0F213B]/35 dark:text-white/90 dark:border-white/15 dark:hover:border-[#D5A52B]/55 dark:hover:bg-[#162B4D]/75 dark:hover:text-white',
+    'bg-transparent text-[#07152C] border border-[#E2E8F0]/80 hover:border-[#07152C]/25 hover:bg-[#07152C]/5 dark:bg-[#0F213B]/40 dark:text-white/90 dark:border-white/15 dark:hover:border-[#D5A83C]/55 dark:hover:bg-[#162B4D]/80 dark:hover:text-white',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -51,10 +53,16 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
   lg: 'h-12 px-6 text-sm',
 };
 
+const SHAPE_CLASSES: Record<ButtonShape, string> = {
+  default: 'rounded-[10px]',
+  pill: 'rounded-full',
+};
+
 export function Button(props: ButtonProps) {
   const {
     variant = 'primary',
     size = 'md',
+    shape = 'default',
     className,
     children,
     fullWidth = false,
@@ -64,7 +72,8 @@ export function Button(props: ButtonProps) {
   } = props;
 
   const classes = cn(
-    'inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold tracking-tight whitespace-nowrap shrink-0 transition-all duration-150 ease-out cursor-pointer select-none hover:-translate-y-[1px] motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#07152C] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed active:translate-y-0 active:scale-[0.99]',
+    'inline-flex items-center justify-center gap-2 font-semibold tracking-tight whitespace-nowrap shrink-0 transition-all duration-150 ease-out cursor-pointer select-none hover:-translate-y-[1px] motion-reduce:hover:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A83C] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#07152C] disabled:opacity-50 disabled:pointer-events-none disabled:cursor-not-allowed active:translate-y-0 active:scale-[0.99]',
+    SHAPE_CLASSES[shape],
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth && 'w-full',
@@ -103,6 +112,7 @@ export function Button(props: ButtonProps) {
   const {
     variant: _v,
     size: _s,
+    shape: _sh,
     fullWidth: _fw,
     loading: _ld,
     leftIcon: _li,

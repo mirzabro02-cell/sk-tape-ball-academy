@@ -25,7 +25,7 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
   );
 
   return (
-    <div className="divide-y divide-[#E2E8F0] dark:divide-white/10 rounded-[16px] border border-[#E2E8F0] dark:border-white/12 bg-white dark:bg-gradient-to-b dark:from-[#112647] dark:to-[#0A1933] overflow-hidden shadow-[var(--shadow-card)]">
+    <div className="divide-y divide-[#E2E8F0] dark:divide-white/10 rounded-[16px] border border-[#E2E8F0] dark:border-white/12 bg-white dark:bg-gradient-to-b dark:from-[#102342] dark:to-[#09172E] overflow-hidden shadow-[var(--shadow-card)]">
       {items.map((item, idx) => {
         const itemKey = item.id ?? String(idx);
         const isOpen = openKey === itemKey;
@@ -36,11 +36,11 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
               type="button"
               aria-expanded={isOpen}
               onClick={() => setOpenKey(isOpen ? null : itemKey)}
-              className="flex w-full items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 text-left hover:bg-[#F5F7FA]/80 dark:hover:bg-white/6 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D5A52B]"
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 text-left hover:bg-[#F4F6FA]/85 dark:hover:bg-white/6 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D5A83C]"
             >
               <div className="space-y-1">
                 {item.category && (
-                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1E3F73] dark:text-[#D5A52B]">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1E3F73] dark:text-[#D5A83C]">
                     {item.category}
                   </p>
                 )}
@@ -50,8 +50,8 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
               </div>
               <ChevronDown
                 className={cn(
-                  'h-5 w-5 shrink-0 text-[#64748B] dark:text-[#8499B8] transition-transform duration-200',
-                  isOpen && 'rotate-180 text-[#07152C] dark:text-[#D5A52B]',
+                  'h-5 w-5 shrink-0 text-[#64748B] dark:text-[#859BB9] transition-transform duration-200',
+                  isOpen && 'rotate-180 text-[#07152C] dark:text-[#D5A83C]',
                 )}
                 aria-hidden="true"
               />
@@ -66,7 +66,7 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
                   transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="border-t border-[#E2E8F0] dark:border-white/10 bg-[#F5F7FA]/75 dark:bg-[#07152C]/70 px-5 py-4 sm:px-6 text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
+                  <div className="border-t border-[#E2E8F0] dark:border-white/10 bg-[#F4F6FA]/80 dark:bg-[#07152C]/75 px-5 py-4 sm:px-6 text-sm leading-relaxed text-[#475569] dark:text-[#B8C7DF]">
                     {item.answer}
                   </div>
                 </motion.div>

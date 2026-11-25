@@ -20,6 +20,7 @@ export function Textarea({
 }: TextareaProps) {
   const generatedId = useId();
   const textareaId = id ?? generatedId;
+  const feedbackId = error || helperText ? `${textareaId}-feedback` : undefined;
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
@@ -41,8 +42,9 @@ export function Textarea({
         rows={rows}
         required={required}
         aria-invalid={Boolean(error)}
+        aria-describedby={feedbackId}
         className={cn(
-          'min-h-[112px] w-full rounded-[10px] border bg-white px-4 py-3 text-sm text-[#07152C] placeholder:text-[#64748B]/80 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#7F95B8] dark:focus:border-[#D5A52B]',
+          'min-h-[112px] w-full rounded-[10px] border bg-white px-4 py-3 text-sm text-[#07152C] placeholder:text-[#64748B]/85 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A83C]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#859BB9]/85 dark:focus:border-[#D5A83C]',
           error
             ? 'border-[#C8202B] focus:border-[#C8202B] focus:ring-[#C8202B]/30 dark:border-[#F87171] dark:focus:border-[#F87171]'
             : 'border-[#CBD5E1] hover:border-[#94A3B8] dark:border-white/15 dark:hover:border-white/28',
@@ -51,9 +53,13 @@ export function Textarea({
         {...rest}
       />
       {error ? (
-        <p className="text-xs font-medium text-[#C8202B] dark:text-[#FCA5A5]">{error}</p>
+        <p id={feedbackId} className="text-xs font-medium text-[#C8202B] dark:text-[#FCA5A5]">
+          {error}
+        </p>
       ) : helperText ? (
-        <p className="text-xs text-[#64748B] dark:text-[#8499B8]">{helperText}</p>
+        <p id={feedbackId} className="text-xs text-[#64748B] dark:text-[#859BB9]">
+          {helperText}
+        </p>
       ) : null}
     </div>
   );

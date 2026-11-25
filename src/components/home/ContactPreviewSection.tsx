@@ -78,7 +78,7 @@ export function ContactPreviewSection() {
                   {sectionMeta?.headline || 'We Are Here To Help You'}
                 </h2>
                 <p className="text-sm leading-relaxed text-[#C2D0E3]">
-                  Reach out for training batch guidance, admissions questions, or facility visits in{' '}
+                  Send an inquiry regarding training programs or admissions in{' '}
                   {siteSettings.locationText}.
                 </p>
               </div>
@@ -168,7 +168,7 @@ export function ContactPreviewSection() {
                   label="Your Message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Ask about coaching programs, batches, or admissions..."
+                  placeholder="Ask about training programs or admissions..."
                   required
                 />
 
@@ -180,10 +180,10 @@ export function ContactPreviewSection() {
 
                 {sentName && (
                   <Card tone="muted" padding="sm" className="flex items-center gap-2.5 text-xs">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D5A83C]" aria-hidden="true" />
                     <span className="text-[#07152C] dark:text-white">
                       Thank you, <strong>{sentName}</strong>. For full enrollment submissions, please use the{' '}
-                      <Link to="/register" className="font-bold text-[#D5A52B] underline">
+                      <Link to="/register" className="font-bold text-[#D5A83C] underline">
                         Admissions Registration Form
                       </Link>
                       .
@@ -192,10 +192,10 @@ export function ContactPreviewSection() {
                 )}
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                  <Button to="/contact" variant="outline" size="sm">
+                  <Button to="/contact" variant="outline" size="sm" shape="pill">
                     Full Contact Page
                   </Button>
-                  <Button type="submit" variant="primary" size="md">
+                  <Button type="submit" variant="primary" size="md" shape="pill">
                     <span>{sectionMeta?.ctaLabel || 'Send Message'}</span>
                     <Send className="h-4 w-4" aria-hidden="true" />
                   </Button>

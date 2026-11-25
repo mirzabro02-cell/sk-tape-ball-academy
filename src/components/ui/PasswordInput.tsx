@@ -22,6 +22,7 @@ export function PasswordInput({
 }: PasswordInputProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
+  const feedbackId = error || helperText ? `${inputId}-feedback` : undefined;
   const [visible, setVisible] = useState(false);
 
   return (
@@ -42,7 +43,7 @@ export function PasswordInput({
         {leftIcon && (
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] dark:text-[#8499B8]"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] dark:text-[#859BB9]"
           >
             {leftIcon}
           </span>
@@ -52,8 +53,9 @@ export function PasswordInput({
           type={visible ? 'text' : 'password'}
           required={required}
           aria-invalid={Boolean(error)}
+          aria-describedby={feedbackId}
           className={cn(
-            'h-[48px] w-full rounded-[10px] border bg-white text-sm text-[#07152C] placeholder:text-[#64748B]/80 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#7F95B8] dark:focus:border-[#D5A52B]',
+            'h-[48px] w-full rounded-[10px] border bg-white text-sm text-[#07152C] placeholder:text-[#64748B]/85 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A83C]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#859BB9]/85 dark:focus:border-[#D5A83C]',
             leftIcon ? 'pl-10 pr-12' : 'pl-4 pr-12',
             error
               ? 'border-[#C8202B] focus:border-[#C8202B] focus:ring-[#C8202B]/30 dark:border-[#F87171] dark:focus:border-[#F87171]'
@@ -67,7 +69,7 @@ export function PasswordInput({
           type="button"
           onClick={() => setVisible((prev) => !prev)}
           aria-label={visible ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
-          className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-[8px] text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#07152C] dark:text-[#8499B8] dark:hover:bg-white/10 dark:hover:text-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]"
+          className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex h-9 w-9 items-center justify-center rounded-[8px] text-[#64748B] hover:bg-[#F4F6FA] hover:text-[#07152C] dark:text-[#859BB9] dark:hover:bg-white/10 dark:hover:text-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A83C]"
         >
           {visible ? (
             <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -78,9 +80,13 @@ export function PasswordInput({
       </div>
 
       {error ? (
-        <p className="text-xs font-medium text-[#C8202B] dark:text-[#FCA5A5]">{error}</p>
+        <p id={feedbackId} className="text-xs font-medium text-[#C8202B] dark:text-[#FCA5A5]">
+          {error}
+        </p>
       ) : helperText ? (
-        <p className="text-xs text-[#64748B] dark:text-[#8499B8]">{helperText}</p>
+        <p id={feedbackId} className="text-xs text-[#64748B] dark:text-[#859BB9]">
+          {helperText}
+        </p>
       ) : null}
     </div>
   );

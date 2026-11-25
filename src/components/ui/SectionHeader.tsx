@@ -39,10 +39,10 @@ export function SectionHeader({
             className={cn(
               'text-xs font-bold tracking-[0.16em] uppercase',
               isForcedDark
-                ? 'text-[#D5A52B]'
+                ? 'text-[#D5A83C]'
                 : isForcedLight
                   ? 'text-[#1E3F73]'
-                  : 'text-[#1E3F73] dark:text-[#D5A52B]',
+                  : 'text-[#1E3F73] dark:text-[#D5A83C]',
             )}
           >
             {kicker}
@@ -51,7 +51,7 @@ export function SectionHeader({
         <h2
           id={id}
           className={cn(
-            'text-2xl sm:text-3xl font-extrabold tracking-tight',
+            'text-2xl sm:text-[32px] font-extrabold tracking-tight leading-[1.15]',
             isForcedDark
               ? 'text-white'
               : isForcedLight
@@ -66,10 +66,10 @@ export function SectionHeader({
             className={cn(
               'text-sm sm:text-base leading-relaxed',
               isForcedDark
-                ? 'text-[#B4C4DC]'
+                ? 'text-[#B8C7DF]'
                 : isForcedLight
                   ? 'text-[#475569]'
-                  : 'text-[#475569] dark:text-[#B4C4DC]',
+                  : 'text-[#475569] dark:text-[#B8C7DF]',
             )}
           >
             {description}

@@ -17,11 +17,13 @@ export function MainLayout() {
     return <MaintenancePage />;
   }
 
+  const isHomePage = location.pathname === '/';
+
   return (
     <div className="min-h-screen flex flex-col overflow-x-clip bg-[var(--bg-canvas)] text-[var(--text-primary)] transition-colors duration-200">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#07152C] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D5A52B] focus:shadow-lg focus:ring-2 focus:ring-[#D5A52B]"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#07152C] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D5A83C] focus:shadow-lg focus:ring-2 focus:ring-[#D5A83C]"
       >
         Skip to main content
       </a>
@@ -36,12 +38,21 @@ export function MainLayout() {
         onClose={() => setMobileMenuOpen(false)}
       />
 
-      <main id="main-content" className="flex-1 py-6 sm:py-10">
-        <PageContainer>
+      <main
+        id="main-content"
+        className={isHomePage ? 'flex-1 pb-12 sm:pb-16' : 'flex-1 py-6 sm:py-10'}
+      >
+        {isHomePage ? (
           <PageTransition key={location.pathname}>
             <Outlet />
           </PageTransition>
-        </PageContainer>
+        ) : (
+          <PageContainer>
+            <PageTransition key={location.pathname}>
+              <Outlet />
+            </PageTransition>
+          </PageContainer>
+        )}
       </main>
 
       <Footer />

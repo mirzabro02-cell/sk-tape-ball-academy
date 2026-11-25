@@ -48,10 +48,10 @@ export function GalleryPreviewSection() {
         <SectionHeader
           id="gallery-preview-heading"
           kicker="Media Gallery"
-          title="Training Ground & Session Visuals"
-          description="Practice drills, pace bowling clinics, catching stations, and campus views from SK Tape Ball Academy."
+          title="Training Visuals"
+          description="Practice sessions and floodlit tape-ball drills from SK Tape Ball Academy."
           action={
-            <Button to="/gallery" variant="outline">
+            <Button to="/gallery" variant="outline" shape="pill">
               <span>View Full Gallery</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Button>
