@@ -206,6 +206,8 @@ export interface AdminWebsiteContentSection {
   ctaLabel: string;
   bodyNotes: string;
   lastUpdatedLabel: string;
+  visible?: boolean;
+  published?: boolean;
 }
 
 export interface AdminNotification {

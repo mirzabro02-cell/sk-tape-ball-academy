@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Eye, Save } from 'lucide-react';
+import { ArrowDown, ArrowUp, CheckCircle2, Eye, EyeOff, Globe, Save, X } from 'lucide-react';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 import { HERO_STADIUM_VISUAL } from '@/src/assets/branding';
@@ -7,7 +7,7 @@ import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminWebsiteContentSection } from '@/src/types/admin';
 import { containsUnsafeHtml } from '@/src/utils/validation';
-import { AdminPageHeader } from '@/src/components/admin/AdminPrimitives';
+import { AdminPageHeader, AdminStatusBadge } from '@/src/components/admin/AdminPrimitives';
 import { ImageManager } from '@/src/components/admin/ImageManager';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
@@ -22,7 +22,10 @@ export function AdminWebsiteContentPage() {
 
   const sections = state.websiteSections;
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? 'hero');
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+
   const activeSection = sections.find((s) => s.id === selectedId) ?? sections[0];
+  const activeIndex = sections.findIndex((s) => s.id === activeSection?.id);
 
   function updateField<K extends keyof AdminWebsiteContentSection>(
     field: K,
@@ -34,8 +37,18 @@ export function AdminWebsiteContentPage() {
     );
   }
 
-  function handleSaveSection(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function moveSection(index: number, direction: -1 | 1) {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= sections.length) return;
+    setWebsiteSections((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(index, 1);
+      next.splice(targetIndex, 0, moved);
+      return next;
+    });
+  }
+
+  function saveCurrentSection(publish = false) {
     if (!activeSection) return;
     if (
       containsUnsafeHtml([
@@ -55,72 +68,134 @@ export function AdminWebsiteContentPage() {
 
     setWebsiteSections((prev) =>
       prev.map((sec) =>
-        sec.id === activeSection.id ? { ...sec, lastUpdatedLabel: 'Updated' } : sec,
+        sec.id === activeSection.id
+          ? {
+              ...sec,
+              published: publish ? true : (sec.published ?? true),
+              lastUpdatedLabel: publish ? 'Published' : 'Saved',
+            }
+          : sec,
       ),
     );
-    showToast('Content Updated', `"${activeSection.label}" changes saved.`);
+    showToast(
+      publish ? 'Section Published' : 'Changes Saved',
+      `"${activeSection.label}" ${publish ? 'is now live on the website' : 'changes saved'}.`,
+    );
+  }
+
+  function handleSaveSection(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    saveCurrentSection(false);
   }
 
   if (!activeSection) return null;
+  const isVisible = activeSection.visible !== false;
 
   return (
     <div className="space-y-5">
       <AdminPageHeader
         title="Website Content Management (CMS)"
-        description="Update section headlines, supporting copy, and homepage hero/about images."
+        description="Manage website section headlines, copy, visibility, order, and hero/about visuals with live preview."
         actions={
-          <Button to="/" variant="outline" size="sm">
-            <Eye className="h-4 w-4" aria-hidden="true" />
-            <span>Open Public Homepage</span>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => setPreviewModalOpen(true)}>
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              <span>Preview</span>
+            </Button>
+            <Button to="/" variant="secondary" size="sm">
+              <Globe className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
+              <span>View Public Site</span>
+            </Button>
+          </div>
         }
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
-        {/* Sticky Left Rail: Section Selector + Live Preview balanced together to avoid blank vertical voids */}
+        {/* Compact Sticky Left Sidebar: Section Selector + Live Preview Card */}
         <div className="lg:col-span-5 lg:sticky lg:top-[84px] space-y-5">
           <Card padding="sm" className="space-y-1.5">
-            <p className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
-              Website Sections ({sections.length})
-            </p>
-            <div className="space-y-1">
-              {sections.map((sec) => {
+            <div className="flex items-center justify-between px-3 py-1.5">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
+                Website Sections ({sections.length})
+              </p>
+              <span className="text-[11px] font-medium text-[#64748B] dark:text-[#7F95B8]">
+                {sections.filter((s) => s.visible !== false).length} visible
+              </span>
+            </div>
+            <div className="space-y-1 max-h-[340px] overflow-y-auto pr-0.5">
+              {sections.map((sec, idx) => {
                 const active = sec.id === activeSection.id;
+                const secVisible = sec.visible !== false;
                 return (
-                  <button
+                  <div
                     key={sec.id}
-                    type="button"
-                    onClick={() => setSelectedId(sec.id)}
-                    className={`flex w-full items-center justify-between rounded-[10px] px-3 py-2.5 text-left text-xs font-semibold transition-colors cursor-pointer ${
+                    className={`flex items-center gap-1 rounded-[10px] px-2 py-1.5 transition-colors ${
                       active
                         ? 'bg-[#D5A52B] text-[#050D1B]'
                         : 'text-[#07152C] hover:bg-[#F5F7FA] dark:text-[#E2E8F0] dark:hover:bg-[#162B4D]'
                     }`}
                   >
-                    <span className="truncate">{sec.label}</span>
-                    <span
-                      className={`text-[10px] font-semibold shrink-0 ${
-                        active ? 'text-[#050D1B]/80' : 'text-[#64748B] dark:text-[#A3B4CC]'
-                      }`}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(sec.id)}
+                      className="flex min-w-0 flex-1 items-center justify-between gap-2 px-1.5 py-1 text-left text-xs font-semibold cursor-pointer"
                     >
-                      {active ? 'Editing' : 'Edit'}
-                    </span>
-                  </button>
+                      <span className="truncate">{sec.label}</span>
+                      <span
+                        className={`text-[10px] font-semibold shrink-0 ${
+                          active ? 'text-[#050D1B]/80' : 'text-[#64748B] dark:text-[#A3B4CC]'
+                        }`}
+                      >
+                        {secVisible ? (sec.published === false ? 'Draft' : 'Live') : 'Hidden'}
+                      </span>
+                    </button>
+
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => moveSection(idx, -1)}
+                        disabled={idx === 0}
+                        aria-label={`Move ${sec.label} up`}
+                        className={`inline-flex h-6 w-6 items-center justify-center rounded-[6px] disabled:opacity-30 cursor-pointer ${
+                          active ? 'hover:bg-[#050D1B]/10' : 'hover:bg-[#E2E8F0] dark:hover:bg-white/10'
+                        }`}
+                      >
+                        <ArrowUp className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(idx, 1)}
+                        disabled={idx === sections.length - 1}
+                        aria-label={`Move ${sec.label} down`}
+                        className={`inline-flex h-6 w-6 items-center justify-center rounded-[6px] disabled:opacity-30 cursor-pointer ${
+                          active ? 'hover:bg-[#050D1B]/10' : 'hover:bg-[#E2E8F0] dark:hover:bg-white/10'
+                        }`}
+                      >
+                        <ArrowDown className="h-3 w-3" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
                 );
               })}
             </div>
           </Card>
 
           <Card tone="navy" padding="md" className="space-y-3">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
-              Live Website Preview
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
+                Live Section Preview
+              </p>
+              <AdminStatusBadge
+                label={isVisible ? 'Visible' : 'Hidden'}
+                variant={isVisible ? 'success' : 'neutral'}
+              />
+            </div>
             <h3 className="font-display text-xl font-bold text-white leading-tight">
               {activeSection.headline}
             </h3>
             <p className="text-sm text-white/80">{activeSection.subheadline}</p>
             {activeSection.bodyNotes && (
-              <p className="text-xs leading-relaxed text-white/65 line-clamp-4">
+              <p className="text-xs leading-relaxed text-white/65 line-clamp-3">
                 {activeSection.bodyNotes}
               </p>
             )}
@@ -132,88 +207,198 @@ export function AdminWebsiteContentPage() {
           </Card>
         </div>
 
-        {/* Right Column: Section Editor */}
+        {/* Right Column: Compact Structured Section Editor */}
         <div className="lg:col-span-7">
           <Card padding="lg" className="space-y-5">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E2E8F0] pb-3 dark:border-white/10">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E2E8F0] pb-4 dark:border-white/10">
               <div>
                 <h2 className="text-lg font-bold text-[#07152C] dark:text-white">
                   {activeSection.label}
                 </h2>
                 <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
-                  {activeSection.lastUpdatedLabel}
+                  Section #{activeIndex + 1} · Status: {activeSection.lastUpdatedLabel}
                 </p>
               </div>
+
+              <button
+                type="button"
+                onClick={() => updateField('visible', !isVisible)}
+                className={`inline-flex h-9 items-center gap-2 rounded-[10px] border px-3 text-xs font-semibold transition-colors cursor-pointer ${
+                  isVisible
+                    ? 'border-[#D5A52B]/50 bg-[#D5A52B]/15 text-[#9A6F0A] dark:text-[#D5A52B]'
+                    : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#64748B] dark:border-white/15 dark:bg-[#07152C] dark:text-[#A3B4CC]'
+                }`}
+              >
+                {isVisible ? (
+                  <>
+                    <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Visible on Homepage</span>
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Hidden on Homepage</span>
+                  </>
+                )}
+              </button>
             </div>
 
             <form onSubmit={handleSaveSection} className="space-y-4">
-              <Input
-                label="Section Headline"
-                value={activeSection.headline}
-                onChange={(e) => updateField('headline', e.target.value)}
-                required
-              />
-              <Input
-                label="Supporting Subheadline"
-                value={activeSection.subheadline}
-                onChange={(e) => updateField('subheadline', e.target.value)}
-                required
-              />
-              <Input
-                label="Primary CTA Label"
-                value={activeSection.ctaLabel}
-                onChange={(e) => updateField('ctaLabel', e.target.value)}
-              />
-              <Textarea
-                label="Section Copy / Summary"
-                value={activeSection.bodyNotes}
-                onChange={(e) => updateField('bodyNotes', e.target.value)}
-              />
+              <div className="space-y-4">
+                <Input
+                  label="Section Heading"
+                  value={activeSection.headline}
+                  onChange={(e) => updateField('headline', e.target.value)}
+                  required
+                />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Input
+                    label="Supporting Subheading"
+                    value={activeSection.subheadline}
+                    onChange={(e) => updateField('subheadline', e.target.value)}
+                    required
+                  />
+                  <Input
+                    label="Primary Button Label"
+                    value={activeSection.ctaLabel}
+                    onChange={(e) => updateField('ctaLabel', e.target.value)}
+                  />
+                </div>
+                <Textarea
+                  label="Section Description / Summary"
+                  value={activeSection.bodyNotes}
+                  onChange={(e) => updateField('bodyNotes', e.target.value)}
+                />
+              </div>
 
               {activeSection.id === 'hero' && (
-                <ImageManager
-                  label="Hero Backdrop Image"
-                  value={state.siteSettings.heroMedia}
-                  onChange={(heroMedia) =>
-                    updateSiteSettings((prev) => ({ ...prev, heroMedia }))
-                  }
-                  aspectRatio="16/9"
-                  presetAssets={[
-                    { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
-                    { label: 'Floodlit Pitch Backdrop', src: heroImg },
-                    { label: 'Practice Lanes', src: lanesImg },
-                  ]}
-                  storageFolder="hero"
-                />
+                <div className="border-t border-[#E2E8F0] pt-4 dark:border-white/10">
+                  <ImageManager
+                    label="Hero Backdrop Image"
+                    value={state.siteSettings.heroMedia}
+                    onChange={(heroMedia) =>
+                      updateSiteSettings((prev) => ({ ...prev, heroMedia }))
+                    }
+                    aspectRatio="16/9"
+                    presetAssets={[
+                      { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
+                      { label: 'Floodlit Pitch Backdrop', src: heroImg },
+                      { label: 'Practice Lanes', src: lanesImg },
+                    ]}
+                    storageFolder="hero"
+                  />
+                </div>
               )}
 
               {activeSection.id === 'about' && (
-                <ImageManager
-                  label="About Section Image"
-                  value={state.siteSettings.aboutMedia}
-                  onChange={(aboutMedia) =>
-                    updateSiteSettings((prev) => ({ ...prev, aboutMedia }))
-                  }
-                  aspectRatio="4/3"
-                  presetAssets={[
-                    { label: 'Practice Lanes', src: lanesImg },
-                    { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
-                    { label: 'Floodlit Pitch Backdrop', src: heroImg },
-                  ]}
-                  storageFolder="about"
-                />
+                <div className="border-t border-[#E2E8F0] pt-4 dark:border-white/10">
+                  <ImageManager
+                    label="About Section Image"
+                    value={state.siteSettings.aboutMedia}
+                    onChange={(aboutMedia) =>
+                      updateSiteSettings((prev) => ({ ...prev, aboutMedia }))
+                    }
+                    aspectRatio="4/3"
+                    presetAssets={[
+                      { label: 'Practice Lanes', src: lanesImg },
+                      { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
+                      { label: 'Floodlit Pitch Backdrop', src: heroImg },
+                    ]}
+                    storageFolder="about"
+                  />
+                </div>
               )}
 
-              <div className="flex justify-end pt-2 border-t border-[#E2E8F0] dark:border-white/10">
-                <Button type="submit" variant="primary" size="sm">
-                  <Save className="h-4 w-4" aria-hidden="true" />
-                  <span>Save Section</span>
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E2E8F0] dark:border-white/10">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPreviewModalOpen(true)}
+                >
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                  <span>Preview</span>
                 </Button>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <Button type="submit" variant="secondary" size="sm">
+                    <Save className="h-4 w-4" aria-hidden="true" />
+                    <span>Save Changes</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="sm"
+                    onClick={() => saveCurrentSection(true)}
+                  >
+                    <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                    <span>Publish</span>
+                  </Button>
+                </div>
               </div>
             </form>
           </Card>
         </div>
       </div>
+
+      {/* Live Preview Modal */}
+      {previewModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/80 p-4 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Website Section Live Preview"
+        >
+          <div className="w-full max-w-2xl rounded-[20px] border border-white/15 bg-[#07152C] p-6 sm:p-8 text-white shadow-2xl space-y-5">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
+                  Live Section Preview
+                </p>
+                <p className="text-sm font-bold text-white">{activeSection.label}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewModalOpen(false)}
+                aria-label="Close preview"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-white/15 text-white hover:bg-white/10 cursor-pointer"
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="rounded-[16px] border border-white/10 bg-[#0F213B] p-6 space-y-4">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#D5A52B]">
+                {activeSection.subheadline}
+              </p>
+              <h3 className="font-display text-3xl font-extrabold uppercase tracking-tight text-white">
+                {activeSection.headline}
+              </h3>
+              {activeSection.bodyNotes && (
+                <p className="text-sm leading-relaxed text-[#C2D0E3]">
+                  {activeSection.bodyNotes}
+                </p>
+              )}
+              {activeSection.ctaLabel && (
+                <div className="pt-1">
+                  <span className="inline-flex h-11 items-center rounded-[10px] bg-[#D5A52B] px-6 text-xs font-bold text-[#050D1B]">
+                    {activeSection.ctaLabel}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outlineLight" size="sm" onClick={() => setPreviewModalOpen(false)}>
+                Close Preview
+              </Button>
+              <Button to="/" variant="primary" size="sm">
+                Open Live Homepage
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

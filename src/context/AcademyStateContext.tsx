@@ -45,6 +45,17 @@ export interface AcademySocialLinks {
   tiktok: string;
 }
 
+export interface AcademyMaintenanceSettings {
+  enabled: boolean;
+  heading: string;
+  message: string;
+  reopeningDateTime: string;
+  contactPhone: string;
+  contactEmail: string;
+  whatsapp: string;
+  backgroundMedia: ManagedMediaValue;
+}
+
 export interface AcademySiteSettings {
   academyName: string;
   shortName: string;
@@ -62,6 +73,7 @@ export interface AcademySiteSettings {
   logo: ManagedMediaValue;
   heroMedia: ManagedMediaValue;
   aboutMedia: ManagedMediaValue;
+  maintenance: AcademyMaintenanceSettings;
   showPublicFees: boolean;
   seoTitle: string;
   seoDescription: string;
@@ -115,6 +127,22 @@ const DEFAULT_SITE_SETTINGS: AcademySiteSettings = {
   logo: createManagedMedia(OFFICIAL_LOGO_CONFIG.src, { fit: 'contain', posX: 50, posY: 50, scale: 1 }),
   heroMedia: createManagedMedia(HERO_STADIUM_VISUAL, { fit: 'cover', posX: 70, posY: 35, scale: 1 }),
   aboutMedia: createManagedMedia(lanesImg, { fit: 'cover', posX: 50, posY: 50, scale: 1 }),
+  maintenance: {
+    enabled: false,
+    heading: "We're Under Maintenance",
+    message:
+      'We are upgrading our academy website and training portal to deliver an improved experience. Thank you for your patience—we will be back online shortly.',
+    reopeningDateTime: '',
+    contactPhone: '',
+    contactEmail: '',
+    whatsapp: '',
+    backgroundMedia: createManagedMedia(HERO_STADIUM_VISUAL, {
+      fit: 'cover',
+      posX: 60,
+      posY: 40,
+      scale: 1,
+    }),
+  },
   showPublicFees: false,
   seoTitle: 'SK Tape Ball Academy — Where Dreams Meet Opportunities.',
   seoDescription:
@@ -293,13 +321,15 @@ const DEFAULT_GALLERY: AdminMediaItem[] = [
 const DEFAULT_WEBSITE_SECTIONS: AdminWebsiteContentSection[] = [
   {
     id: 'hero',
-    label: 'Homepage Hero Content',
+    label: 'Hero Section',
     headline: 'Structured Tape Ball Cricket Coaching for Competitive Match Readiness',
     subheadline: ACADEMY_BRAND.tagline,
     ctaLabel: 'Register Now',
     bodyNotes:
       'SK Tape Ball Academy in Sabzazar, Lahore pairs disciplined athletic conditioning (~200 exercises), structured batting and bowling practice methods, and focused fielding drills.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'about',
@@ -309,61 +339,108 @@ const DEFAULT_WEBSITE_SECTIONS: AdminWebsiteContentSection[] = [
     ctaLabel: 'About Academy',
     bodyNotes:
       'Built on passion, sportsmanship, leadership, integrity, teamwork, discipline, excellence, resilience, and continuous improvement.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'programs',
-    label: 'Training Programs Content',
+    label: 'Training Programs',
     headline: 'Core Coaching Tracks & Individual Pathways',
     subheadline: 'Fitness, Batting, Bowling, Fielding, Wicket Keeping & Level Tracks',
     ctaLabel: 'View Programs',
     bodyNotes: 'Controls curriculum copy and program cards across /programs.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'coaches',
-    label: 'Coach Profiles Content',
+    label: 'Coaches Directory',
     headline: 'Coaching Staff Directory',
     subheadline: 'Official coaching profiles managed directly in the Coach Management portal',
     ctaLabel: 'Meet Coaches',
     bodyNotes: 'Public /coaches page shows only verified, published coach records.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
+  },
+  {
+    id: 'matches',
+    label: 'Matches & Results',
+    headline: 'Tape Ball Leagues & Single-Wicket Events',
+    subheadline: 'Scheduled academy fixtures, match results, and tournament events',
+    ctaLabel: 'Matches & Events',
+    bodyNotes: 'Controls fixtures and match result cards on the homepage and /matches.',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'achievements',
-    label: 'Achievements Section',
+    label: 'Achievements',
     headline: 'Player Milestones & Academy Honors',
     subheadline: 'Verified tournament and squad milestones appear automatically once published',
     ctaLabel: 'View Achievements',
     bodyNotes: 'Controls public milestones on /achievements.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'gallery',
-    label: 'Gallery Content',
+    label: 'Gallery',
     headline: 'Training Ground & Session Gallery',
     subheadline: 'Manage published photos and video clips with custom crop and positioning',
     ctaLabel: 'Open Gallery',
     bodyNotes: 'Controls public photo and video cards on /gallery.',
-    lastUpdatedLabel: 'Active',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'testimonials',
-    label: 'Testimonials Section',
+    label: 'Testimonials',
     headline: 'Parent & Player Feedback',
     subheadline: 'Approved testimonials appear cleanly when published',
     ctaLabel: 'Submit Inquiry',
-    bodyNotes: 'Hidden automatically on homepage until verified reviews are published.',
-    lastUpdatedLabel: 'Active',
+    bodyNotes: 'Shown on homepage automatically once verified reviews are published.',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
+  },
+  {
+    id: 'blog',
+    label: 'News & Updates',
+    headline: 'Academy Announcements & Updates',
+    subheadline: 'Official training notices, trials, and match updates published by the academy',
+    ctaLabel: 'All Updates',
+    bodyNotes: 'Synced with published posts on /updates.',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
   {
     id: 'contact',
-    label: 'Contact Information',
-    headline: 'Sabzazar, Lahore, Pakistan',
-    subheadline: 'Configure official phone, WhatsApp, email, hours, and ground map link in Settings',
-    ctaLabel: 'Contact Academy',
-    bodyNotes: 'Synced with public /contact page and global footer.',
-    lastUpdatedLabel: 'Active',
+    label: 'Contact Section',
+    headline: 'Get In Touch With Our Coaching Desk',
+    subheadline: 'Sabzazar, Lahore · Configure phone, WhatsApp, email, hours, and map link in Settings',
+    ctaLabel: 'Send Message',
+    bodyNotes: 'Synced with the homepage Contact section, /contact page, and global footer.',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
+  },
+  {
+    id: 'footer',
+    label: 'Footer & Legal',
+    headline: 'SK Tape Ball Academy',
+    subheadline: 'Where Dreams Meet Opportunities.',
+    ctaLabel: 'Register Now',
+    bodyNotes: 'Controls academy footer identity alongside verified social and contact channels.',
+    lastUpdatedLabel: 'Published',
+    visible: true,
+    published: true,
   },
 ];
 
@@ -404,6 +481,13 @@ function mergeLoadedState(raw: Partial<AcademyPersistedState> | null): AcademyPe
         ? raw.siteSettings.heroMedia
         : DEFAULT_SITE_SETTINGS.heroMedia,
       aboutMedia: raw.siteSettings?.aboutMedia ?? DEFAULT_SITE_SETTINGS.aboutMedia,
+      maintenance: {
+        ...DEFAULT_SITE_SETTINGS.maintenance,
+        ...(raw.siteSettings?.maintenance ?? {}),
+        backgroundMedia: raw.siteSettings?.maintenance?.backgroundMedia?.src
+          ? raw.siteSettings.maintenance.backgroundMedia
+          : DEFAULT_SITE_SETTINGS.maintenance.backgroundMedia,
+      },
     },
     coaches: Array.isArray(raw.coaches) ? raw.coaches : DEFAULT_STATE.coaches,
     programs: Array.isArray(raw.programs) && raw.programs.length > 0 ? raw.programs : DEFAULT_STATE.programs,
@@ -421,7 +505,16 @@ function mergeLoadedState(raw: Partial<AcademyPersistedState> | null): AcademyPe
     paymentHistory: Array.isArray(raw.paymentHistory) ? raw.paymentHistory : DEFAULT_STATE.paymentHistory,
     websiteSections:
       Array.isArray(raw.websiteSections) && raw.websiteSections.length > 0
-        ? raw.websiteSections
+        ? [
+            ...raw.websiteSections.map((sec) => ({
+              visible: true,
+              published: true,
+              ...sec,
+            })),
+            ...DEFAULT_WEBSITE_SECTIONS.filter(
+              (def) => !raw.websiteSections!.some((sec) => sec.id === def.id),
+            ),
+          ]
         : DEFAULT_STATE.websiteSections,
   };
 }

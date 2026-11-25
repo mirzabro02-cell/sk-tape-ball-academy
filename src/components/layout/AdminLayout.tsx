@@ -25,9 +25,11 @@ import {
   PanelLeftOpen,
   RefreshCw,
   Settings,
+  Search,
   Trophy,
   UserCheck,
   Users,
+  Wrench,
   X,
 } from 'lucide-react';
 import { OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
@@ -65,6 +67,7 @@ const SIDEBAR_ICONS: Record<AdminSidebarItem['iconName'], typeof LayoutDashboard
   Globe,
   BarChart3,
   Settings,
+  Wrench,
 };
 
 function AdminShellInner() {
@@ -89,9 +92,12 @@ function AdminShellInner() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+  const [moduleSearch, setModuleSearch] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const notificationsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useScrollLock(mobileMenuOpen);
 
@@ -99,6 +105,8 @@ function AdminShellInner() {
     setMobileMenuOpen(false);
     setNotificationsOpen(false);
     setProfileMenuOpen(false);
+    setSearchFocused(false);
+    setModuleSearch('');
   }, [location.pathname]);
 
   useEffect(() => {
@@ -113,6 +121,7 @@ function AdminShellInner() {
         setMobileMenuOpen(false);
         setNotificationsOpen(false);
         setProfileMenuOpen(false);
+        setSearchFocused(false);
       }
     }
     function handleClickOutside(e: MouseEvent) {
@@ -122,6 +131,9 @@ function AdminShellInner() {
       }
       if (profileRef.current && !profileRef.current.contains(target)) {
         setProfileMenuOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(target)) {
+        setSearchFocused(false);
       }
     }
     document.addEventListener('keydown', handleKeyDown);
@@ -396,7 +408,96 @@ function AdminShellInner() {
             </div>
           </div>
 
+          {/* Functional Portal Search */}
+          <div ref={searchRef} className="relative hidden md:block w-full max-w-xs lg:max-w-sm">
+            <div className="relative flex items-center">
+              <Search
+                className="pointer-events-none absolute left-3 h-4 w-4 text-[#64748B] dark:text-[#7F95B8]"
+                aria-hidden="true"
+              />
+              <input
+                type="search"
+                value={moduleSearch}
+                onFocus={() => setSearchFocused(true)}
+                onChange={(e) => {
+                  setModuleSearch(e.target.value);
+                  setSearchFocused(true);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && moduleSearch.trim()) {
+                    const query = moduleSearch.trim().toLowerCase();
+                    const firstMatch = ADMIN_SIDEBAR_GROUPS.flatMap((g) => g.items).find((item) =>
+                      item.label.toLowerCase().includes(query),
+                    );
+                    if (firstMatch) {
+                      navigate(firstMatch.path);
+                      setSearchFocused(false);
+                      setModuleSearch('');
+                    }
+                  }
+                }}
+                placeholder="Search portal modules..."
+                aria-label="Search admin modules"
+                className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] pl-9 pr-3 text-xs text-[#07152C] placeholder:text-[#64748B] focus:border-[#D5A52B] focus:outline-none dark:border-white/15 dark:bg-[#0F213B] dark:text-white dark:placeholder:text-[#7F95B8]"
+              />
+            </div>
+
+            {searchFocused && moduleSearch.trim().length > 0 && (
+              <div className="absolute left-0 right-0 top-11 z-40 rounded-[12px] border border-[#E2E8F0] bg-white p-1.5 shadow-xl dark:border-white/15 dark:bg-[#0F213B]">
+                {ADMIN_SIDEBAR_GROUPS.flatMap((g) =>
+                  g.items.map((item) => ({ ...item, group: g.heading })),
+                )
+                  .filter(
+                    (item) =>
+                      item.label.toLowerCase().includes(moduleSearch.trim().toLowerCase()) ||
+                      item.group.toLowerCase().includes(moduleSearch.trim().toLowerCase()),
+                  )
+                  .slice(0, 6)
+                  .map((item) => {
+                    const Icon = SIDEBAR_ICONS[item.iconName];
+                    return (
+                      <button
+                        key={item.path}
+                        type="button"
+                        onClick={() => {
+                          navigate(item.path);
+                          setSearchFocused(false);
+                          setModuleSearch('');
+                        }}
+                        className="flex w-full items-center justify-between gap-2 rounded-[8px] px-3 py-2 text-left text-xs hover:bg-[#F5F7FA] dark:hover:bg-[#162B4D] cursor-pointer"
+                      >
+                        <span className="flex items-center gap-2 font-semibold text-[#07152C] dark:text-white">
+                          <Icon className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                          <span>{item.label}</span>
+                        </span>
+                        <span className="text-[10px] uppercase tracking-wider text-[#64748B] dark:text-[#7F95B8]">
+                          {item.group}
+                        </span>
+                      </button>
+                    );
+                  })}
+                {ADMIN_SIDEBAR_GROUPS.flatMap((g) => g.items).filter((item) =>
+                  item.label.toLowerCase().includes(moduleSearch.trim().toLowerCase()),
+                ).length === 0 && (
+                  <p className="px-3 py-2 text-xs text-[#64748B] dark:text-[#7F95B8]">
+                    No matching portal modules.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-2 shrink-0">
+            {state.siteSettings.maintenance.enabled && (
+              <Link
+                to={`${ADMIN_BASE_PATH}/maintenance`}
+                className="hidden xl:inline-flex h-10 items-center gap-1.5 rounded-[10px] border border-[#D5A52B]/50 bg-[#D5A52B]/15 px-3 text-xs font-bold text-[#9A6F0A] dark:text-[#D5A52B] hover:bg-[#D5A52B]/25 transition-colors whitespace-nowrap"
+              >
+                <Wrench className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>Maintenance ON</span>
+              </Link>
+            )}
+
             <ThemeToggle variant="surface" />
 
             {isBackendConnected && (

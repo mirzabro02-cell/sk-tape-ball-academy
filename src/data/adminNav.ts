@@ -18,7 +18,8 @@ export interface AdminSidebarItem {
     | 'Newspaper'
     | 'Globe'
     | 'BarChart3'
-    | 'Settings';
+    | 'Settings'
+    | 'Wrench';
 }
 
 export interface AdminSidebarGroup {
@@ -73,7 +74,10 @@ export const ADMIN_SIDEBAR_GROUPS: AdminSidebarGroup[] = [
   },
   {
     heading: 'SYSTEM',
-    items: [{ label: 'Settings', path: '/sk-portal/settings', iconName: 'Settings' }],
+    items: [
+      { label: 'Maintenance Mode', path: '/sk-portal/maintenance', iconName: 'Wrench' },
+      { label: 'Settings', path: '/sk-portal/settings', iconName: 'Settings' },
+    ],
   },
 ];
 
@@ -99,5 +103,6 @@ export const ADMIN_ROUTE_META: Record<string, AdminRouteMeta> = {
   '/sk-portal/blog': { title: 'Blog & Updates Management', group: 'Content Management' },
   '/sk-portal/website-content': { title: 'Website Content Management', group: 'Content Management' },
   '/sk-portal/reports': { title: 'Academy Reports', group: 'Analytics' },
+  '/sk-portal/maintenance': { title: 'Maintenance Mode', group: 'System' },
   '/sk-portal/settings': { title: 'System Settings', group: 'System' },
 };

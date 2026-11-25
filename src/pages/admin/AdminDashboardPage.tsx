@@ -2,15 +2,18 @@ import {
   BookOpen,
   CreditCard,
   FileCheck2,
+  Globe,
+  Plus,
   Trophy,
   UserCheck,
   Users,
+  Wrench,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { ADMIN_BASE_PATH } from '@/src/data/adminNav';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import { AdminDonutBreakdown } from '@/src/components/admin/AdminCharts';
+import { AdminDonutBreakdown, AdminLineChart } from '@/src/components/admin/AdminCharts';
 import {
   AdminEmptyState,
   AdminPageHeader,
@@ -36,6 +39,11 @@ export function AdminDashboardPage() {
   ).length;
   const upcomingMatches = state.matches.filter((m) => m.status === 'Upcoming').length;
   const paidFees = state.feeRecords.filter((f) => f.status === 'Paid').length;
+
+  const programTrackChartData = state.programs.slice(0, 6).map((prog) => ({
+    label: prog.title.split(' ')[0] || prog.code,
+    value: state.students.filter((s) => s.program === prog.title).length,
+  }));
 
   return (
     <div className="space-y-5">
@@ -116,6 +124,90 @@ export function AdminDashboardPage() {
           hint="Active morning, evening & weekend groups"
           icon={BookOpen}
         />
+      </div>
+
+      {/* Enrollment Trend Chart + Quick Actions */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:items-start">
+        <Card padding="md" className="lg:col-span-8 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <div>
+              <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                Student Enrollment by Program
+              </h2>
+              <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                Real-time player distribution across active academy coaching tracks
+              </p>
+            </div>
+            <Link
+              to={`${ADMIN_BASE_PATH}/reports`}
+              className="text-xs font-semibold text-[#07152C] hover:text-[#C8202B] dark:text-[#D5A52B] dark:hover:text-[#E2B84A] whitespace-nowrap"
+            >
+              Full Reports
+            </Link>
+          </div>
+          {totalStudents === 0 ? (
+            <AdminEmptyState
+              title="No enrollment data recorded yet"
+              description="As players register or are added to training batches, their distribution across academy tracks appears here automatically."
+              action={
+                <Button to={`${ADMIN_BASE_PATH}/students`} variant="outline" size="sm">
+                  Add First Student
+                </Button>
+              }
+            />
+          ) : (
+            <AdminLineChart data={programTrackChartData} seriesLabel="Players per Track" />
+          )}
+        </Card>
+
+        <Card padding="md" className="lg:col-span-4 space-y-3.5">
+          <div>
+            <h2 className="text-base font-bold text-[#07152C] dark:text-white">Quick Actions</h2>
+            <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+              Jump directly to common academy tasks
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-2">
+            <Link
+              to={`${ADMIN_BASE_PATH}/students`}
+              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs font-semibold text-[#07152C] hover:border-[#D5A52B] dark:border-white/10 dark:bg-[#07152C] dark:text-white dark:hover:border-[#D5A52B]/60 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Plus className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                <span>Enroll / Manage Students</span>
+              </span>
+            </Link>
+            <Link
+              to={`${ADMIN_BASE_PATH}/matches`}
+              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs font-semibold text-[#07152C] hover:border-[#D5A52B] dark:border-white/10 dark:bg-[#07152C] dark:text-white dark:hover:border-[#D5A52B]/60 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Trophy className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                <span>Schedule Match / Result</span>
+              </span>
+            </Link>
+            <Link
+              to={`${ADMIN_BASE_PATH}/website-content`}
+              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs font-semibold text-[#07152C] hover:border-[#D5A52B] dark:border-white/10 dark:bg-[#07152C] dark:text-white dark:hover:border-[#D5A52B]/60 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Globe className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                <span>Edit Website Content (CMS)</span>
+              </span>
+            </Link>
+            <Link
+              to={`${ADMIN_BASE_PATH}/maintenance`}
+              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs font-semibold text-[#07152C] hover:border-[#D5A52B] dark:border-white/10 dark:bg-[#07152C] dark:text-white dark:hover:border-[#D5A52B]/60 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                <Wrench className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
+                <span>
+                  Maintenance Mode ({state.siteSettings.maintenance.enabled ? 'ON' : 'OFF'})
+                </span>
+              </span>
+            </Link>
+          </div>
+        </Card>
       </div>
 
       {/* Distribution Overview */}

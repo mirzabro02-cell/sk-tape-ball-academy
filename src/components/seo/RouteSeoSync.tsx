@@ -70,6 +70,7 @@ export function RouteSeoSync() {
     const isAdminOrSensitive =
       pathname.startsWith('/sk-portal') ||
       pathname.startsWith('/admin') ||
+      pathname === '/maintenance-preview' ||
       pathname === '/reset-password';
 
     const description = ROUTE_DESCRIPTIONS[pathname] ?? DEFAULT_DESCRIPTION;

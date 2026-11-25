@@ -52,6 +52,9 @@ const LegalPage = lazy(() =>
 const LoginPage = lazy(() =>
   import('@/src/pages/LoginPage').then((m) => ({ default: m.LoginPage })),
 );
+const MaintenancePage = lazy(() =>
+  import('@/src/pages/MaintenancePage').then((m) => ({ default: m.MaintenancePage })),
+);
 const MatchDetailPage = lazy(() =>
   import('@/src/pages/MatchDetailPage').then((m) => ({ default: m.MatchDetailPage })),
 );
@@ -130,6 +133,11 @@ const AdminFeesPage = lazy(() =>
 const AdminGalleryPage = lazy(() =>
   import('@/src/pages/admin/AdminGalleryPage').then((m) => ({
     default: m.AdminGalleryPage,
+  })),
+);
+const AdminMaintenancePage = lazy(() =>
+  import('@/src/pages/admin/AdminMaintenancePage').then((m) => ({
+    default: m.AdminMaintenancePage,
   })),
 );
 const AdminMatchesPage = lazy(() =>
@@ -222,6 +230,9 @@ export function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 
+        {/* Full-screen Maintenance Preview (Bypass public gate for admin review) */}
+        <Route path="/maintenance-preview" element={<MaintenancePage previewMode />} />
+
         {/* Unadvertised Protected Admin Portal */}
         <Route path="/sk-portal/login" element={<AdminLoginPage />} />
         <Route
@@ -249,6 +260,7 @@ export function AppRoutes() {
           <Route path="blog" element={<AdminBlogPage />} />
           <Route path="website-content" element={<AdminWebsiteContentPage />} />
           <Route path="reports" element={<AdminReportsPage />} />
+          <Route path="maintenance" element={<AdminMaintenancePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
       </Routes>

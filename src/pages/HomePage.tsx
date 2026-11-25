@@ -1,3 +1,4 @@
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { HeroSection } from '@/src/components/home/HeroSection';
 import { AcademyIntroSection } from '@/src/components/home/AcademyIntroSection';
@@ -9,23 +10,33 @@ import { AchievementsPreviewSection } from '@/src/components/home/AchievementsPr
 import { MatchesEventsSection } from '@/src/components/home/MatchesEventsSection';
 import { GalleryPreviewSection } from '@/src/components/home/GalleryPreviewSection';
 import { TestimonialsSection } from '@/src/components/home/TestimonialsSection';
+import { UpdatesPreviewSection } from '@/src/components/home/UpdatesPreviewSection';
+import { ContactPreviewSection } from '@/src/components/home/ContactPreviewSection';
 import { FinalCtaSection } from '@/src/components/home/FinalCtaSection';
 
 export function HomePage() {
   useDocumentTitle();
+  const { state } = useAcademyState();
+
+  const isSectionVisible = (id: string) => {
+    const found = state.websiteSections.find((s) => s.id === id);
+    return found ? found.visible !== false : true;
+  };
 
   return (
     <div className="space-y-14 sm:space-y-20">
-      <HeroSection />
-      <AcademyIntroSection />
-      <ProgramsPreviewSection />
+      {isSectionVisible('hero') && <HeroSection />}
+      {isSectionVisible('about') && <AcademyIntroSection />}
+      {isSectionVisible('programs') && <ProgramsPreviewSection />}
       <WhyChooseSection />
-      <CoachesPreviewSection />
+      {isSectionVisible('coaches') && <CoachesPreviewSection />}
       <SchedulePreviewSection />
-      <AchievementsPreviewSection />
-      <MatchesEventsSection />
-      <GalleryPreviewSection />
-      <TestimonialsSection />
+      {isSectionVisible('achievements') && <AchievementsPreviewSection />}
+      {isSectionVisible('matches') && <MatchesEventsSection />}
+      {isSectionVisible('gallery') && <GalleryPreviewSection />}
+      {isSectionVisible('testimonials') && <TestimonialsSection />}
+      {isSectionVisible('blog') && <UpdatesPreviewSection />}
+      {isSectionVisible('contact') && <ContactPreviewSection />}
       <FinalCtaSection />
     </div>
   );

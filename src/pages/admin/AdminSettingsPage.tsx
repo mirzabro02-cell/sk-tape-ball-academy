@@ -23,6 +23,7 @@ type SettingsTab =
   | 'social'
   | 'seo'
   | 'notifications'
+  | 'maintenance'
   | 'profile'
   | 'security';
 
@@ -33,6 +34,7 @@ const SETTINGS_TABS: { id: SettingsTab; label: string }[] = [
   { id: 'social', label: 'Social Media Links' },
   { id: 'seo', label: 'Website SEO' },
   { id: 'notifications', label: 'Notifications' },
+  { id: 'maintenance', label: 'Maintenance Mode' },
   { id: 'profile', label: 'Admin Profile' },
   { id: 'security', label: 'Security' },
 ];
@@ -436,6 +438,50 @@ export function AdminSettingsPage() {
                     />
                     <span>Track overdue fee reminders</span>
                   </label>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'maintenance' && (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                      Maintenance Mode Status
+                    </h2>
+                    <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                      Current public website status:{' '}
+                      <strong className="text-[#07152C] dark:text-[#D5A52B]">
+                        {state.siteSettings.maintenance.enabled
+                          ? 'Maintenance Active (Public Site Locked)'
+                          : 'Website Live'}
+                      </strong>
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Button to="/maintenance-preview" variant="outline" size="sm">
+                      Preview Maintenance Page
+                    </Button>
+                    <Button to="/sk-portal/maintenance" variant="primary" size="sm">
+                      Configure Maintenance Mode
+                    </Button>
+                  </div>
+                </div>
+                <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 text-xs text-[#475569] dark:border-white/10 dark:bg-[#07152C] dark:text-[#B4C4DC] space-y-1.5">
+                  <p>
+                    <strong className="text-[#07152C] dark:text-white">Heading:</strong>{' '}
+                    {state.siteSettings.maintenance.heading}
+                  </p>
+                  <p>
+                    <strong className="text-[#07152C] dark:text-white">Message:</strong>{' '}
+                    {state.siteSettings.maintenance.message}
+                  </p>
+                  {state.siteSettings.maintenance.reopeningDateTime && (
+                    <p>
+                      <strong className="text-[#07152C] dark:text-white">Reopening:</strong>{' '}
+                      {state.siteSettings.maintenance.reopeningDateTime}
+                    </p>
+                  )}
                 </div>
               </div>
             )}

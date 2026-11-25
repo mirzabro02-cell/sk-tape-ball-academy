@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { PageTransition } from '@/src/components/motion/MotionPrimitives';
+import { MaintenancePage } from '@/src/pages/MaintenancePage';
 import { Header } from './Header';
 import { MobileDrawer } from './MobileDrawer';
 import { Footer } from './Footer';
@@ -9,6 +11,11 @@ import { PageContainer } from './PageContainer';
 export function MainLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { state } = useAcademyState();
+
+  if (state.siteSettings.maintenance.enabled) {
+    return <MaintenancePage />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-clip bg-[#F5F7FA] text-[#07152C] transition-colors duration-200 dark:bg-[#07152C] dark:text-white">
