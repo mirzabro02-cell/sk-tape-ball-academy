@@ -26,9 +26,9 @@ export function ResetPasswordPage() {
 
   const strengthBarColor =
     strength.label === 'Strong'
-      ? 'bg-[#D9A52E]'
+      ? 'bg-[#D5A52B]'
       : strength.label === 'Fair'
-        ? 'bg-[#071A36]'
+        ? 'bg-[#07152C] dark:bg-white'
         : 'bg-[#C8202B]';
 
   const strengthWidthPercent = newPassword ? Math.max(20, (strength.score / 5) * 100) : 0;
@@ -108,21 +108,21 @@ export function ResetPasswordPage() {
             required
           />
 
-          <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-3">
+          <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-3 dark:border-white/10 dark:bg-[#07152C]">
             <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-[#071A36]">Password Strength</span>
+              <span className="text-[#07152C] dark:text-white">Password Strength</span>
               <span
                 className={
                   strength.label === 'Strong' || strength.label === 'Fair'
-                    ? 'text-[#071A36]'
-                    : 'text-[#C8202B]'
+                    ? 'text-[#07152C] dark:text-[#D5A52B]'
+                    : 'text-[#C8202B] dark:text-[#FCA5A5]'
                 }
               >
                 {newPassword ? strength.label : 'Not entered'}
               </span>
             </div>
 
-            <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]">
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0] dark:bg-white/10">
               <div
                 className={`h-full transition-all duration-200 ${strengthBarColor}`}
                 style={{ width: `${strengthWidthPercent}%` }}
@@ -134,14 +134,16 @@ export function ResetPasswordPage() {
                 <li
                   key={rule.label}
                   className={`flex items-center gap-2 text-xs ${
-                    rule.met ? 'font-medium text-[#071A36]' : 'text-[#64748B]'
+                    rule.met
+                      ? 'font-medium text-[#07152C] dark:text-white'
+                      : 'text-[#64748B] dark:text-[#7F95B8]'
                   }`}
                 >
                   <span
                     className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
                       rule.met
-                        ? 'border-[#071A36] bg-[#071A36] text-[#D9A52E]'
-                        : 'border-[#E2E8F0] bg-white text-transparent'
+                        ? 'border-[#07152C] bg-[#07152C] text-[#D5A52B] dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#07152C]'
+                        : 'border-[#E2E8F0] bg-white text-transparent dark:border-white/15 dark:bg-[#0F213B]'
                     }`}
                   >
                     <Check className="h-2.5 w-2.5" aria-hidden="true" />
@@ -171,7 +173,7 @@ export function ResetPasswordPage() {
           {Object.keys(errors).length > 0 && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>Please resolve the highlighted password requirements above.</span>
@@ -181,9 +183,9 @@ export function ResetPasswordPage() {
           {resetMessage && (
             <div
               role="status"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#071A36]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#071A36]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#07152C]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-[#E2E8F0]"
             >
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
               <span>{resetMessage}</span>
             </div>
           )}
@@ -201,16 +203,16 @@ export function ResetPasswordPage() {
           </Button>
         </form>
 
-        <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-sm dark:border-white/10">
           <Link
             to="/login"
-            className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+            className="font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
           >
             Back to Login
           </Link>
           <Link
             to="/forgot-password"
-            className="text-[#64748B] font-medium hover:text-[#071A36]"
+            className="text-[#475569] font-medium hover:text-[#07152C] dark:text-[#B4C4DC] dark:hover:text-white"
           >
             Request Another Reset
           </Link>

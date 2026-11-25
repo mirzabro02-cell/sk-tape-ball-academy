@@ -18,20 +18,24 @@ export function CtaBanner({
   description,
   primaryLabel = 'Register Now',
   primaryTo = '/register',
-  secondaryLabel = 'Book Free Trial',
-  secondaryTo = '/book-trial',
+  secondaryLabel = 'Explore Programs',
+  secondaryTo = '/programs',
 }: CtaBannerProps) {
   return (
-    <section className="rounded-[18px] bg-[#071A36] px-6 py-9 sm:px-10 sm:py-12 text-white border border-[#050D1B]">
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#0F213B] via-[#07152C] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/12 shadow-[var(--shadow-card)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-20 -bottom-20 h-60 w-60 rounded-full bg-[#D5A52B]/14 blur-3xl"
+      />
+      <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-2xl space-y-2.5">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#D9A52E]">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
             {kicker}
           </p>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             {title}
           </h2>
-          <p className="text-sm sm:text-base leading-relaxed text-white/80">
+          <p className="text-sm sm:text-base leading-relaxed text-[#C2D0E3]">
             {description}
           </p>
         </div>

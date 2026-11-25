@@ -195,7 +195,7 @@ export function AdminCoachesPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
           <div className="sm:col-span-8 relative">
             <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] dark:text-[#8499B8]"
               aria-hidden="true"
             />
             <input
@@ -203,7 +203,7 @@ export function AdminCoachesPage() {
               placeholder="Search coaches by name, role, or specialty..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#07152C] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 dark:border-white/15 dark:bg-[#07152C] dark:text-white dark:placeholder:text-[#8499B8]"
             />
           </div>
           <div className="sm:col-span-4">
@@ -211,7 +211,7 @@ export function AdminCoachesPage() {
               aria-label="Filter coaches by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as 'All' | CoachStatus)}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-white"
             >
               <option value="All">All Statuses</option>
               <option value="Active">Active</option>
@@ -243,53 +243,57 @@ export function AdminCoachesPage() {
             {filteredCoaches.map((coach) => (
               <div
                 key={coach.id}
-                className="rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA]/60 p-5 flex flex-col justify-between gap-4"
+                className="rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA]/75 p-5 flex flex-col justify-between gap-4 dark:border-white/10 dark:bg-[#07152C]/80"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                       {coach.imageSrc ? (
                         <MediaImage
                           src={coach.imageSrc}
                           alt={coach.fullName}
                           transform={coach.imageTransform}
-                          className="h-12 w-12 shrink-0 rounded-[12px] border border-[#E2E8F0]"
+                          className="h-12 w-12 shrink-0 rounded-[12px] border border-[#E2E8F0] dark:border-white/15"
                         />
                       ) : (
-                        <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[#071A36] text-sm font-extrabold text-[#D9A52E]">
+                        <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[#07152C] text-sm font-extrabold text-[#D5A52B] dark:bg-[#162B4D]">
                           {coach.avatarLabel || coach.fullName.slice(0, 2).toUpperCase()}
                         </div>
                       )}
-                      <div>
-                        <h2 className="text-sm font-bold text-[#071A36]">{coach.fullName}</h2>
-                        <p className="text-xs text-[#64748B]">{coach.roleTitle}</p>
+                      <div className="min-w-0">
+                        <h2 className="text-sm font-bold text-[#07152C] dark:text-white truncate">
+                          {coach.fullName}
+                        </h2>
+                        <p className="text-xs text-[#64748B] dark:text-[#A3B4CC] truncate">
+                          {coach.roleTitle}
+                        </p>
                       </div>
                     </div>
                     <AdminStatusBadge label={coach.status} variant={STATUS_BADGE[coach.status]} />
                   </div>
 
                   {coach.bio && (
-                    <p className="text-xs leading-relaxed text-[#64748B] line-clamp-3">
+                    <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC] line-clamp-3">
                       {coach.bio}
                     </p>
                   )}
 
                   {coach.specialties.length > 0 && (
-                    <p className="text-xs font-semibold text-[#071A36]">
+                    <p className="text-xs font-semibold text-[#07152C] dark:text-white">
                       Specialties:{' '}
-                      <span className="font-normal text-[#64748B]">
+                      <span className="font-normal text-[#64748B] dark:text-[#A3B4CC]">
                         {coach.specialties.join(' · ')}
                       </span>
                     </p>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(coach)}
                     aria-label={`Delete ${coach.fullName}`}
-                    className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                    className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
@@ -409,19 +413,23 @@ export function AdminCoachesPage() {
             placeholder="Verified coaching background and focus areas..."
           />
 
-          <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer">
+          <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 accent-[#071A36]"
+              className="h-4 w-4 accent-[#D5A52B]"
             />
             <span>Publish on public Coaches directory</span>
           </label>
 
-          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
+          {formError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
+              {formError}
+            </p>
+          )}
 
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
@@ -440,7 +448,7 @@ export function AdminCoachesPage() {
       >
         {viewCoach && (
           <div className="space-y-4 text-sm">
-            <div className="flex items-center gap-4 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4">
+            <div className="flex items-center gap-4 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 dark:border-white/10 dark:bg-[#07152C]">
               {viewCoach.imageSrc ? (
                 <MediaImage
                   src={viewCoach.imageSrc}
@@ -449,32 +457,36 @@ export function AdminCoachesPage() {
                   className="h-16 w-16 shrink-0 rounded-[14px]"
                 />
               ) : (
-                <div className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-[#071A36] text-lg font-extrabold text-[#D9A52E]">
+                <div className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-[#07152C] text-lg font-extrabold text-[#D5A52B] dark:bg-[#162B4D]">
                   {viewCoach.avatarLabel}
                 </div>
               )}
               <div className="space-y-1">
                 {viewCoach.experienceLabel && (
-                  <p className="text-xs font-semibold text-[#64748B]">
+                  <p className="text-xs font-semibold text-[#64748B] dark:text-[#A3B4CC]">
                     {viewCoach.experienceLabel}
                   </p>
                 )}
                 <AdminStatusBadge label={viewCoach.status} variant={STATUS_BADGE[viewCoach.status]} />
               </div>
             </div>
-            {viewCoach.bio && <p className="leading-relaxed text-[#64748B]">{viewCoach.bio}</p>}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 border-t border-[#E2E8F0] pt-4 text-xs">
+            {viewCoach.bio && (
+              <p className="leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">{viewCoach.bio}</p>
+            )}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 border-t border-[#E2E8F0] pt-4 text-xs dark:border-white/10">
               <div>
-                <p className="font-bold uppercase tracking-wider text-[#071A36]">Specialties</p>
-                <p className="mt-1 text-[#64748B]">
+                <p className="font-bold uppercase tracking-wider text-[#07152C] dark:text-white">
+                  Specialties
+                </p>
+                <p className="mt-1 text-[#64748B] dark:text-[#A3B4CC]">
                   {viewCoach.specialties.join(', ') || 'None specified'}
                 </p>
               </div>
               <div>
-                <p className="font-bold uppercase tracking-wider text-[#071A36]">
+                <p className="font-bold uppercase tracking-wider text-[#07152C] dark:text-white">
                   Assigned Programs
                 </p>
-                <p className="mt-1 text-[#64748B]">
+                <p className="mt-1 text-[#64748B] dark:text-[#A3B4CC]">
                   {viewCoach.assignedPrograms.join(', ') || 'None specified'}
                 </p>
               </div>

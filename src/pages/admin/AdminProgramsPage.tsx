@@ -135,8 +135,8 @@ export function AdminProgramsPage() {
             onClick={() => setCategoryFilter(cat)}
             className={`rounded-[10px] border px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
               categoryFilter === cat
-                ? 'border-[#071A36] bg-[#071A36] text-white'
-                : 'border-[#E2E8F0] bg-white text-[#071A36] hover:bg-[#F5F7FA]'
+                ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                : 'border-[#E2E8F0] bg-white text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:bg-[#0F213B] dark:text-[#E2E8F0] dark:hover:bg-[#162B4D]'
             }`}
           >
             {cat}
@@ -156,11 +156,13 @@ export function AdminProgramsPage() {
               />
 
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
                     {prog.code} · {prog.category}
                   </p>
-                  <h2 className="text-base font-bold text-[#071A36]">{prog.title}</h2>
+                  <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                    {prog.title}
+                  </h2>
                 </div>
                 <AdminStatusBadge
                   label={prog.published ? 'Published' : 'Hidden'}
@@ -168,10 +170,12 @@ export function AdminProgramsPage() {
                 />
               </div>
 
-              <p className="text-xs leading-relaxed text-[#64748B]">{prog.description}</p>
+              <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">
+                {prog.description}
+              </p>
             </div>
 
-            <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+            <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
               <Button
                 type="button"
                 variant="outline"
@@ -242,17 +246,17 @@ export function AdminProgramsPage() {
             required
           />
 
-          <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer">
+          <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 accent-[#071A36]"
+              className="h-4 w-4 accent-[#D5A52B]"
             />
             <span>Visible on public Training Programs listing</span>
           </label>
 
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

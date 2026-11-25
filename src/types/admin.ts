@@ -1,6 +1,6 @@
 import type { ImageTransformConfig } from './media';
 
-export type StudentStatus = 'Active' | 'Trial' | 'Inactive' | 'On Hold';
+export type StudentStatus = 'Active' | 'Inactive' | 'On Hold';
 export type CoachStatus = 'Active' | 'Part-Time' | 'On Leave';
 export type BatchStatus = 'Open' | 'Full' | 'Upcoming' | 'Archived';
 export type AdmissionDecisionStatus =
@@ -9,11 +9,6 @@ export type AdmissionDecisionStatus =
   | 'Approved'
   | 'Rejected'
   | 'More Information Required';
-export type TrialBookingStatus =
-  | 'Requested (Unconfirmed)'
-  | 'Confirmed'
-  | 'Rescheduled'
-  | 'Rejected';
 export type FeePaymentStatus = 'Paid' | 'Pending' | 'Overdue';
 export type AttendanceMark = 'Present' | 'Absent' | 'Late';
 export type MatchRecordStatus = 'Upcoming' | 'Completed' | 'Postponed';
@@ -101,19 +96,6 @@ export interface AdminApplication {
   status: AdmissionDecisionStatus;
   reviewerNotes: string;
   convertedToStudent: boolean;
-}
-
-export interface AdminTrialBooking {
-  id: string;
-  requestCode: string;
-  playerName: string;
-  ageGroup: string;
-  contactPlaceholder: string;
-  requestedProgram: string;
-  preferredDate: string;
-  preferredTimeSlot: string;
-  status: TrialBookingStatus;
-  staffNote: string;
 }
 
 export interface AdminFeePackage {

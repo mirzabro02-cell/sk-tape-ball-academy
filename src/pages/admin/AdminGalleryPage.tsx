@@ -134,7 +134,7 @@ export function AdminGalleryPage() {
       />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1 gap-1">
+        <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1 gap-1 dark:border-white/15 dark:bg-[#0F213B]">
           {(
             [
               { id: 'all', label: 'All Media' },
@@ -148,8 +148,8 @@ export function AdminGalleryPage() {
               onClick={() => setMediaTypeTab(tab.id)}
               className={`rounded-[8px] px-3 py-1.5 text-xs font-semibold cursor-pointer whitespace-nowrap ${
                 mediaTypeTab === tab.id
-                  ? 'bg-[#071A36] text-white'
-                  : 'text-[#64748B] hover:text-[#071A36]'
+                  ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                  : 'text-[#64748B] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:text-white'
               }`}
             >
               {tab.label}
@@ -161,7 +161,7 @@ export function AdminGalleryPage() {
           aria-label="Filter media by category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          className="h-10 rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-xs font-medium text-[#071A36]"
+          className="h-10 rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-xs font-medium text-[#07152C] dark:border-white/15 dark:bg-[#0F213B] dark:text-white"
         >
           <option value="All">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -192,18 +192,20 @@ export function AdminGalleryPage() {
                 />
 
                 <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B]">
+                  <div className="min-w-0">
+                    <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#64748B] dark:text-[#A3B4CC]">
                       {item.mediaType === 'video' ? (
-                        <Film className="h-3.5 w-3.5 text-[#C8202B]" aria-hidden="true" />
+                        <Film className="h-3.5 w-3.5 text-[#C8202B] dark:text-[#FCA5A5]" aria-hidden="true" />
                       ) : (
-                        <ImageIcon className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
+                        <ImageIcon className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
                       )}
                       <span>
                         {item.category} · {item.mediaType.toUpperCase()}
                       </span>
                     </p>
-                    <h2 className="text-sm font-bold text-[#071A36]">{item.title}</h2>
+                    <h2 className="text-sm font-bold text-[#07152C] dark:text-white truncate">
+                      {item.title}
+                    </h2>
                   </div>
                   <AdminStatusBadge
                     label={item.published ? 'Published' : 'Hidden'}
@@ -211,15 +213,17 @@ export function AdminGalleryPage() {
                   />
                 </div>
 
-                {item.caption && <p className="text-xs text-[#64748B]">{item.caption}</p>}
+                {item.caption && (
+                  <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">{item.caption}</p>
+                )}
               </div>
 
-              <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
+              <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setDeleteTarget(item)}
                   aria-label={`Delete ${item.title}`}
-                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Delete</span>
@@ -304,16 +308,16 @@ export function AdminGalleryPage() {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
           />
-          <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer">
+          <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 accent-[#071A36]"
+              className="h-4 w-4 accent-[#D5A52B]"
             />
             <span>Publish on public Gallery page</span>
           </label>
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

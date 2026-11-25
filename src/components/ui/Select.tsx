@@ -26,44 +26,52 @@ export function Select({
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <label
-        htmlFor={selectId}
-        className="text-sm font-medium text-[#071A36] flex items-center gap-1"
-      >
-        <span>{label}</span>
-        {required && (
-          <span className="text-[#C8202B]" aria-hidden="true">
-            *
-          </span>
-        )}
-      </label>
+      {label && (
+        <label
+          htmlFor={selectId}
+          className="text-sm font-medium text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
+        >
+          <span>{label}</span>
+          {required && (
+            <span className="text-[#C8202B] dark:text-[#F87171]" aria-hidden="true">
+              *
+            </span>
+          )}
+        </label>
+      )}
       <div className="relative">
         <select
           id={selectId}
           required={required}
           aria-invalid={Boolean(error)}
           className={cn(
-            'h-[50px] w-full appearance-none rounded-[10px] border bg-white pl-4 pr-10 text-sm text-[#071A36] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/60 focus:border-[#071A36]',
-            error ? 'border-[#C8202B]' : 'border-[#E2E8F0]',
+            'h-[48px] w-full appearance-none rounded-[10px] border bg-white pl-4 pr-10 text-sm text-[#07152C] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 focus:border-[#07152C] dark:bg-[#07152C] dark:text-white dark:focus:border-[#D5A52B]',
+            error
+              ? 'border-[#C8202B] dark:border-[#F87171]'
+              : 'border-[#E2E8F0] dark:border-white/15',
             className,
           )}
           {...rest}
         >
           {options.map((option) => (
-            <option key={option.value || option.label} value={option.value}>
+            <option
+              key={option.value || option.label}
+              value={option.value}
+              className="bg-white text-[#07152C] dark:bg-[#0F213B] dark:text-white"
+            >
               {option.label}
             </option>
           ))}
         </select>
         <ChevronDown
-          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]"
+          className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] dark:text-[#8499B8]"
           aria-hidden="true"
         />
       </div>
       {error ? (
-        <p className="text-xs font-medium text-[#C8202B]">{error}</p>
+        <p className="text-xs font-medium text-[#C8202B] dark:text-[#FCA5A5]">{error}</p>
       ) : helperText ? (
-        <p className="text-xs text-[#64748B]">{helperText}</p>
+        <p className="text-xs text-[#64748B] dark:text-[#8499B8]">{helperText}</p>
       ) : null}
     </div>
   );

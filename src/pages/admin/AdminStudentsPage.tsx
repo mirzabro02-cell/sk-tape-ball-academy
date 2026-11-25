@@ -18,9 +18,8 @@ import { Input } from '@/src/components/ui/Input';
 import { Select } from '@/src/components/ui/Select';
 import { Textarea } from '@/src/components/ui/Textarea';
 
-const STATUS_BADGE_MAP: Record<StudentStatus, 'success' | 'warning' | 'danger' | 'neutral'> = {
+const STATUS_BADGE_MAP: Record<StudentStatus, 'success' | 'danger' | 'neutral'> = {
   Active: 'success',
-  Trial: 'warning',
   'On Hold': 'neutral',
   Inactive: 'danger',
 };
@@ -228,7 +227,7 @@ export function AdminStudentsPage() {
               Search students
             </label>
             <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] dark:text-[#8499B8]"
               aria-hidden="true"
             />
             <input
@@ -240,7 +239,7 @@ export function AdminStudentsPage() {
                 setSearchQuery(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36] placeholder:text-[#64748B] focus:border-[#071A36] focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/50"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#07152C] placeholder:text-[#64748B] focus:border-[#07152C] focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 dark:border-white/15 dark:bg-[#07152C] dark:text-white dark:placeholder:text-[#8499B8] dark:focus:border-[#D5A52B]"
             />
           </div>
 
@@ -252,11 +251,10 @@ export function AdminStudentsPage() {
                 setStatusFilter(e.target.value as 'All' | StudentStatus);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-white"
             >
               <option value="All">All Statuses</option>
               <option value="Active">Active</option>
-              <option value="Trial">Trial</option>
               <option value="On Hold">On Hold</option>
               <option value="Inactive">Inactive</option>
             </select>
@@ -270,7 +268,7 @@ export function AdminStudentsPage() {
                 setProgramFilter(e.target.value);
                 setPage(1);
               }}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-white"
             >
               <option value="All">All Programs</option>
               {programOptions.map((p) => (
@@ -282,7 +280,7 @@ export function AdminStudentsPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0]">
+        <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0] dark:border-white/10">
           {paginatedStudents.length === 0 ? (
             <AdminEmptyState
               title={state.students.length === 0 ? 'No students enrolled yet' : 'No matching student records'}
@@ -316,8 +314,8 @@ export function AdminStudentsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#F5F7FA] text-[#64748B]">
-                  <tr className="border-b border-[#E2E8F0]">
+                <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                  <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                     <th className="px-4 py-3 font-semibold">Student</th>
                     <th className="px-4 py-3 font-semibold">Division</th>
                     <th className="px-4 py-3 font-semibold">Program &amp; Batch</th>
@@ -326,23 +324,37 @@ export function AdminStudentsPage() {
                     <th className="px-4 py-3 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                <tbody className="divide-y divide-[#E2E8F0] bg-white dark:divide-white/10 dark:bg-[#0F213B]">
                   {paginatedStudents.map((stu) => (
-                    <tr key={stu.id} className="hover:bg-[#F5F7FA]/60">
+                    <tr
+                      key={stu.id}
+                      className="hover:bg-[#F5F7FA]/60 dark:hover:bg-[#162B4D]/60"
+                    >
                       <td className="px-4 py-3">
-                        <p className="font-bold text-[#071A36]">{stu.fullName}</p>
-                        <p className="font-mono text-[11px] text-[#64748B]">{stu.studentCode}</p>
+                        <p className="font-bold text-[#07152C] dark:text-white">{stu.fullName}</p>
+                        <p className="font-mono text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                          {stu.studentCode}
+                        </p>
                       </td>
-                      <td className="px-4 py-3 text-[#071A36] whitespace-nowrap">{stu.ageGroup}</td>
+                      <td className="px-4 py-3 text-[#07152C] dark:text-[#E2E8F0] whitespace-nowrap">
+                        {stu.ageGroup}
+                      </td>
                       <td className="px-4 py-3">
-                        <p className="font-semibold text-[#071A36]">{stu.program}</p>
-                        <p className="text-[11px] text-[#64748B]">{stu.batchName}</p>
+                        <p className="font-semibold text-[#07152C] dark:text-white">
+                          {stu.program}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                          {stu.batchName}
+                        </p>
                       </td>
-                      <td className="px-4 py-3 font-mono font-semibold text-[#071A36] tabular-nums">
+                      <td className="px-4 py-3 font-mono font-semibold text-[#07152C] dark:text-[#D5A52B] tabular-nums">
                         {stu.attendanceRate}%
                       </td>
                       <td className="px-4 py-3">
-                        <AdminStatusBadge label={stu.status} variant={STATUS_BADGE_MAP[stu.status]} />
+                        <AdminStatusBadge
+                          label={stu.status}
+                          variant={STATUS_BADGE_MAP[stu.status] ?? 'neutral'}
+                        />
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
@@ -350,7 +362,7 @@ export function AdminStudentsPage() {
                             type="button"
                             onClick={() => setProfileStudent(stu)}
                             aria-label={`View ${stu.fullName}`}
-                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                           >
                             <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                             <span>View</span>
@@ -359,7 +371,7 @@ export function AdminStudentsPage() {
                             type="button"
                             onClick={() => openAssignModal(stu)}
                             aria-label={`Assign batch for ${stu.fullName}`}
-                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                           >
                             <Layers className="h-3.5 w-3.5" aria-hidden="true" />
                             <span>Batch</span>
@@ -368,7 +380,7 @@ export function AdminStudentsPage() {
                             type="button"
                             onClick={() => openEditModal(stu)}
                             aria-label={`Edit ${stu.fullName}`}
-                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+                            className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                           >
                             <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                             <span>Edit</span>
@@ -377,7 +389,7 @@ export function AdminStudentsPage() {
                             type="button"
                             onClick={() => setDeleteTarget(stu)}
                             aria-label={`Remove ${stu.fullName}`}
-                            className="inline-flex h-8 items-center justify-center rounded-[8px] border border-[#C8202B]/25 px-2 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                            className="inline-flex h-8 items-center justify-center rounded-[8px] border border-[#C8202B]/30 px-2 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                           >
                             <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
@@ -448,7 +460,6 @@ export function AdminStudentsPage() {
               }
               options={[
                 { value: 'Active', label: 'Active' },
-                { value: 'Trial', label: 'Trial' },
                 { value: 'On Hold', label: 'On Hold' },
                 { value: 'Inactive', label: 'Inactive' },
               ]}
@@ -472,9 +483,13 @@ export function AdminStudentsPage() {
             placeholder="Optional skill focus or batch notes..."
           />
 
-          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
+          {formError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
+              {formError}
+            </p>
+          )}
 
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
@@ -493,46 +508,62 @@ export function AdminStudentsPage() {
         open={Boolean(profileStudent)}
         onClose={() => setProfileStudent(null)}
         title={profileStudent?.fullName ?? 'Student Profile'}
-        subtitle={profileStudent ? `ID: ${profileStudent.studentCode} · Joined ${profileStudent.joinedLabel}` : undefined}
+        subtitle={
+          profileStudent
+            ? `ID: ${profileStudent.studentCode} · Joined ${profileStudent.joinedLabel}`
+            : undefined
+        }
       >
         {profileStudent && (
           <div className="space-y-4 text-sm">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 dark:border-white/10 dark:bg-[#07152C]">
               <div>
-                <p className="text-xs text-[#64748B]">Division</p>
-                <p className="font-semibold text-[#071A36]">{profileStudent.ageGroup}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">Division</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {profileStudent.ageGroup}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Guardian / Emergency Contact</p>
-                <p className="font-semibold text-[#071A36]">{profileStudent.guardianName}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                  Guardian / Emergency Contact
+                </p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {profileStudent.guardianName}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Contact Number</p>
-                <p className="font-semibold text-[#071A36]">
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">Contact Number</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
                   {profileStudent.contactPlaceholder || 'Not recorded'}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Assigned Program</p>
-                <p className="font-semibold text-[#071A36]">{profileStudent.program}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">Assigned Program</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {profileStudent.program}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Batch Placement</p>
-                <p className="font-semibold text-[#071A36]">{profileStudent.batchName}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">Batch Placement</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {profileStudent.batchName}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Status</p>
-                <AdminStatusBadge
-                  label={profileStudent.status}
-                  variant={STATUS_BADGE_MAP[profileStudent.status]}
-                />
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">Status</p>
+                <div className="mt-1">
+                  <AdminStatusBadge
+                    label={profileStudent.status}
+                    variant={STATUS_BADGE_MAP[profileStudent.status] ?? 'neutral'}
+                  />
+                </div>
               </div>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
                 Development Notes
               </p>
-              <p className="mt-1 text-sm text-[#071A36]">
+              <p className="mt-1 text-sm text-[#07152C] dark:text-[#E2E8F0]">
                 {profileStudent.notes || 'No notes recorded.'}
               </p>
             </div>
@@ -563,7 +594,7 @@ export function AdminStudentsPage() {
               ...batchOptions.map((b) => ({ value: b.id, label: b.name })),
             ]}
           />
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setAssignStudent(null)}>
               Cancel
             </Button>

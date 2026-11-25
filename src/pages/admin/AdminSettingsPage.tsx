@@ -3,7 +3,7 @@ import { AlertCircle, Save, ShieldCheck } from 'lucide-react';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 import battingImg from '@/src/assets/images/drill_power_batting_1795439224792.jpg';
-import { OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
+import { HERO_STADIUM_VISUAL, OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useAdminAuth } from '@/src/context/AdminAuthContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
@@ -77,7 +77,6 @@ export function AdminSettingsPage() {
   const [notifyApplications, setNotifyApplications] = useState(
     state.siteSettings.notifyApplications,
   );
-  const [notifyTrials, setNotifyTrials] = useState(state.siteSettings.notifyTrials);
   const [notifyFees, setNotifyFees] = useState(state.siteSettings.notifyFees);
 
   const [adminDisplayName, setAdminDisplayName] = useState(
@@ -161,7 +160,6 @@ export function AdminSettingsPage() {
       seoTitle: seoTitle.trim(),
       seoDescription: seoDescription.trim(),
       notifyApplications,
-      notifyTrials,
       notifyFees,
       adminDisplayName: adminDisplayName.trim() || 'Administrator',
       adminEmail: adminEmail.trim(),
@@ -181,7 +179,7 @@ export function AdminSettingsPage() {
       />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
-        <Card padding="sm" className="lg:col-span-3 space-y-1">
+        <Card padding="sm" className="lg:col-span-3 lg:sticky lg:top-[84px] space-y-1">
           {SETTINGS_TABS.map((tab) => {
             const active = activeTab === tab.id;
             return (
@@ -194,8 +192,8 @@ export function AdminSettingsPage() {
                 }}
                 className={`flex w-full items-center justify-between rounded-[10px] px-3.5 py-2.5 text-left text-xs font-semibold transition-colors cursor-pointer ${
                   active
-                    ? 'bg-[#071A36] text-white'
-                    : 'text-[#071A36] hover:bg-[#F5F7FA]'
+                    ? 'bg-[#D5A52B] text-[#050D1B]'
+                    : 'text-[#07152C] hover:bg-[#F5F7FA] dark:text-[#E2E8F0] dark:hover:bg-[#162B4D]'
                 }`}
               >
                 <span>{tab.label}</span>
@@ -208,7 +206,9 @@ export function AdminSettingsPage() {
           <form onSubmit={handleSaveSettings} className="space-y-5">
             {activeTab === 'academy' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Academy Information</h2>
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Academy Information
+                </h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <Input
                     label="Official Academy Name"
@@ -238,12 +238,12 @@ export function AdminSettingsPage() {
                   value={footerBio}
                   onChange={(e) => setFooterBio(e.target.value)}
                 />
-                <label className="flex items-center gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-4 py-3 text-xs text-[#071A36] cursor-pointer">
+                <label className="flex items-center gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-4 py-3 text-xs text-[#07152C] dark:border-white/10 dark:bg-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
                   <input
                     type="checkbox"
                     checked={showPublicFees}
                     onChange={(e) => setShowPublicFees(e.target.checked)}
-                    className="h-4 w-4 accent-[#071A36]"
+                    className="h-4 w-4 accent-[#D5A52B]"
                   />
                   <span>
                     Show published fee packages on the public Fees page (keep unchecked until
@@ -255,7 +255,7 @@ export function AdminSettingsPage() {
 
             {activeTab === 'logo' && (
               <div className="space-y-5">
-                <h2 className="text-base font-bold text-[#071A36]">
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
                   Official Crest &amp; Homepage Visuals
                 </h2>
                 <ImageManager
@@ -277,6 +277,7 @@ export function AdminSettingsPage() {
                     onChange={setHeroMedia}
                     aspectRatio="16/9"
                     presetAssets={[
+                      { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
                       { label: 'Floodlit Pitch Backdrop', src: heroImg },
                       { label: 'Practice Lanes', src: lanesImg },
                       { label: 'Power Batting Drill', src: battingImg },
@@ -290,6 +291,7 @@ export function AdminSettingsPage() {
                     aspectRatio="4/3"
                     presetAssets={[
                       { label: 'Practice Lanes', src: lanesImg },
+                      { label: 'Stadium Tape Ball Action Hero', src: HERO_STADIUM_VISUAL },
                       { label: 'Floodlit Pitch', src: heroImg },
                     ]}
                     storageFolder="about"
@@ -300,10 +302,10 @@ export function AdminSettingsPage() {
 
             {activeTab === 'contact' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
                   Contact &amp; Location Details
                 </h2>
-                <p className="text-xs text-[#64748B]">
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
                   Leave any unconfirmed channel blank—blank channels are hidden cleanly on the
                   public website rather than showing placeholder text.
                 </p>
@@ -353,8 +355,10 @@ export function AdminSettingsPage() {
 
             {activeTab === 'social' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Social Media Links</h2>
-                <p className="text-xs text-[#64748B]">
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Social Media Links
+                </h2>
+                <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
                   Only populated, valid social URLs appear in the public footer and contact page.
                 </p>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -392,7 +396,9 @@ export function AdminSettingsPage() {
 
             {activeTab === 'seo' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Website SEO Settings</h2>
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Website SEO Settings
+                </h2>
                 <Input
                   label="Default Meta Title"
                   value={seoTitle}
@@ -408,32 +414,25 @@ export function AdminSettingsPage() {
 
             {activeTab === 'notifications' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Notification Preferences</h2>
-                <div className="space-y-3 text-sm text-[#071A36]">
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Notification Preferences
+                </h2>
+                <div className="space-y-3 text-sm text-[#07152C] dark:text-[#E2E8F0]">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={notifyApplications}
                       onChange={(e) => setNotifyApplications(e.target.checked)}
-                      className="h-4 w-4 accent-[#071A36]"
+                      className="h-4 w-4 accent-[#D5A52B]"
                     />
                     <span>Alert portal on new student admission applications</span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={notifyTrials}
-                      onChange={(e) => setNotifyTrials(e.target.checked)}
-                      className="h-4 w-4 accent-[#071A36]"
-                    />
-                    <span>Alert coaching desk on incoming free trial requests</span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
                       checked={notifyFees}
                       onChange={(e) => setNotifyFees(e.target.checked)}
-                      className="h-4 w-4 accent-[#071A36]"
+                      className="h-4 w-4 accent-[#D5A52B]"
                     />
                     <span>Track overdue fee reminders</span>
                   </label>
@@ -443,7 +442,9 @@ export function AdminSettingsPage() {
 
             {activeTab === 'profile' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Administrator Profile</h2>
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Administrator Profile
+                </h2>
                 <Input
                   label="Display Name"
                   value={adminDisplayName}
@@ -460,21 +461,23 @@ export function AdminSettingsPage() {
 
             {activeTab === 'security' && (
               <div className="space-y-4">
-                <h2 className="text-base font-bold text-[#071A36]">Portal Access Security</h2>
-                <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 flex items-start gap-3 text-xs text-[#071A36]">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+                <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                  Portal Access Security
+                </h2>
+                <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 flex items-start gap-3 text-xs text-[#07152C] dark:border-white/10 dark:bg-[#07152C] dark:text-[#E2E8F0]">
+                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
                   <div className="space-y-1.5">
                     <p className="font-semibold">
                       {isSupabaseMode
                         ? 'Supabase Authentication & Admin Role Verification Active'
                         : 'Local Preview Mode Only (Supabase Unconfigured)'}
                     </p>
-                    <p className="text-[#64748B]">
+                    <p className="text-[#64748B] dark:text-[#A3B4CC]">
                       {isSupabaseMode
                         ? 'Portal authentication is backed by Supabase Auth with profiles.role = "admin" enforcement. No service_role keys are exposed in client code.'
                         : 'Supabase environment variables are not configured in this workspace, so portal access uses a browser-local preview gate only. Configure VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and Row Level Security before production use.'}
                     </p>
-                    <p className="text-[#64748B]">
+                    <p className="text-[#64748B] dark:text-[#A3B4CC]">
                       The management portal is excluded from public navigation and sets robots{' '}
                       <code className="font-mono">noindex, nofollow</code>. HTML tags are blocked
                       across text inputs and external URLs require HTTP/HTTPS protocols.
@@ -487,14 +490,14 @@ export function AdminSettingsPage() {
             {validationError && (
               <div
                 role="alert"
-                className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-xs font-semibold text-[#C8202B]"
+                className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-xs font-semibold text-[#C8202B] dark:border-[#F87171]/35 dark:text-[#FCA5A5]"
               >
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{validationError}</span>
               </div>
             )}
 
-            <div className="flex justify-end border-t border-[#E2E8F0] pt-4">
+            <div className="flex justify-end border-t border-[#E2E8F0] pt-4 dark:border-white/10">
               <Button type="submit" variant="primary" size="sm">
                 <Save className="h-4 w-4" aria-hidden="true" />
                 <span>Save Settings</span>

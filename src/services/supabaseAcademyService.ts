@@ -2,24 +2,20 @@ import { isSupabaseConfigured, rawSupabase } from '@/src/services/supabaseClient
 import type {
   AdminApplication,
   AdminStudent,
-  AdminTrialBooking,
   AdmissionDecisionStatus,
   StudentStatus,
-  TrialBookingStatus,
 } from '@/src/types/admin';
 
 /**
  * Verified Core Supabase Repository
  *
- * Maps strictly against Task 4 v15 verified tables:
+ * Maps against:
  *   - public.profiles (id, role, full_name)
  *   - public.students (id, full_name, guardian_profile_id, created_at, ...)
  *   - public.admissions (id, reference_code, status, created_at, ...)
- *   - public.trial_bookings (id, reference_code, status, created_at, ...)
  *
- * All status mapping strictly respects v15 Postgres CHECK constraints:
+ * All status mapping respects Postgres CHECK constraints:
  *   - admissions.status: 'pending' | 'under_review' | 'accepted' | 'rejected' | 'waitlisted'
- *   - trial_bookings.status: 'requested' | 'confirmed' | 'completed' | 'cancelled'
  */
 
 export type DbAdmissionStatus =
@@ -28,8 +24,6 @@ export type DbAdmissionStatus =
   | 'accepted'
   | 'rejected'
   | 'waitlisted';
-
-export type DbTrialStatus = 'requested' | 'confirmed' | 'completed' | 'cancelled';
 
 export interface RegistrationSubmitInput {
   studentName: string;
@@ -52,19 +46,6 @@ export interface RegistrationSubmitInput {
   guardianConsent: boolean;
   privacyConsent: boolean;
   photographyConsent: boolean;
-}
-
-export interface TrialSubmitInput {
-  studentName: string;
-  dobOrAge: string;
-  guardianName: string;
-  contactPhone: string;
-  contactEmail: string;
-  requestedProgram: string;
-  preferredDate: string;
-  preferredTimeSlot: string;
-  previousExperience: string;
-  additionalMessage: string;
 }
 
 export interface RepositoryActionResult<T = void> {
@@ -107,39 +88,6 @@ export function mapUiAdmissionStatusToDb(status: AdmissionDecisionStatus): DbAdm
   }
 }
 
-export function mapDbTrialStatusToUi(
-  raw: string | null | undefined,
-  staffNote?: string | null,
-): TrialBookingStatus {
-  if (staffNote && staffNote.startsWith('[Rescheduled]') && raw !== 'cancelled') {
-    return 'Rescheduled';
-  }
-  switch ((raw ?? '').toLowerCase()) {
-    case 'confirmed':
-    case 'completed':
-      return 'Confirmed';
-    case 'cancelled':
-    case 'rejected':
-      return 'Rejected';
-    case 'requested':
-    default:
-      return 'Requested (Unconfirmed)';
-  }
-}
-
-export function mapUiTrialStatusToDb(status: TrialBookingStatus): DbTrialStatus {
-  switch (status) {
-    case 'Confirmed':
-      return 'confirmed';
-    case 'Rejected':
-      return 'cancelled';
-    case 'Rescheduled':
-    case 'Requested (Unconfirmed)':
-    default:
-      return 'requested';
-  }
-}
-
 function formatReadableDate(iso: unknown): string {
   if (typeof iso !== 'string' || !iso) return 'Recorded';
   const parsed = new Date(iso);
@@ -164,7 +112,7 @@ function isSchemaColumnOrTableError(message: string): boolean {
 
 function mapStudentRow(row: Record<string, unknown>, index: number): AdminStudent {
   const rawStatus = String(row.status ?? 'Active');
-  const validStatuses: StudentStatus[] = ['Active', 'Trial', 'Inactive', 'On Hold'];
+  const validStatuses: StudentStatus[] = ['Active', 'Inactive', 'On Hold'];
   const status: StudentStatus = validStatuses.includes(rawStatus as StudentStatus)
     ? (rawStatus as StudentStatus)
     : 'Active';
@@ -208,43 +156,24 @@ function mapAdmissionRow(row: Record<string, unknown>, index: number): AdminAppl
   };
 }
 
-function mapTrialRow(row: Record<string, unknown>, index: number): AdminTrialBooking {
-  const staffNote = typeof row.staff_note === 'string' ? row.staff_note : '';
-  return {
-    id: String(row.id ?? `trl-${index}`),
-    requestCode: String(row.reference_code ?? 'TRL-PENDING'),
-    playerName: String(row.player_name ?? row.student_name ?? row.full_name ?? 'Player'),
-    ageGroup: String(row.dob_or_age ?? row.age_group ?? ''),
-    contactPlaceholder: String(row.contact_phone ?? row.contact ?? ''),
-    requestedProgram: String(row.requested_program ?? row.program ?? 'Trial Session'),
-    preferredDate: String(row.preferred_date ?? ''),
-    preferredTimeSlot: String(row.preferred_time_slot ?? ''),
-    status: mapDbTrialStatusToUi(typeof row.status === 'string' ? row.status : 'requested', staffNote),
-    staffNote: staffNote.replace(/^\[Rescheduled\]\s*/, ''),
-  };
-}
-
 export async function fetchCoreSupabaseData(): Promise<
   RepositoryActionResult<{
     students: AdminStudent[];
     applications: AdminApplication[];
-    trials: AdminTrialBooking[];
   }>
 > {
   if (!isSupabaseConfigured || !rawSupabase) {
     return { ok: false, error: 'Supabase is not configured in this environment.' };
   }
 
-  const [studentsRes, admissionsRes, trialsRes] = await Promise.all([
+  const [studentsRes, admissionsRes] = await Promise.all([
     rawSupabase.from('students').select('*').order('created_at', { ascending: false }),
     rawSupabase.from('admissions').select('*').order('created_at', { ascending: false }),
-    rawSupabase.from('trial_bookings').select('*').order('created_at', { ascending: false }),
   ]);
 
   const errors: string[] = [];
   if (studentsRes.error) errors.push(`students: ${studentsRes.error.message}`);
   if (admissionsRes.error) errors.push(`admissions: ${admissionsRes.error.message}`);
-  if (trialsRes.error) errors.push(`trial_bookings: ${trialsRes.error.message}`);
 
   if (errors.length > 0) {
     const joined = errors.join(' | ');
@@ -264,7 +193,6 @@ export async function fetchCoreSupabaseData(): Promise<
       applications: (admissionsRes.data ?? []).map((r, i) =>
         mapAdmissionRow(r as Record<string, unknown>, i),
       ),
-      trials: (trialsRes.data ?? []).map((r, i) => mapTrialRow(r as Record<string, unknown>, i)),
     },
   };
 }
@@ -318,51 +246,6 @@ export async function insertSupabaseAdmission(
   return {
     ok: true,
     data: { application: mapAdmissionRow(data as Record<string, unknown>, 0) },
-  };
-}
-
-export async function insertSupabaseTrialBooking(
-  input: TrialSubmitInput,
-): Promise<RepositoryActionResult<{ trial: AdminTrialBooking }>> {
-  if (!isSupabaseConfigured || !rawSupabase) {
-    return { ok: false, error: 'Supabase is not configured.' };
-  }
-
-  const payload = {
-    player_name: input.studentName,
-    dob_or_age: input.dobOrAge,
-    guardian_name: input.guardianName,
-    contact_phone: input.contactPhone,
-    contact_email: input.contactEmail || null,
-    requested_program: input.requestedProgram,
-    preferred_date: input.preferredDate,
-    preferred_time_slot: input.preferredTimeSlot,
-    previous_experience: input.previousExperience,
-    additional_message: input.additionalMessage || null,
-    status: 'requested' as DbTrialStatus,
-    staff_note: input.additionalMessage
-      ? `Guardian: ${input.guardianName} · ${input.additionalMessage}`
-      : `Guardian: ${input.guardianName} · Level: ${input.previousExperience}`,
-  };
-
-  const { data, error } = await rawSupabase
-    .from('trial_bookings')
-    .insert(payload)
-    .select('*')
-    .single();
-
-  if (error || !data) {
-    const msg = error?.message ?? 'Unable to submit trial request to Supabase.';
-    return {
-      ok: false,
-      error: msg,
-      schemaMissingHint: isSchemaColumnOrTableError(msg),
-    };
-  }
-
-  return {
-    ok: true,
-    data: { trial: mapTrialRow(data as Record<string, unknown>, 0) },
   };
 }
 
@@ -491,44 +374,4 @@ export async function updateSupabaseAdmission(
     return { ok: false, error: msg, schemaMissingHint: isSchemaColumnOrTableError(msg) };
   }
   return { ok: true, data: mapAdmissionRow(data as Record<string, unknown>, 0) };
-}
-
-export async function updateSupabaseTrialBooking(
-  id: string,
-  patch: {
-    status: TrialBookingStatus;
-    preferredDate?: string;
-    preferredTimeSlot?: string;
-    staffNote?: string;
-  },
-): Promise<RepositoryActionResult<AdminTrialBooking>> {
-  if (!isSupabaseConfigured || !rawSupabase) {
-    return { ok: false, error: 'Supabase is not configured.' };
-  }
-
-  const updatePayload: Record<string, unknown> = {
-    status: mapUiTrialStatusToDb(patch.status),
-  };
-  if (patch.preferredDate !== undefined) updatePayload.preferred_date = patch.preferredDate;
-  if (patch.preferredTimeSlot !== undefined) {
-    updatePayload.preferred_time_slot = patch.preferredTimeSlot;
-  }
-  if (patch.staffNote !== undefined || patch.status === 'Rescheduled') {
-    const cleanNote = (patch.staffNote ?? '').replace(/^\[Rescheduled\]\s*/, '').trim();
-    updatePayload.staff_note =
-      patch.status === 'Rescheduled' ? `[Rescheduled] ${cleanNote}`.trim() : cleanNote;
-  }
-
-  const { data, error } = await rawSupabase
-    .from('trial_bookings')
-    .update(updatePayload)
-    .eq('id', id)
-    .select('*')
-    .single();
-
-  if (error || !data) {
-    const msg = error?.message ?? 'Failed to update trial booking.';
-    return { ok: false, error: msg, schemaMissingHint: isSchemaColumnOrTableError(msg) };
-  }
-  return { ok: true, data: mapTrialRow(data as Record<string, unknown>, 0) };
 }

@@ -257,11 +257,13 @@ export function AdminFeesPage() {
 
       {state.feeRecords.length > 0 && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Fee Status Distribution</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Fee Status Distribution
+          </h2>
           <AdminDonutBreakdown
             segments={[
-              { label: 'Paid', count: counts.paid, color: '#D9A52E' },
-              { label: 'Pending', count: counts.pending, color: '#071A36' },
+              { label: 'Paid', count: counts.paid, color: '#D5A52B' },
+              { label: 'Pending', count: counts.pending, color: '#60A5FA' },
               { label: 'Overdue', count: counts.overdue, color: '#C8202B' },
             ]}
           />
@@ -270,13 +272,11 @@ export function AdminFeesPage() {
 
       {/* Fee Packages */}
       <Card padding="md" className="space-y-4">
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <h2 className="text-base font-bold text-[#071A36]">Fee Packages</h2>
-            <p className="text-xs text-[#64748B]">
-              Enable &ldquo;Display Official Fee Packages on Public Website&rdquo; in Settings once approved packages are ready.
-            </p>
-          </div>
+        <div>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">Fee Packages</h2>
+          <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+            Enable &ldquo;Display Official Fee Packages on Public Website&rdquo; in Settings once approved packages are ready.
+          </p>
         </div>
         {state.feePackages.length === 0 ? (
           <AdminEmptyState
@@ -288,10 +288,12 @@ export function AdminFeesPage() {
             {state.feePackages.map((pkg) => (
               <div
                 key={pkg.id}
-                className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-2 text-xs"
+                className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-2 text-xs dark:border-white/10 dark:bg-[#07152C]"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="min-w-0 break-words font-bold text-[#071A36]">{pkg.name}</p>
+                  <p className="min-w-0 break-words font-bold text-[#07152C] dark:text-white">
+                    {pkg.name}
+                  </p>
                   <div className="flex shrink-0 items-center gap-1.5">
                     <AdminStatusBadge
                       label={pkg.status}
@@ -301,15 +303,19 @@ export function AdminFeesPage() {
                       type="button"
                       onClick={() => setDeletePkgTarget(pkg)}
                       aria-label={`Remove ${pkg.name}`}
-                      className="text-[#C8202B]/70 hover:text-[#C8202B] cursor-pointer"
+                      className="text-[#C8202B]/75 hover:text-[#C8202B] dark:text-[#FCA5A5]/80 dark:hover:text-[#FCA5A5] cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
-                <p className="text-[#64748B]">{pkg.programScope}</p>
-                <p className="font-semibold text-[#071A36]">{pkg.billingCycle}</p>
-                <p className="font-mono text-xs font-bold text-[#071A36]">{pkg.amountPlaceholder}</p>
+                <p className="text-[#64748B] dark:text-[#A3B4CC]">{pkg.programScope}</p>
+                <p className="font-semibold text-[#07152C] dark:text-[#E2E8F0]">
+                  {pkg.billingCycle}
+                </p>
+                <p className="font-mono text-xs font-bold text-[#07152C] dark:text-[#D5A52B]">
+                  {pkg.amountPlaceholder}
+                </p>
               </div>
             ))}
           </div>
@@ -319,7 +325,7 @@ export function AdminFeesPage() {
       {/* Student Fee Records */}
       <Card padding="md" className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-bold text-[#071A36]">Student Fee Records</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">Student Fee Records</h2>
           <div className="flex flex-wrap gap-2">
             {(['All', 'Paid', 'Pending', 'Overdue'] as const).map((st) => (
               <button
@@ -328,8 +334,8 @@ export function AdminFeesPage() {
                 onClick={() => setStatusFilter(st)}
                 className={`rounded-[10px] border px-3 py-1.5 text-xs font-semibold cursor-pointer ${
                   statusFilter === st
-                    ? 'border-[#071A36] bg-[#071A36] text-white'
-                    : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36]'
+                    ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                    : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-[#E2E8F0]'
                 }`}
               >
                 {st}
@@ -344,10 +350,10 @@ export function AdminFeesPage() {
             description="Create a student invoice above to start tracking monthly or program fee status."
           />
         ) : (
-          <div className="overflow-x-auto rounded-[12px] border border-[#E2E8F0]">
+          <div className="overflow-x-auto rounded-[12px] border border-[#E2E8F0] dark:border-white/10">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F5F7FA] text-[#64748B]">
-                <tr className="border-b border-[#E2E8F0]">
+              <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                   <th className="px-4 py-3 font-semibold">Invoice</th>
                   <th className="px-4 py-3 font-semibold">Student</th>
                   <th className="px-4 py-3 font-semibold">Package</th>
@@ -355,18 +361,25 @@ export function AdminFeesPage() {
                   <th className="px-4 py-3 font-semibold">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8F0] bg-white">
+              <tbody className="divide-y divide-[#E2E8F0] bg-white dark:divide-white/10 dark:bg-[#0F213B]">
                 {filteredRecords.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-[#F5F7FA]/60">
-                    <td className="px-4 py-3 font-mono font-semibold text-[#071A36] whitespace-nowrap">
+                  <tr
+                    key={rec.id}
+                    className="hover:bg-[#F5F7FA]/60 dark:hover:bg-[#162B4D]/60"
+                  >
+                    <td className="px-4 py-3 font-mono font-semibold text-[#07152C] dark:text-[#D5A52B] whitespace-nowrap">
                       {rec.invoiceCode}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-bold text-[#071A36]">{rec.studentName}</p>
-                      <p className="text-[11px] text-[#64748B]">{rec.program}</p>
+                      <p className="font-bold text-[#07152C] dark:text-white">{rec.studentName}</p>
+                      <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                        {rec.program}
+                      </p>
                     </td>
-                    <td className="px-4 py-3 text-[#64748B]">{rec.packageName}</td>
-                    <td className="px-4 py-3 font-mono text-[11px] text-[#071A36]">
+                    <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
+                      {rec.packageName}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-[11px] text-[#07152C] dark:text-white">
                       {rec.amountPlaceholder}
                     </td>
                     <td className="px-4 py-3">
@@ -382,27 +395,31 @@ export function AdminFeesPage() {
 
       {/* Payment History */}
       <Card padding="md" className="space-y-4">
-        <h2 className="text-base font-bold text-[#071A36]">Payment History Log</h2>
+        <h2 className="text-base font-bold text-[#07152C] dark:text-white">Payment History Log</h2>
         {state.paymentHistory.length === 0 ? (
-          <p className="text-xs text-[#64748B]">No payments recorded yet.</p>
+          <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">No payments recorded yet.</p>
         ) : (
           <div className="space-y-2">
             {state.paymentHistory.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-4 py-3 text-xs"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-4 py-3 text-xs dark:border-white/10 dark:bg-[#07152C]"
               >
                 <div>
-                  <p className="font-bold text-[#071A36]">
+                  <p className="font-bold text-[#07152C] dark:text-white">
                     {item.invoiceCode} · {item.studentName}
                   </p>
-                  <p className="text-[#64748B]">
+                  <p className="text-[#64748B] dark:text-[#A3B4CC]">
                     {item.methodPlaceholder} — {item.notes}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-mono font-semibold text-[#071A36]">{item.amountPlaceholder}</p>
-                  <p className="text-[11px] text-[#64748B]">{item.recordedLabel}</p>
+                  <p className="font-mono font-semibold text-[#07152C] dark:text-[#D5A52B]">
+                    {item.amountPlaceholder}
+                  </p>
+                  <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                    {item.recordedLabel}
+                  </p>
                 </div>
               </div>
             ))}
@@ -456,8 +473,10 @@ export function AdminFeesPage() {
               { value: 'Draft', label: 'Draft' },
             ]}
           />
-          {pkgError && <p className="text-xs font-semibold text-[#C8202B]">{pkgError}</p>}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          {pkgError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">{pkgError}</p>
+          )}
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setPackageModalOpen(false)}>
               Cancel
             </Button>
@@ -508,8 +527,10 @@ export function AdminFeesPage() {
             onChange={(e) => setInvDueDate(e.target.value)}
             placeholder="e.g. 05 Dec 2026"
           />
-          {invError && <p className="text-xs font-semibold text-[#C8202B]">{invError}</p>}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          {invError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">{invError}</p>
+          )}
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setInvoiceModalOpen(false)}>
               Cancel
             </Button>
@@ -553,8 +574,10 @@ export function AdminFeesPage() {
             value={paymentNotes}
             onChange={(e) => setPaymentNotes(e.target.value)}
           />
-          {payError && <p className="text-xs font-semibold text-[#C8202B]">{payError}</p>}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          {payError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">{payError}</p>
+          )}
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button
               type="button"
               variant="outline"

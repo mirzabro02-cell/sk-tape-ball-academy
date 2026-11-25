@@ -1,9 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#071A36" />
+    <meta name="theme-color" content="#07152C" />
+    <script>
+      (function () {
+        try {
+          var saved = window.localStorage.getItem('sk_academy_theme');
+          var theme = saved === 'light' || saved === 'dark' ? saved : 'dark';
+          var root = document.documentElement;
+          if (theme === 'dark') {
+            root.classList.add('dark');
+            root.style.colorScheme = 'dark';
+          } else {
+            root.classList.remove('dark');
+            root.style.colorScheme = 'light';
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <link rel="icon" type="image/png" href="/assets/aistudio/SK_Tape_Ball_Academy_Crest_f75649f7.png" />
     <link rel="canonical" href="https://sktapeballacademy.example.com/" />
     <title>SK Tape Ball Academy — Where Dreams Meet Opportunities.</title>
@@ -34,7 +52,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <script type="application/ld+json">
@@ -57,7 +75,7 @@
       }
     </script>
   </head>
-  <body class="bg-[#F5F7FA] text-[#071A36] antialiased selection:bg-[#D9A52E]/25 selection:text-[#071A36]">
+  <body class="bg-[var(--bg-canvas)] text-[var(--text-primary)] antialiased selection:bg-[#D5A52B]/30 selection:text-white dark:selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

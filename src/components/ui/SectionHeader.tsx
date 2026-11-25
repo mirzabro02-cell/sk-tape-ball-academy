@@ -7,7 +7,7 @@ export interface SectionHeaderProps {
   title: string;
   description?: string;
   align?: 'left' | 'center';
-  tone?: 'light' | 'dark';
+  tone?: 'auto' | 'light' | 'dark';
   action?: ReactNode;
   className?: string;
 }
@@ -18,11 +18,12 @@ export function SectionHeader({
   title,
   description,
   align = 'left',
-  tone = 'light',
+  tone = 'auto',
   action,
   className,
 }: SectionHeaderProps) {
-  const isDark = tone === 'dark';
+  const isForcedDark = tone === 'dark';
+  const isForcedLight = tone === 'light';
 
   return (
     <div
@@ -36,8 +37,12 @@ export function SectionHeader({
         {kicker && (
           <p
             className={cn(
-              'text-xs font-semibold tracking-wider uppercase',
-              isDark ? 'text-[#D9A52E]' : 'text-[#C8202B]',
+              'text-xs font-bold tracking-[0.16em] uppercase',
+              isForcedDark
+                ? 'text-[#D5A52B]'
+                : isForcedLight
+                  ? 'text-[#C8202B]'
+                  : 'text-[#C8202B] dark:text-[#D5A52B]',
             )}
           >
             {kicker}
@@ -46,8 +51,12 @@ export function SectionHeader({
         <h2
           id={id}
           className={cn(
-            'text-2xl sm:text-3xl font-bold tracking-tight',
-            isDark ? 'text-white' : 'text-[#071A36]',
+            'text-2xl sm:text-3xl font-extrabold tracking-tight',
+            isForcedDark
+              ? 'text-white'
+              : isForcedLight
+                ? 'text-[#07152C]'
+                : 'text-[#07152C] dark:text-white',
           )}
         >
           {title}
@@ -56,7 +65,11 @@ export function SectionHeader({
           <p
             className={cn(
               'text-sm sm:text-base leading-relaxed',
-              isDark ? 'text-white/75' : 'text-[#64748B]',
+              isForcedDark
+                ? 'text-[#B4C4DC]'
+                : isForcedLight
+                  ? 'text-[#475569]'
+                  : 'text-[#475569] dark:text-[#B4C4DC]',
             )}
           >
             {description}

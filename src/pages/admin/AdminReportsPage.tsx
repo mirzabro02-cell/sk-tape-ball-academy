@@ -117,8 +117,8 @@ export function AdminReportsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`rounded-[10px] border px-3.5 py-2 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'border-[#071A36] bg-[#071A36] text-white'
-                  : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] hover:border-[#071A36]/40'
+                  ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                  : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] hover:border-[#07152C]/40 dark:border-white/15 dark:bg-[#162B4D] dark:text-[#E2E8F0]'
               }`}
             >
               {tab.label}
@@ -129,7 +129,9 @@ export function AdminReportsPage() {
 
       {activeTab === 'enrollment' && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Student Status Breakdown</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Student Status Breakdown
+          </h2>
           {state.students.length === 0 ? (
             <AdminEmptyState
               title="No enrolled students yet"
@@ -141,16 +143,16 @@ export function AdminReportsPage() {
                 {
                   label: 'Active',
                   count: state.students.filter((s) => s.status === 'Active').length,
-                  color: '#071A36',
-                },
-                {
-                  label: 'Trial',
-                  count: state.students.filter((s) => s.status === 'Trial').length,
-                  color: '#D9A52E',
+                  color: '#D5A52B',
                 },
                 {
                   label: 'On Hold',
                   count: state.students.filter((s) => s.status === 'On Hold').length,
+                  color: '#60A5FA',
+                },
+                {
+                  label: 'Inactive',
+                  count: state.students.filter((s) => s.status === 'Inactive').length,
                   color: '#C8202B',
                 },
               ]}
@@ -161,7 +163,9 @@ export function AdminReportsPage() {
 
       {activeTab === 'admissions' && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Decision Pipeline Snapshot</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Decision Pipeline Snapshot
+          </h2>
           {state.applications.length === 0 ? (
             <AdminEmptyState
               title="No applications submitted yet"
@@ -172,12 +176,14 @@ export function AdminReportsPage() {
               {state.applications.map((app) => (
                 <div
                   key={app.id}
-                  className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5"
+                  className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 dark:border-white/10 dark:bg-[#07152C]"
                 >
-                  <span className="font-semibold text-[#071A36]">
+                  <span className="font-semibold text-[#07152C] dark:text-white">
                     {app.referencePlaceholder} · {app.applicantName}
                   </span>
-                  <span className="font-bold text-[#071A36]">{app.status}</span>
+                  <span className="font-bold text-[#07152C] dark:text-[#D5A52B]">
+                    {app.status}
+                  </span>
                 </div>
               ))}
             </div>
@@ -187,7 +193,9 @@ export function AdminReportsPage() {
 
       {activeTab === 'attendance' && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Student Attendance Rates</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Student Attendance Rates
+          </h2>
           {state.students.length === 0 ? (
             <AdminEmptyState
               title="No attendance data available"
@@ -207,7 +215,9 @@ export function AdminReportsPage() {
 
       {activeTab === 'fees' && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Fee Record Status Report</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Fee Record Status Report
+          </h2>
           {state.feeRecords.length === 0 ? (
             <AdminEmptyState
               title="No fee invoices recorded"
@@ -219,12 +229,12 @@ export function AdminReportsPage() {
                 {
                   label: 'Paid',
                   count: state.feeRecords.filter((f) => f.status === 'Paid').length,
-                  color: '#D9A52E',
+                  color: '#D5A52B',
                 },
                 {
                   label: 'Pending',
                   count: state.feeRecords.filter((f) => f.status === 'Pending').length,
-                  color: '#071A36',
+                  color: '#60A5FA',
                 },
                 {
                   label: 'Overdue',
@@ -239,32 +249,40 @@ export function AdminReportsPage() {
 
       {activeTab === 'matches' && (
         <Card padding="md" className="space-y-4">
-          <h2 className="text-base font-bold text-[#071A36]">Match &amp; Event Activity Summary</h2>
+          <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+            Match &amp; Event Activity Summary
+          </h2>
           {state.matches.length === 0 ? (
             <AdminEmptyState
               title="No matches recorded"
               description="Match reports will appear here after fixtures are created."
             />
           ) : (
-            <div className="overflow-x-auto rounded-[12px] border border-[#E2E8F0]">
+            <div className="overflow-x-auto rounded-[12px] border border-[#E2E8F0] dark:border-white/10">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#F5F7FA] text-[#64748B]">
-                  <tr className="border-b border-[#E2E8F0]">
+                <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                  <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                     <th className="px-4 py-3 font-semibold">Fixture</th>
                     <th className="px-4 py-3 font-semibold">Teams</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
                     <th className="px-4 py-3 font-semibold">Summary</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                <tbody className="divide-y divide-[#E2E8F0] bg-white dark:divide-white/10 dark:bg-[#0F213B]">
                   {state.matches.map((m) => (
                     <tr key={m.id}>
-                      <td className="px-4 py-3 font-bold text-[#071A36]">{m.title}</td>
-                      <td className="px-4 py-3 text-[#64748B]">
+                      <td className="px-4 py-3 font-bold text-[#07152C] dark:text-white">
+                        {m.title}
+                      </td>
+                      <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
                         {m.academyTeam} vs {m.opponentTeam}
                       </td>
-                      <td className="px-4 py-3 font-semibold text-[#071A36]">{m.status}</td>
-                      <td className="px-4 py-3 text-[#64748B]">{m.resultSummary}</td>
+                      <td className="px-4 py-3 font-semibold text-[#07152C] dark:text-[#D5A52B]">
+                        {m.status}
+                      </td>
+                      <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
+                        {m.resultSummary}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

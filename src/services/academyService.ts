@@ -4,12 +4,11 @@ import {
   type RepositoryActionResult,
 } from '@/src/services/supabaseAcademyService';
 import type { AdminApplication } from '@/src/types/admin';
-import type { RegistrationDraft, TrialRequestDraft } from '@/src/types/academy';
+import type { RegistrationDraft } from '@/src/types/academy';
 import { isValidEmailAddress } from '@/src/utils/validation';
 
 export interface AcademyServiceContract {
   isBackendConnected: () => boolean;
-  validateTrialDraft: (draft: TrialRequestDraft) => { valid: boolean; message: string };
   validateRegistrationDraft: (draft: RegistrationDraft) => { valid: boolean; message: string };
   lookupApplicationStatus: (
     referenceCode: string,
@@ -20,18 +19,6 @@ export interface AcademyServiceContract {
 export const academyService: AcademyServiceContract = {
   isBackendConnected() {
     return isSupabaseConfigured;
-  },
-  validateTrialDraft(draft) {
-    if (!draft.playerName.trim() || !draft.guardianOrContact.trim() || !draft.preferredProgram) {
-      return {
-        valid: false,
-        message: 'Please complete the required student, contact, and program fields.',
-      };
-    }
-    return {
-      valid: true,
-      message: 'Validation passed.',
-    };
   },
   validateRegistrationDraft(draft) {
     if (!draft.fullName.trim() || !isValidEmailAddress(draft.email)) {

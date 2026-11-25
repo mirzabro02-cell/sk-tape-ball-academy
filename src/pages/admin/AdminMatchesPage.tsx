@@ -169,37 +169,42 @@ export function AdminMatchesPage() {
           {state.matches.map((m) => (
             <Card key={m.id} padding="md" className="space-y-4">
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
                     {m.matchType}
                   </p>
-                  <h2 className="text-base font-bold text-[#071A36]">{m.title}</h2>
+                  <h2 className="text-base font-bold text-[#07152C] dark:text-white">{m.title}</h2>
                 </div>
                 <AdminStatusBadge label={m.status} variant={MATCH_BADGE[m.status]} />
               </div>
 
-              <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
+              <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs dark:border-white/10 dark:bg-[#07152C]">
                 <div>
-                  <p className="text-[#64748B]">{m.academyTeam}</p>
-                  <p className="font-mono font-bold text-[#071A36]">{m.academyScore}</p>
+                  <p className="text-[#64748B] dark:text-[#A3B4CC]">{m.academyTeam}</p>
+                  <p className="font-mono font-bold text-[#07152C] dark:text-[#D5A52B]">
+                    {m.academyScore}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[#64748B]">{m.opponentTeam}</p>
-                  <p className="font-mono font-bold text-[#071A36]">{m.opponentScore}</p>
+                  <p className="text-[#64748B] dark:text-[#A3B4CC]">{m.opponentTeam}</p>
+                  <p className="font-mono font-bold text-[#07152C] dark:text-white">
+                    {m.opponentScore}
+                  </p>
                 </div>
               </div>
 
-              <div className="text-xs text-[#64748B] space-y-1">
+              <div className="text-xs text-[#64748B] dark:text-[#A3B4CC] space-y-1">
                 <p>
-                  <strong className="text-[#071A36]">Date &amp; Venue:</strong> {m.datePlaceholder} ·{' '}
-                  {m.locationPlaceholder}
+                  <strong className="text-[#07152C] dark:text-white">Date &amp; Venue:</strong>{' '}
+                  {m.datePlaceholder} · {m.locationPlaceholder}
                 </p>
                 <p>
-                  <strong className="text-[#071A36]">Summary:</strong> {m.resultSummary}
+                  <strong className="text-[#07152C] dark:text-white">Summary:</strong>{' '}
+                  {m.resultSummary}
                 </p>
               </div>
 
-              <div className="flex flex-wrap justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+              <div className="flex flex-wrap justify-end gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                 <Button
                   type="button"
                   variant="outline"
@@ -217,7 +222,7 @@ export function AdminMatchesPage() {
                   type="button"
                   onClick={() => setDeleteTarget(m)}
                   aria-label={`Delete ${m.title}`}
-                  className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -285,7 +290,7 @@ export function AdminMatchesPage() {
               onChange={(e) => setLocationPlaceholder(e.target.value)}
             />
           </div>
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
@@ -324,7 +329,7 @@ export function AdminMatchesPage() {
               onChange={(e) => setResultSummary(e.target.value)}
               required
             />
-            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
               <Button
                 type="button"
                 variant="outline"

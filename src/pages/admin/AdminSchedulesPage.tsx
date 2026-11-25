@@ -112,12 +112,14 @@ export function AdminSchedulesPage() {
         description="Configure weekly training days, timings, ground zones, and supervising coaches."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1">
+            <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1 dark:border-white/15 dark:bg-[#0F213B]">
               <button
                 type="button"
                 onClick={() => setViewMode('calendar')}
                 className={`inline-flex items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-semibold cursor-pointer ${
-                  viewMode === 'calendar' ? 'bg-[#071A36] text-white' : 'text-[#64748B]'
+                  viewMode === 'calendar'
+                    ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                    : 'text-[#64748B] dark:text-[#A3B4CC]'
                 }`}
               >
                 <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
@@ -127,7 +129,9 @@ export function AdminSchedulesPage() {
                 type="button"
                 onClick={() => setViewMode('list')}
                 className={`inline-flex items-center gap-1.5 rounded-[8px] px-3 py-1.5 text-xs font-semibold cursor-pointer ${
-                  viewMode === 'list' ? 'bg-[#071A36] text-white' : 'text-[#64748B]'
+                  viewMode === 'list'
+                    ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                    : 'text-[#64748B] dark:text-[#A3B4CC]'
                 }`}
               >
                 <List className="h-3.5 w-3.5" aria-hidden="true" />
@@ -161,34 +165,38 @@ export function AdminSchedulesPage() {
             const items = state.schedules.filter((s) => s.day === dayName);
             return (
               <Card key={dayName} padding="sm" className="space-y-3">
-                <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
-                  <h2 className="text-sm font-bold text-[#071A36]">{dayName}</h2>
+                <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2 dark:border-white/10">
+                  <h2 className="text-sm font-bold text-[#07152C] dark:text-white">{dayName}</h2>
                   <button
                     type="button"
                     onClick={() => openAdd(dayName)}
-                    className="text-[11px] font-semibold text-[#071A36] hover:text-[#C8202B] cursor-pointer"
+                    className="text-[11px] font-semibold text-[#07152C] hover:text-[#C8202B] dark:text-[#D5A52B] dark:hover:text-[#E2B84A] cursor-pointer"
                   >
                     + Add Slot
                   </button>
                 </div>
 
                 {items.length === 0 ? (
-                  <p className="py-4 text-center text-xs text-[#64748B]">No sessions scheduled</p>
+                  <p className="py-3 text-center text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                    No sessions scheduled
+                  </p>
                 ) : (
                   <div className="space-y-2.5">
                     {items.map((slot) => (
                       <div
                         key={slot.id}
-                        className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 space-y-1 text-xs"
+                        className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 space-y-1 text-xs dark:border-white/10 dark:bg-[#07152C]"
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <span className="min-w-0 break-words font-bold text-[#071A36]">{slot.programTitle}</span>
+                          <span className="min-w-0 break-words font-bold text-[#07152C] dark:text-white">
+                            {slot.programTitle}
+                          </span>
                           <div className="flex shrink-0 items-center gap-1.5">
                             <button
                               type="button"
                               onClick={() => openEdit(slot)}
                               aria-label={`Edit ${slot.day} ${slot.programTitle}`}
-                              className="text-[#64748B] hover:text-[#071A36] cursor-pointer"
+                              className="text-[#64748B] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:text-white cursor-pointer"
                             >
                               <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                             </button>
@@ -196,16 +204,24 @@ export function AdminSchedulesPage() {
                               type="button"
                               onClick={() => setDeleteTarget(slot)}
                               aria-label={`Delete ${slot.day} ${slot.programTitle}`}
-                              className="text-[#C8202B]/70 hover:text-[#C8202B] cursor-pointer"
+                              className="text-[#C8202B]/75 hover:text-[#C8202B] dark:text-[#FCA5A5]/80 dark:hover:text-[#FCA5A5] cursor-pointer"
                             >
                               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                             </button>
                           </div>
                         </div>
-                        <p className="font-medium text-[#071A36]">{slot.batchName}</p>
-                        <p className="text-[11px] text-[#64748B]">{slot.timePlaceholder}</p>
-                        <p className="text-[11px] text-[#64748B]">Coach: {slot.coachName}</p>
-                        <p className="text-[11px] text-[#64748B]">Zone: {slot.groundZone}</p>
+                        <p className="font-medium text-[#07152C] dark:text-[#D5A52B]">
+                          {slot.batchName}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                          {slot.timePlaceholder}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                          Coach: {slot.coachName}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                          Zone: {slot.groundZone}
+                        </p>
                       </div>
                     ))}
                   </div>
@@ -218,8 +234,8 @@ export function AdminSchedulesPage() {
         <Card padding="sm" className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F5F7FA] text-[#64748B]">
-                <tr className="border-b border-[#E2E8F0]">
+              <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                   <th className="px-4 py-3 font-semibold">Day</th>
                   <th className="px-4 py-3 font-semibold">Batch &amp; Program</th>
                   <th className="px-4 py-3 font-semibold">Coach</th>
@@ -227,29 +243,45 @@ export function AdminSchedulesPage() {
                   <th className="px-4 py-3 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E2E8F0]">
+              <tbody className="divide-y divide-[#E2E8F0] dark:divide-white/10">
                 {state.schedules.map((slot) => (
-                  <tr key={slot.id} className="hover:bg-[#F5F7FA]/60">
-                    <td className="px-4 py-3 font-bold text-[#071A36]">{slot.day}</td>
-                    <td className="px-4 py-3">
-                      <p className="font-semibold text-[#071A36]">{slot.batchName}</p>
-                      <p className="text-[11px] text-[#64748B]">{slot.programTitle}</p>
+                  <tr
+                    key={slot.id}
+                    className="hover:bg-[#F5F7FA]/60 dark:hover:bg-[#162B4D]/60"
+                  >
+                    <td className="px-4 py-3 font-bold text-[#07152C] dark:text-white">
+                      {slot.day}
                     </td>
-                    <td className="px-4 py-3 text-[#64748B]">{slot.coachName}</td>
-                    <td className="px-4 py-3 text-[#64748B]">
+                    <td className="px-4 py-3">
+                      <p className="font-semibold text-[#07152C] dark:text-white">
+                        {slot.batchName}
+                      </p>
+                      <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                        {slot.programTitle}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
+                      {slot.coachName}
+                    </td>
+                    <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
                       <p>{slot.timePlaceholder}</p>
                       <p className="text-[11px]">{slot.groundZone}</p>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="inline-flex items-center gap-1.5">
-                        <Button type="button" variant="outline" size="sm" onClick={() => openEdit(slot)}>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => openEdit(slot)}
+                        >
                           Edit
                         </Button>
                         <button
                           type="button"
                           onClick={() => setDeleteTarget(slot)}
                           aria-label={`Delete ${slot.day} slot`}
-                          className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-2.5 text-xs text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                          className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-2.5 text-xs text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                         </button>
@@ -317,8 +349,12 @@ export function AdminSchedulesPage() {
             onChange={(e) => setGroundZone(e.target.value)}
             placeholder="e.g. Sabzazar Ground — Practice Lanes"
           />
-          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          {formError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
+              {formError}
+            </p>
+          )}
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

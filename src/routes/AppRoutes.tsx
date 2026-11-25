@@ -20,9 +20,6 @@ const ApplicationStatusPage = lazy(() =>
     default: m.ApplicationStatusPage,
   })),
 );
-const BookTrialPage = lazy(() =>
-  import('@/src/pages/BookTrialPage').then((m) => ({ default: m.BookTrialPage })),
-);
 const CoachesPage = lazy(() =>
   import('@/src/pages/CoachesPage').then((m) => ({ default: m.CoachesPage })),
 );
@@ -86,6 +83,9 @@ const ResetPasswordPage = lazy(() =>
 );
 const SchedulePage = lazy(() =>
   import('@/src/pages/SchedulePage').then((m) => ({ default: m.SchedulePage })),
+);
+const UpdatesPage = lazy(() =>
+  import('@/src/pages/UpdatesPage').then((m) => ({ default: m.UpdatesPage })),
 );
 
 const AdminLoginPage = lazy(() =>
@@ -167,11 +167,6 @@ const AdminTestimonialsPage = lazy(() =>
     default: m.AdminTestimonialsPage,
   })),
 );
-const AdminTrialBookingsPage = lazy(() =>
-  import('@/src/pages/admin/AdminTrialBookingsPage').then((m) => ({
-    default: m.AdminTrialBookingsPage,
-  })),
-);
 const AdminWebsiteContentPage = lazy(() =>
   import('@/src/pages/admin/AdminWebsiteContentPage').then((m) => ({
     default: m.AdminWebsiteContentPage,
@@ -196,6 +191,8 @@ export function AppRoutes() {
           <Route path="/achievements" element={<AchievementsPage />} />
           <Route path="/players/:slug" element={<PlayerProfilePage />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/updates" element={<UpdatesPage />} />
+          <Route path="/blog" element={<Navigate to="/updates" replace />} />
           <Route path="/admissions" element={<AdmissionsPage />} />
           <Route path="/fees" element={<FeesPage />} />
           <Route path="/faqs" element={<FaqsPage />} />
@@ -222,7 +219,6 @@ export function AppRoutes() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/book-trial" element={<BookTrialPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 
@@ -244,8 +240,6 @@ export function AppRoutes() {
           <Route path="schedules" element={<AdminSchedulesPage />} />
           <Route path="schedule" element={<Navigate to="/sk-portal/schedules" replace />} />
           <Route path="admissions" element={<AdminAdmissionsPage />} />
-          <Route path="trial-bookings" element={<AdminTrialBookingsPage />} />
-          <Route path="trials" element={<Navigate to="/sk-portal/trial-bookings" replace />} />
           <Route path="fees" element={<AdminFeesPage />} />
           <Route path="attendance" element={<AdminAttendancePage />} />
           <Route path="matches" element={<AdminMatchesPage />} />

@@ -93,7 +93,7 @@ export function AdminAttendancePage() {
             />
           </div>
 
-          <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0]">
+          <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0] dark:border-white/10">
             {batchRoster.length === 0 ? (
               <AdminEmptyState
                 title="No students available for this batch"
@@ -102,32 +102,41 @@ export function AdminAttendancePage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#F5F7FA] text-[#64748B]">
-                    <tr className="border-b border-[#E2E8F0]">
+                  <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                    <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                       <th className="px-4 py-3 font-semibold">Student</th>
                       <th className="px-4 py-3 font-semibold">Program</th>
                       <th className="px-4 py-3 font-semibold text-right">Mark Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                  <tbody className="divide-y divide-[#E2E8F0] bg-white dark:divide-white/10 dark:bg-[#0F213B]">
                     {batchRoster.map((stu) => {
                       const currentMark = marks[stu.id] ?? 'Present';
                       return (
-                        <tr key={stu.id} className="hover:bg-[#F5F7FA]/60">
+                        <tr
+                          key={stu.id}
+                          className="hover:bg-[#F5F7FA]/60 dark:hover:bg-[#162B4D]/60"
+                        >
                           <td className="px-4 py-3">
-                            <p className="font-bold text-[#071A36]">{stu.fullName}</p>
-                            <p className="font-mono text-[11px] text-[#64748B]">{stu.studentCode}</p>
+                            <p className="font-bold text-[#07152C] dark:text-white">
+                              {stu.fullName}
+                            </p>
+                            <p className="font-mono text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                              {stu.studentCode}
+                            </p>
                           </td>
-                          <td className="px-4 py-3 text-[#64748B]">{stu.program}</td>
+                          <td className="px-4 py-3 text-[#64748B] dark:text-[#A3B4CC]">
+                            {stu.program}
+                          </td>
                           <td className="px-4 py-3 text-right">
-                            <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-1 gap-1">
+                            <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-1 gap-1 dark:border-white/15 dark:bg-[#07152C]">
                               {(['Present', 'Late', 'Absent'] as AttendanceMark[]).map((option) => {
                                 const selected = currentMark === option;
                                 const activeStyle =
                                   option === 'Present'
-                                    ? 'bg-[#071A36] text-[#D9A52E]'
+                                    ? 'bg-[#07152C] text-[#D5A52B] dark:bg-[#162B4D]'
                                     : option === 'Late'
-                                      ? 'bg-[#D9A52E] text-[#050D1B]'
+                                      ? 'bg-[#D5A52B] text-[#050D1B]'
                                       : 'bg-[#C8202B] text-white';
 
                                 return (
@@ -138,7 +147,9 @@ export function AdminAttendancePage() {
                                       setMarks((prev) => ({ ...prev, [stu.id]: option }))
                                     }
                                     className={`inline-flex items-center gap-1 rounded-[7px] px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer ${
-                                      selected ? activeStyle : 'text-[#64748B] hover:text-[#071A36]'
+                                      selected
+                                        ? activeStyle
+                                        : 'text-[#64748B] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:text-white'
                                     }`}
                                   >
                                     {selected && <Check className="h-3 w-3" aria-hidden="true" />}
@@ -160,34 +171,40 @@ export function AdminAttendancePage() {
 
         <div className="lg:col-span-4 space-y-5">
           <Card padding="md" className="space-y-4">
-            <h2 className="text-base font-bold text-[#071A36]">Session Summary</h2>
+            <h2 className="text-base font-bold text-[#07152C] dark:text-white">Session Summary</h2>
             <AdminDonutBreakdown
               segments={[
-                { label: 'Present', count: summary.present, color: '#071A36' },
-                { label: 'Late', count: summary.late, color: '#D9A52E' },
+                { label: 'Present', count: summary.present, color: '#60A5FA' },
+                { label: 'Late', count: summary.late, color: '#D5A52B' },
                 { label: 'Absent', count: summary.absent, color: '#C8202B' },
               ]}
             />
           </Card>
 
           <Card padding="md" className="space-y-3">
-            <h2 className="text-base font-bold text-[#071A36]">Saved Attendance Sheets</h2>
+            <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+              Saved Attendance Sheets
+            </h2>
             {historyLog.length === 0 ? (
-              <p className="text-xs text-[#64748B]">No sheets logged in this session yet.</p>
+              <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                No sheets logged in this session yet.
+              </p>
             ) : (
               <div className="space-y-2">
                 {historyLog.map((entry) => (
                   <div
                     key={entry.id}
-                    className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs space-y-0.5"
+                    className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs space-y-0.5 dark:border-white/10 dark:bg-[#07152C]"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#071A36]">{entry.batchName}</span>
-                      <span className="font-mono text-[11px] text-[#64748B] tabular-nums">
+                      <span className="font-bold text-[#07152C] dark:text-white">
+                        {entry.batchName}
+                      </span>
+                      <span className="font-mono text-[11px] text-[#64748B] dark:text-[#A3B4CC] tabular-nums">
                         {entry.date}
                       </span>
                     </div>
-                    <p className="text-[#64748B]">{entry.summary}</p>
+                    <p className="text-[#64748B] dark:text-[#A3B4CC]">{entry.summary}</p>
                   </div>
                 ))}
               </div>

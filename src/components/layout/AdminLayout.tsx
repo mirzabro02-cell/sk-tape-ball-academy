@@ -8,7 +8,6 @@ import {
   Bell,
   BookOpen,
   Calendar,
-  CalendarClock,
   ChevronRight,
   ClipboardList,
   CreditCard,
@@ -43,6 +42,7 @@ import {
 } from '@/src/data/adminNav';
 import type { AdminNotification } from '@/src/types/admin';
 import { OfficialLogo } from '@/src/components/ui/OfficialLogo';
+import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 import { AdminConfirmDialog } from '@/src/components/admin/AdminPrimitives';
 import { AdminToastProvider, useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { cn } from '@/src/utils/cn';
@@ -55,7 +55,6 @@ const SIDEBAR_ICONS: Record<AdminSidebarItem['iconName'], typeof LayoutDashboard
   Layers,
   Calendar,
   FileCheck2,
-  CalendarClock,
   CreditCard,
   ClipboardList,
   Trophy,
@@ -141,9 +140,6 @@ function AdminShellInner() {
   const pendingApps = state.applications.filter(
     (a) => a.status === 'Pending' || a.status === 'Under Review',
   ).length;
-  const pendingTrials = state.trials.filter(
-    (t) => t.status === 'Requested (Unconfirmed)',
-  ).length;
 
   const liveNotifications: AdminNotification[] = [
     ...(pendingApps > 0
@@ -155,18 +151,6 @@ function AdminShellInner() {
             timeLabel: 'Action Required',
             unread: !dismissedIds.includes('notif-apps'),
             route: `${ADMIN_BASE_PATH}/admissions`,
-          },
-        ]
-      : []),
-    ...(pendingTrials > 0
-      ? [
-          {
-            id: 'notif-trials',
-            title: `${pendingTrials} Unconfirmed Trial Request${pendingTrials > 1 ? 's' : ''}`,
-            detail: 'Assign dates and confirm slots in Trial Bookings.',
-            timeLabel: 'Action Required',
-            unread: !dismissedIds.includes('notif-trials'),
-            route: `${ADMIN_BASE_PATH}/trial-bookings`,
           },
         ]
       : []),
@@ -190,7 +174,7 @@ function AdminShellInner() {
   async function handleManualSync() {
     const res = await syncCoreRecords();
     if (res.ok) {
-      showToast('Database Synced', 'Fetched latest Students, Admissions, and Trial Bookings.');
+      showToast('Database Synced', 'Fetched latest Students and Admissions records.');
     } else if (res.error) {
       showToast('Sync Issue', res.error, 'warning');
     }
@@ -204,10 +188,10 @@ function AdminShellInner() {
   const crestSrc = state.siteSettings.logo.src || OFFICIAL_LOGO_CONFIG.src;
 
   return (
-    <div className="min-h-screen flex bg-[#F5F7FA] text-[#071A36] overflow-x-clip">
+    <div className="min-h-screen flex bg-[#F5F7FA] text-[#07152C] dark:bg-[#07152C] dark:text-white overflow-x-clip">
       <a
         href="#admin-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#071A36] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D9A52E] focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#07152C] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D5A52B] focus:shadow-lg"
       >
         Skip to admin content
       </a>
@@ -258,7 +242,7 @@ function AdminShellInner() {
                           'flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm font-medium transition-colors',
                           sidebarCollapsed && 'justify-center px-2',
                           isActive
-                            ? 'bg-[#D9A52E] text-[#050D1B] font-semibold'
+                            ? 'bg-[#D5A52B] text-[#050D1B] font-semibold'
                             : 'text-white/75 hover:bg-white/10 hover:text-white',
                         )
                       }
@@ -298,7 +282,7 @@ function AdminShellInner() {
         >
           <div
             onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-[#050D1B]/65 backdrop-blur-[2px]"
+            className="fixed inset-0 bg-[#050D1B]/70 backdrop-blur-[2px]"
           />
           <aside className="fixed inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-[#050D1B] text-white shadow-2xl border-r border-white/10">
             <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-white/10 px-4">
@@ -337,7 +321,7 @@ function AdminShellInner() {
                             cn(
                               'flex items-center gap-3 rounded-[10px] px-3 py-2 text-sm font-medium transition-colors',
                               isActive
-                                ? 'bg-[#D9A52E] text-[#050D1B] font-semibold'
+                                ? 'bg-[#D5A52B] text-[#050D1B] font-semibold'
                                 : 'text-white/80 hover:bg-white/10 hover:text-white',
                             )
                           }
@@ -368,13 +352,13 @@ function AdminShellInner() {
       {/* Main Column */}
       <div className="flex min-w-0 flex-1 flex-col min-h-screen overflow-x-clip">
         {/* Top Bar */}
-        <header className="sticky top-0 z-30 flex h-[72px] shrink-0 items-center justify-between gap-3 border-b border-[#E2E8F0] bg-white px-4 sm:px-6">
+        <header className="sticky top-0 z-30 flex h-[72px] shrink-0 items-center justify-between gap-3 border-b border-[#E2E8F0] bg-white/95 backdrop-blur-md px-4 sm:px-6 dark:border-white/10 dark:bg-[#07152C]/95">
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open admin sidebar"
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#071A36] hover:bg-[#F5F7FA] lg:hidden cursor-pointer"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] lg:hidden cursor-pointer"
             >
               <Menu className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -383,7 +367,7 @@ function AdminShellInner() {
               type="button"
               onClick={() => setSidebarCollapsed((prev) => !prev)}
               aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className="hidden lg:inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+              className="hidden lg:inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
             >
               {sidebarCollapsed ? (
                 <PanelLeftOpen className="h-4 w-4" aria-hidden="true" />
@@ -395,29 +379,36 @@ function AdminShellInner() {
             <div className="min-w-0">
               <nav
                 aria-label="Admin Breadcrumbs"
-                className="flex items-center gap-1.5 text-[11px] font-medium text-[#64748B]"
+                className="flex items-center gap-1.5 text-[11px] font-medium text-[#64748B] dark:text-[#A3B4CC]"
               >
-                <Link to={ADMIN_BASE_PATH} className="hover:text-[#071A36] whitespace-nowrap">
+                <Link
+                  to={ADMIN_BASE_PATH}
+                  className="hover:text-[#07152C] dark:hover:text-white whitespace-nowrap"
+                >
                   Portal
                 </Link>
                 <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />
                 <span className="truncate">{routeMeta.group}</span>
               </nav>
-              <p className="truncate text-sm font-bold text-[#071A36]">{routeMeta.title}</p>
+              <p className="truncate text-sm font-bold text-[#07152C] dark:text-white">
+                {routeMeta.title}
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            <ThemeToggle variant="surface" />
+
             {isBackendConnected && (
               <button
                 type="button"
                 onClick={() => void handleManualSync()}
                 disabled={isSyncing}
                 title={lastSyncedAt ? `Last synced at ${lastSyncedAt}` : 'Sync database'}
-                className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3 text-xs font-semibold text-[#071A36] hover:border-[#071A36]/30 disabled:opacity-60 cursor-pointer whitespace-nowrap"
+                className="hidden md:inline-flex h-10 items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3 text-xs font-semibold text-[#07152C] hover:border-[#07152C]/30 disabled:opacity-60 dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:border-[#D5A52B]/60 cursor-pointer whitespace-nowrap"
               >
                 <RefreshCw
-                  className={cn('h-3.5 w-3.5 text-[#D9A52E]', isSyncing && 'animate-spin')}
+                  className={cn('h-3.5 w-3.5 text-[#D5A52B]', isSyncing && 'animate-spin')}
                   aria-hidden="true"
                 />
                 <span>{isSyncing ? 'Syncing...' : 'Sync DB'}</span>
@@ -426,7 +417,7 @@ function AdminShellInner() {
 
             <Link
               to="/"
-              className="hidden sm:inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] px-3 text-xs font-semibold text-[#071A36] hover:bg-[#F5F7FA] whitespace-nowrap shrink-0"
+              className="hidden sm:inline-flex h-10 items-center gap-1.5 rounded-[10px] border border-[#E2E8F0] px-3 text-xs font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:bg-[#0F213B] dark:text-white dark:hover:bg-[#162B4D] whitespace-nowrap shrink-0"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Public Site</span>
@@ -442,7 +433,7 @@ function AdminShellInner() {
                 }}
                 aria-label="Toggle admin notifications"
                 aria-expanded={notificationsOpen}
-                className="relative inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+                className="relative inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:bg-[#0F213B] dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
               >
                 <Bell className="h-4 w-4" aria-hidden="true" />
                 {unreadCount > 0 && (
@@ -453,21 +444,21 @@ function AdminShellInner() {
               </button>
 
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-[14px] border border-[#E2E8F0] bg-white p-4 shadow-xl z-40 space-y-3">
-                  <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5">
-                    <p className="text-xs font-bold text-[#071A36]">Notifications</p>
+                <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] rounded-[14px] border border-[#E2E8F0] bg-white p-4 shadow-xl z-40 space-y-3 dark:border-white/15 dark:bg-[#0F213B]">
+                  <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2.5 dark:border-white/10">
+                    <p className="text-xs font-bold text-[#07152C] dark:text-white">Notifications</p>
                     {liveNotifications.length > 0 && (
                       <button
                         type="button"
                         onClick={markAllNotificationsRead}
-                        className="text-[11px] font-semibold text-[#C8202B] hover:underline cursor-pointer"
+                        className="text-[11px] font-semibold text-[#C8202B] dark:text-[#FCA5A5] hover:underline cursor-pointer"
                       >
                         Mark all read
                       </button>
                     )}
                   </div>
                   {liveNotifications.length === 0 ? (
-                    <p className="py-4 text-center text-xs text-[#64748B]">
+                    <p className="py-4 text-center text-xs text-[#64748B] dark:text-[#A3B4CC]">
                       No pending items require attention.
                     </p>
                   ) : (
@@ -478,14 +469,18 @@ function AdminShellInner() {
                           to={item.route}
                           onClick={() => setNotificationsOpen(false)}
                           className={cn(
-                            'block rounded-[10px] border p-2.5 text-left transition-colors hover:border-[#071A36]/30',
+                            'block rounded-[10px] border p-2.5 text-left transition-colors hover:border-[#D5A52B]/60',
                             item.unread
-                              ? 'border-[#D9A52E]/50 bg-[#F5F7FA]'
-                              : 'border-[#E2E8F0] bg-white',
+                              ? 'border-[#D5A52B]/50 bg-[#F5F7FA] dark:bg-[#162B4D]'
+                              : 'border-[#E2E8F0] bg-white dark:border-white/10 dark:bg-[#07152C]',
                           )}
                         >
-                          <p className="text-xs font-bold text-[#071A36]">{item.title}</p>
-                          <p className="mt-0.5 text-[11px] text-[#64748B]">{item.detail}</p>
+                          <p className="text-xs font-bold text-[#07152C] dark:text-white">
+                            {item.title}
+                          </p>
+                          <p className="mt-0.5 text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+                            {item.detail}
+                          </p>
                         </Link>
                       ))}
                     </div>
@@ -503,30 +498,34 @@ function AdminShellInner() {
                   setNotificationsOpen(false);
                 }}
                 aria-expanded={profileMenuOpen}
-                className="inline-flex h-10 items-center gap-2 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-2.5 text-left hover:border-[#071A36]/30 cursor-pointer"
+                className="inline-flex h-10 items-center gap-2 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-2.5 text-left hover:border-[#07152C]/30 dark:border-white/15 dark:bg-[#0F213B] dark:hover:border-[#D5A52B]/60 cursor-pointer"
               >
-                <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#071A36] text-[11px] font-bold text-[#D9A52E]">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-[8px] bg-[#07152C] text-[11px] font-bold text-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]">
                   {initials}
                 </span>
                 <span className="hidden md:block leading-tight max-w-[140px]">
-                  <span className="block truncate text-xs font-bold text-[#071A36]">
+                  <span className="block truncate text-xs font-bold text-[#07152C] dark:text-white">
                     {displayName}
                   </span>
-                  <span className="block truncate text-[10px] text-[#64748B]">
+                  <span className="block truncate text-[10px] text-[#64748B] dark:text-[#A3B4CC]">
                     {user?.email || 'Administrator'}
                   </span>
                 </span>
               </button>
 
               {profileMenuOpen && (
-                <div className="absolute right-0 mt-2 w-60 rounded-[14px] border border-[#E2E8F0] bg-white p-2 shadow-xl z-40 space-y-1">
-                  <div className="border-b border-[#E2E8F0] px-3 py-2">
-                    <p className="text-xs font-bold text-[#071A36] truncate">{displayName}</p>
-                    <p className="text-[11px] text-[#64748B] truncate">{user?.email}</p>
+                <div className="absolute right-0 mt-2 w-60 rounded-[14px] border border-[#E2E8F0] bg-white p-2 shadow-xl z-40 space-y-1 dark:border-white/15 dark:bg-[#0F213B]">
+                  <div className="border-b border-[#E2E8F0] px-3 py-2 dark:border-white/10">
+                    <p className="text-xs font-bold text-[#07152C] dark:text-white truncate">
+                      {displayName}
+                    </p>
+                    <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC] truncate">
+                      {user?.email}
+                    </p>
                   </div>
                   <Link
                     to={`${ADMIN_BASE_PATH}/settings`}
-                    className="flex items-center gap-2 rounded-[8px] px-3 py-2 text-xs font-medium text-[#071A36] hover:bg-[#F5F7FA]"
+                    className="flex items-center gap-2 rounded-[8px] px-3 py-2 text-xs font-medium text-[#07152C] hover:bg-[#F5F7FA] dark:text-[#E2E8F0] dark:hover:bg-[#162B4D]"
                   >
                     <Settings className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>System Settings</span>
@@ -537,7 +536,7 @@ function AdminShellInner() {
                       setProfileMenuOpen(false);
                       setLogoutConfirmOpen(true);
                     }}
-                    className="flex w-full items-center gap-2 rounded-[8px] px-3 py-2 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                    className="flex w-full items-center gap-2 rounded-[8px] px-3 py-2 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:text-[#FCA5A5] cursor-pointer"
                   >
                     <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Sign Out</span>
@@ -551,11 +550,11 @@ function AdminShellInner() {
         {/* Main Content Area — compact natural flow without vertical spacer voids */}
         <main
           id="admin-main-content"
-          className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 max-w-[1440px] w-full mx-auto space-y-4"
+          className="flex-1 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 max-w-[1440px] w-full mx-auto space-y-5"
         >
           {!isBackendConnected && (
-            <div className="flex items-start gap-2.5 rounded-[12px] border border-[#D9A52E]/50 bg-[#D9A52E]/10 px-4 py-2.5 text-xs text-[#071A36]">
-              <Database className="mt-0.5 h-4 w-4 shrink-0 text-[#071A36]" aria-hidden="true" />
+            <div className="flex items-start gap-2.5 rounded-[12px] border border-[#D5A52B]/50 bg-[#D5A52B]/10 px-4 py-2.5 text-xs text-[#07152C] dark:border-[#D5A52B]/35 dark:bg-[#D5A52B]/12 dark:text-[#F0CB65]">
+              <Database className="mt-0.5 h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
               <p>
                 <strong className="font-semibold">Local Preview Persistence:</strong> Supabase keys
                 are not set in this environment. Changes are stored in this browser until{' '}
@@ -568,7 +567,7 @@ function AdminShellInner() {
           {dbError && (
             <div
               role="alert"
-              className="flex items-start justify-between gap-3 rounded-[12px] border border-[#C8202B]/35 bg-[#C8202B]/5 px-4 py-3 text-xs text-[#C8202B]"
+              className="flex items-start justify-between gap-3 rounded-[12px] border border-[#C8202B]/35 bg-[#C8202B]/10 px-4 py-3 text-xs text-[#C8202B] dark:border-[#F87171]/35 dark:text-[#FCA5A5]"
             >
               <div className="flex items-start gap-2.5">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -590,7 +589,7 @@ function AdminShellInner() {
           {storageError && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[12px] border border-[#C8202B]/35 bg-[#C8202B]/5 px-4 py-3 text-xs text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[12px] border border-[#C8202B]/35 bg-[#C8202B]/10 px-4 py-3 text-xs text-[#C8202B] dark:border-[#F87171]/35 dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <p>{storageError}</p>
@@ -600,7 +599,7 @@ function AdminShellInner() {
           <Outlet />
         </main>
 
-        <footer className="shrink-0 border-t border-[#E2E8F0] bg-white px-6 py-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B]">
+        <footer className="shrink-0 border-t border-[#E2E8F0] bg-white px-6 py-3 flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B] dark:border-white/10 dark:bg-[#050D1B] dark:text-[#8499B8]">
           <span>{state.siteSettings.academyName} · Management Portal</span>
           <span>
             {isBackendConnected

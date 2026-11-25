@@ -112,19 +112,19 @@ export function LoginPage() {
           />
 
           <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-            <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer select-none">
+            <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border-[#E2E8F0] accent-[#071A36]"
+                className="h-4 w-4 rounded border-[#E2E8F0] accent-[#D5A52B]"
               />
               <span>Remember me on this device</span>
             </label>
 
             <Link
               to="/forgot-password"
-              className="text-sm font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+              className="text-sm font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
             >
               Forgot password?
             </Link>
@@ -133,7 +133,7 @@ export function LoginPage() {
           {formErrorBanner && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{formErrorBanner}</span>
@@ -143,9 +143,9 @@ export function LoginPage() {
           {statusNotice && (
             <div
               role="status"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#071A36]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#071A36]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#07152C]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-[#E2E8F0]"
             >
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
               <span>{statusNotice}</span>
             </div>
           )}
@@ -163,19 +163,19 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <div className="border-t border-[#E2E8F0] pt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm">
-          <p className="text-[#64748B]">
+        <div className="border-t border-[#E2E8F0] pt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-sm dark:border-white/10">
+          <p className="text-[#475569] dark:text-[#B4C4DC]">
             New to SK Tape Ball Academy?{' '}
             <Link
               to="/register"
-              className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+              className="font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
             >
               Register Now
             </Link>
           </p>
           <Link
             to="/application-status"
-            className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+            className="font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
           >
             Track Application Status
           </Link>

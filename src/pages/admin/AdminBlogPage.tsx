@@ -138,7 +138,7 @@ export function AdminBlogPage() {
     <div className="space-y-5">
       <AdminPageHeader
         title="Blog & Updates Management"
-        description="Write coaching notes and academy updates with featured imagery and safe structured text."
+        description="Write coaching notes and academy updates published directly to the public /updates feed."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -161,7 +161,7 @@ export function AdminBlogPage() {
           />
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:items-start">
           {posts.map((post) => (
             <Card key={post.id} padding="sm" className="flex flex-col justify-between gap-4">
               <div className="space-y-3">
@@ -176,8 +176,12 @@ export function AdminBlogPage() {
 
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-[11px] font-semibold text-[#C8202B]">{post.category}</p>
-                    <h2 className="text-base font-bold text-[#071A36]">{post.title}</h2>
+                    <p className="text-[11px] font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
+                      {post.category}
+                    </p>
+                    <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                      {post.title}
+                    </h2>
                   </div>
                   <AdminStatusBadge
                     label={post.status}
@@ -185,17 +189,17 @@ export function AdminBlogPage() {
                   />
                 </div>
 
-                <p className="text-xs leading-relaxed text-[#64748B] line-clamp-3">
+                <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC] line-clamp-3">
                   {post.bodyText}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between border-t border-[#E2E8F0] pt-3">
+              <div className="flex items-center justify-between border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setDeleteTarget(post)}
                   aria-label={`Delete ${post.title}`}
-                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -268,12 +272,14 @@ export function AdminBlogPage() {
 
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-medium text-[#071A36]">Article Body</span>
-              <div className="inline-flex items-center gap-1 rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] p-1">
+              <span className="text-sm font-medium text-[#07152C] dark:text-[#E2E8F0]">
+                Article Body
+              </span>
+              <div className="inline-flex items-center gap-1 rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] p-1 dark:border-white/15 dark:bg-[#07152C]">
                 <button
                   type="button"
                   onClick={() => insertFormattingToken('## Section Heading')}
-                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#071A36] hover:bg-white cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#07152C] hover:bg-white dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                 >
                   <Heading2 className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Heading</span>
@@ -281,7 +287,7 @@ export function AdminBlogPage() {
                 <button
                   type="button"
                   onClick={() => insertFormattingToken('**Key Coaching Point**')}
-                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#071A36] hover:bg-white cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#07152C] hover:bg-white dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                 >
                   <Bold className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Bold</span>
@@ -289,7 +295,7 @@ export function AdminBlogPage() {
                 <button
                   type="button"
                   onClick={() => insertFormattingToken('- Key drill item')}
-                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#071A36] hover:bg-white cursor-pointer"
+                  className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#07152C] hover:bg-white dark:text-[#E2E8F0] dark:hover:bg-[#162B4D] cursor-pointer"
                 >
                   <List className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Bullet</span>
@@ -305,7 +311,7 @@ export function AdminBlogPage() {
             />
           </div>
 
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

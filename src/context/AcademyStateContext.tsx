@@ -4,21 +4,18 @@ import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.j
 import battingImg from '@/src/assets/images/drill_power_batting_1795439224792.jpg';
 import paceImg from '@/src/assets/images/drill_pace_bowling_1795439224452.jpg';
 import fieldingImg from '@/src/assets/images/drill_fielding_agility_1795439226739.jpg';
-import { OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
+import { HERO_STADIUM_VISUAL, OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
 import { ACADEMY_BRAND } from '@/src/data/brand';
 import { isSupabaseConfigured } from '@/src/services/supabaseClient';
 import {
   deleteSupabaseStudent,
   fetchCoreSupabaseData,
   insertSupabaseAdmission,
-  insertSupabaseTrialBooking,
   lookupSupabaseApplicationStatus,
   updateSupabaseAdmission,
-  updateSupabaseTrialBooking,
   upsertSupabaseStudent,
   type RegistrationSubmitInput,
   type RepositoryActionResult,
-  type TrialSubmitInput,
 } from '@/src/services/supabaseAcademyService';
 import type {
   AdminAchievement,
@@ -35,10 +32,8 @@ import type {
   AdminScheduleItem,
   AdminStudent,
   AdminTestimonial,
-  AdminTrialBooking,
   AdminWebsiteContentSection,
   AdmissionDecisionStatus,
-  TrialBookingStatus,
 } from '@/src/types/admin';
 import { createManagedMedia, type ManagedMediaValue } from '@/src/types/media';
 import { sanitizeExternalUrl } from '@/src/utils/validation';
@@ -71,7 +66,6 @@ export interface AcademySiteSettings {
   seoTitle: string;
   seoDescription: string;
   notifyApplications: boolean;
-  notifyTrials: boolean;
   notifyFees: boolean;
   adminDisplayName: string;
   adminEmail: string;
@@ -90,7 +84,6 @@ export interface AcademyPersistedState {
   blogPosts: AdminBlogPost[];
   students: AdminStudent[];
   applications: AdminApplication[];
-  trials: AdminTrialBooking[];
   feePackages: AdminFeePackage[];
   feeRecords: AdminFeeRecord[];
   paymentHistory: AdminPaymentHistoryItem[];
@@ -120,14 +113,13 @@ const DEFAULT_SITE_SETTINGS: AcademySiteSettings = {
     tiktok: '',
   },
   logo: createManagedMedia(OFFICIAL_LOGO_CONFIG.src, { fit: 'contain', posX: 50, posY: 50, scale: 1 }),
-  heroMedia: createManagedMedia(heroImg, { fit: 'cover', posX: 50, posY: 50, scale: 1 }),
+  heroMedia: createManagedMedia(HERO_STADIUM_VISUAL, { fit: 'cover', posX: 70, posY: 35, scale: 1 }),
   aboutMedia: createManagedMedia(lanesImg, { fit: 'cover', posX: 50, posY: 50, scale: 1 }),
   showPublicFees: false,
   seoTitle: 'SK Tape Ball Academy — Where Dreams Meet Opportunities.',
   seoDescription:
     'SK Tape Ball Academy in Sabzazar, Lahore. Structured tape ball cricket coaching covering fitness, batting, bowling, and fielding.',
   notifyApplications: true,
-  notifyTrials: true,
   notifyFees: false,
   adminDisplayName: 'Academy Administrator',
   adminEmail: '',
@@ -218,7 +210,7 @@ const DEFAULT_PROGRAMS: AdminProgram[] = [
     category: 'Level Track',
     description:
       'High-tempo scenario sessions focused on league match execution, death-over plans, and pressure decision-making.',
-    imagePath: heroImg,
+    imagePath: HERO_STADIUM_VISUAL,
     published: true,
     enrolledDemoCount: 0,
   },
@@ -236,6 +228,16 @@ const DEFAULT_PROGRAMS: AdminProgram[] = [
 ];
 
 const DEFAULT_GALLERY: AdminMediaItem[] = [
+  {
+    id: 'med-stadium',
+    mediaType: 'image',
+    title: 'Floodlit Tape Ball Action Session',
+    category: 'Match Highlights',
+    caption: 'Evening floodlit tape ball batting execution under stadium lights.',
+    assetPath: HERO_STADIUM_VISUAL,
+    published: true,
+    uploadedLabel: 'Academy Visual',
+  },
   {
     id: 'med-hero',
     mediaType: 'image',
@@ -294,7 +296,7 @@ const DEFAULT_WEBSITE_SECTIONS: AdminWebsiteContentSection[] = [
     label: 'Homepage Hero Content',
     headline: 'Structured Tape Ball Cricket Coaching for Competitive Match Readiness',
     subheadline: ACADEMY_BRAND.tagline,
-    ctaLabel: 'Explore Programs',
+    ctaLabel: 'Register Now',
     bodyNotes:
       'SK Tape Ball Academy in Sabzazar, Lahore pairs disciplined athletic conditioning (~200 exercises), structured batting and bowling practice methods, and focused fielding drills.',
     lastUpdatedLabel: 'Active',
@@ -378,7 +380,6 @@ const DEFAULT_STATE: AcademyPersistedState = {
   blogPosts: [],
   students: [],
   applications: [],
-  trials: [],
   feePackages: [],
   feeRecords: [],
   paymentHistory: [],
@@ -399,7 +400,9 @@ function mergeLoadedState(raw: Partial<AcademyPersistedState> | null): AcademyPe
         ...(raw.siteSettings?.socials ?? {}),
       },
       logo: raw.siteSettings?.logo ?? DEFAULT_SITE_SETTINGS.logo,
-      heroMedia: raw.siteSettings?.heroMedia ?? DEFAULT_SITE_SETTINGS.heroMedia,
+      heroMedia: raw.siteSettings?.heroMedia?.src
+        ? raw.siteSettings.heroMedia
+        : DEFAULT_SITE_SETTINGS.heroMedia,
       aboutMedia: raw.siteSettings?.aboutMedia ?? DEFAULT_SITE_SETTINGS.aboutMedia,
     },
     coaches: Array.isArray(raw.coaches) ? raw.coaches : DEFAULT_STATE.coaches,
@@ -413,7 +416,6 @@ function mergeLoadedState(raw: Partial<AcademyPersistedState> | null): AcademyPe
     blogPosts: Array.isArray(raw.blogPosts) ? raw.blogPosts : DEFAULT_STATE.blogPosts,
     students: Array.isArray(raw.students) ? raw.students : DEFAULT_STATE.students,
     applications: Array.isArray(raw.applications) ? raw.applications : DEFAULT_STATE.applications,
-    trials: Array.isArray(raw.trials) ? raw.trials : DEFAULT_STATE.trials,
     feePackages: Array.isArray(raw.feePackages) ? raw.feePackages : DEFAULT_STATE.feePackages,
     feeRecords: Array.isArray(raw.feeRecords) ? raw.feeRecords : DEFAULT_STATE.feeRecords,
     paymentHistory: Array.isArray(raw.paymentHistory) ? raw.paymentHistory : DEFAULT_STATE.paymentHistory,
@@ -449,9 +451,6 @@ export interface AcademyStateContextValue {
   submitAdmission: (
     input: RegistrationSubmitInput,
   ) => Promise<RepositoryActionResult<{ application: AdminApplication }>>;
-  submitTrial: (
-    input: TrialSubmitInput,
-  ) => Promise<RepositoryActionResult<{ trial: AdminTrialBooking }>>;
   lookupApplication: (
     referenceCode: string,
     contactDigits: string,
@@ -470,15 +469,6 @@ export interface AcademyStateContextValue {
     app: AdminApplication,
     batch?: AdminBatch | null,
   ) => Promise<RepositoryActionResult<AdminStudent>>;
-  updateTrialBooking: (
-    id: string,
-    patch: {
-      status: TrialBookingStatus;
-      preferredDate?: string;
-      preferredTimeSlot?: string;
-      staffNote?: string;
-    },
-  ) => Promise<RepositoryActionResult<AdminTrialBooking>>;
   updateSiteSettings: (updater: (prev: AcademySiteSettings) => AcademySiteSettings) => void;
   setCoaches: (updater: AdminCoach[] | ((prev: AdminCoach[]) => AdminCoach[])) => void;
   setPrograms: (updater: AdminProgram[] | ((prev: AdminProgram[]) => AdminProgram[])) => void;
@@ -498,9 +488,6 @@ export interface AcademyStateContextValue {
   setStudents: (updater: AdminStudent[] | ((prev: AdminStudent[]) => AdminStudent[])) => void;
   setApplications: (
     updater: AdminApplication[] | ((prev: AdminApplication[]) => AdminApplication[]),
-  ) => void;
-  setTrials: (
-    updater: AdminTrialBooking[] | ((prev: AdminTrialBooking[]) => AdminTrialBooking[]),
   ) => void;
   setFeePackages: (
     updater: AdminFeePackage[] | ((prev: AdminFeePackage[]) => AdminFeePackage[]),
@@ -570,7 +557,6 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
         ...prev,
         students: res.data!.students,
         applications: res.data!.applications,
-        trials: res.data!.trials,
       }));
       setLastSyncedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       return { ok: true };
@@ -619,38 +605,6 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
     };
     setState((prev) => ({ ...prev, applications: [localApp, ...prev.applications] }));
     return { ok: true, data: { application: localApp } };
-  }
-
-  async function submitTrial(
-    input: TrialSubmitInput,
-  ): Promise<RepositoryActionResult<{ trial: AdminTrialBooking }>> {
-    if (isSupabaseConfigured) {
-      const res = await insertSupabaseTrialBooking(input);
-      if (!res.ok || !res.data) {
-        setDbError(res.error ?? 'Trial booking submission failed.');
-        return res;
-      }
-      setState((prev) => ({ ...prev, trials: [res.data!.trial, ...prev.trials] }));
-      return res;
-    }
-
-    const localCode = `LOCAL-TRL-${Math.floor(100000 + Math.random() * 900000)}`;
-    const localTrial: AdminTrialBooking = {
-      id: `trl-${Date.now()}`,
-      requestCode: localCode,
-      playerName: input.studentName,
-      ageGroup: input.dobOrAge,
-      contactPlaceholder: input.contactPhone,
-      requestedProgram: input.requestedProgram,
-      preferredDate: input.preferredDate,
-      preferredTimeSlot: input.preferredTimeSlot,
-      status: 'Requested (Unconfirmed)',
-      staffNote: input.additionalMessage
-        ? `Guardian: ${input.guardianName} · ${input.additionalMessage}`
-        : `Guardian: ${input.guardianName} · Level: ${input.previousExperience}`,
-    };
-    setState((prev) => ({ ...prev, trials: [localTrial, ...prev.trials] }));
-    return { ok: true, data: { trial: localTrial } };
   }
 
   async function lookupApplication(
@@ -811,48 +765,6 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
     return studentRes;
   }
 
-  async function updateTrialBooking(
-    id: string,
-    patch: {
-      status: TrialBookingStatus;
-      preferredDate?: string;
-      preferredTimeSlot?: string;
-      staffNote?: string;
-    },
-  ): Promise<RepositoryActionResult<AdminTrialBooking>> {
-    if (isSupabaseConfigured) {
-      const res = await updateSupabaseTrialBooking(id, patch);
-      if (!res.ok || !res.data) {
-        setDbError(res.error ?? 'Failed to update trial booking.');
-        return res;
-      }
-      setState((prev) => ({
-        ...prev,
-        trials: prev.trials.map((t) => (t.id === id ? res.data! : t)),
-      }));
-      return res;
-    }
-
-    let updated: AdminTrialBooking | undefined;
-    setState((prev) => ({
-      ...prev,
-      trials: prev.trials.map((t) => {
-        if (t.id === id) {
-          updated = {
-            ...t,
-            status: patch.status,
-            preferredDate: patch.preferredDate ?? t.preferredDate,
-            preferredTimeSlot: patch.preferredTimeSlot ?? t.preferredTimeSlot,
-            staffNote: patch.staffNote ?? t.staffNote,
-          };
-          return updated;
-        }
-        return t;
-      }),
-    }));
-    return { ok: true, data: updated };
-  }
-
   function getSafeWhatsAppHref(): string | null {
     const raw = state.siteSettings.whatsappUrlOrNumber.trim();
     if (!raw) return null;
@@ -878,13 +790,11 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
         clearDbError: () => setDbError(null),
         syncCoreRecords,
         submitAdmission,
-        submitTrial,
         lookupApplication,
         saveStudent,
         removeStudent,
         reviewAdmission,
         convertAdmissionToStudent,
-        updateTrialBooking,
         updateSiteSettings: (updater) =>
           setState((prev) => ({ ...prev, siteSettings: updater(prev.siteSettings) })),
         setCoaches: (u) => updateSlice('coaches', u),
@@ -898,7 +808,6 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
         setBlogPosts: (u) => updateSlice('blogPosts', u),
         setStudents: (u) => updateSlice('students', u),
         setApplications: (u) => updateSlice('applications', u),
-        setTrials: (u) => updateSlice('trials', u),
         setFeePackages: (u) => updateSlice('feePackages', u),
         setFeeRecords: (u) => updateSlice('feeRecords', u),
         setPaymentHistory: (u) => updateSlice('paymentHistory', u),

@@ -17,26 +17,27 @@ export function WhatsAppCta({
   const { getSafeWhatsAppHref } = useAcademyState();
   const safeHref = getSafeWhatsAppHref();
 
+  const sharedClasses = cn(
+    'inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#E2E8F0] bg-white px-4 h-11 text-sm font-semibold text-[#07152C] hover:border-[#D5A52B] hover:bg-[#F5F7FA] dark:border-white/15 dark:bg-[#0F213B] dark:text-white dark:hover:border-[#D5A52B]/60 dark:hover:bg-[#162B4D] transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
+    variant === 'banner' && 'w-full justify-between px-5 h-12',
+    className,
+  );
+
   if (!safeHref) {
     if (hideIfUnconfigured) {
       return null;
     }
 
     return (
-      <Link
-        to="/contact"
-        className={cn(
-          'inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#E2E8F0] bg-white px-4 h-11 text-sm font-semibold text-[#071A36] hover:border-[#D9A52E] hover:bg-[#F5F7FA] transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]',
-          variant === 'banner' && 'w-full justify-between px-5 h-12',
-          className,
-        )}
-      >
+      <Link to="/contact" className={sharedClasses}>
         <span className="inline-flex items-center gap-2">
-          <MessageCircle className="h-4 w-4 text-[#071A36]" aria-hidden="true" />
+          <MessageCircle className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
           <span>Academy Inquiry Desk</span>
         </span>
         {variant === 'banner' && (
-          <span className="text-xs font-medium text-[#64748B]">Contact Form</span>
+          <span className="text-xs font-medium text-[#64748B] dark:text-[#8499B8]">
+            Contact Form
+          </span>
         )}
       </Link>
     );
@@ -47,18 +48,14 @@ export function WhatsAppCta({
       href={safeHref}
       target="_blank"
       rel="noopener noreferrer"
-      className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-[10px] border border-[#E2E8F0] bg-white px-4 h-11 text-sm font-semibold text-[#071A36] hover:border-[#D9A52E] hover:bg-[#F5F7FA] transition-colors duration-150 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]',
-        variant === 'banner' && 'w-full justify-between px-5 h-12',
-        className,
-      )}
+      className={sharedClasses}
     >
       <span className="inline-flex items-center gap-2">
-        <MessageCircle className="h-4 w-4 text-[#071A36]" aria-hidden="true" />
+        <MessageCircle className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
         <span>WhatsApp Inquiry</span>
       </span>
       {variant === 'banner' && (
-        <span className="text-xs font-medium text-[#64748B]">Open Chat</span>
+        <span className="text-xs font-medium text-[#64748B] dark:text-[#8499B8]">Open Chat</span>
       )}
     </a>
   );

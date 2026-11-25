@@ -8,7 +8,7 @@ export interface BarDatum {
 
 export function AdminBarChart({
   data,
-  primaryLabel = 'Applications (Demo)',
+  primaryLabel = 'Applications',
   secondaryLabel,
 }: {
   data: BarDatum[];
@@ -23,21 +23,21 @@ export function AdminBarChart({
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B]">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#64748B] dark:text-[#A3B4CC]">
         <div className="flex items-center gap-4">
-          <span className="inline-flex items-center gap-1.5 font-medium text-[#071A36]">
-            <span className="h-2.5 w-2.5 rounded-[3px] bg-[#071A36]" />
+          <span className="inline-flex items-center gap-1.5 font-medium text-[#07152C] dark:text-white">
+            <span className="h-2.5 w-2.5 rounded-[3px] bg-[#07152C] dark:bg-[#E2E8F0]" />
             <span>{primaryLabel}</span>
           </span>
           {secondaryLabel && (
-            <span className="inline-flex items-center gap-1.5 font-medium text-[#071A36]">
-              <span className="h-2.5 w-2.5 rounded-[3px] bg-[#D9A52E]" />
+            <span className="inline-flex items-center gap-1.5 font-medium text-[#07152C] dark:text-white">
+              <span className="h-2.5 w-2.5 rounded-[3px] bg-[#D5A52B]" />
               <span>{secondaryLabel}</span>
             </span>
           )}
         </div>
         {hoveredIdx !== null && data[hoveredIdx] && (
-          <span className="font-mono text-xs font-semibold text-[#071A36] tabular-nums">
+          <span className="font-mono text-xs font-semibold text-[#07152C] dark:text-[#D5A52B] tabular-nums">
             {data[hoveredIdx].label}: {data[hoveredIdx].value}
             {data[hoveredIdx].secondaryValue !== undefined
               ? ` / ${data[hoveredIdx].secondaryValue}`
@@ -47,8 +47,8 @@ export function AdminBarChart({
       </div>
 
       <div
-        className="grid items-end gap-3 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA]/70 px-4 pt-6 pb-3 h-52"
-        style={{ gridTemplateColumns: `repeat(${data.length}, minmax(0, 1fr))` }}
+        className="grid items-end gap-3 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA]/80 px-4 pt-6 pb-3 h-52 dark:border-white/10 dark:bg-[#07152C]/75"
+        style={{ gridTemplateColumns: `repeat(${Math.max(1, data.length)}, minmax(0, 1fr))` }}
         role="img"
         aria-label={`${primaryLabel} bar chart`}
       >
@@ -68,19 +68,19 @@ export function AdminBarChart({
             >
               <div className="flex w-full flex-1 items-end justify-center gap-1.5">
                 <div
-                  className="w-full max-w-[20px] rounded-t-[4px] bg-[#071A36] transition-opacity group-hover:opacity-85"
+                  className="w-full max-w-[20px] rounded-t-[4px] bg-[#07152C] dark:bg-[#60A5FA] transition-opacity group-hover:opacity-85"
                   style={{ height: `${Math.max(8, primaryPct)}%` }}
                   title={`${item.label}: ${item.value}`}
                 />
                 {item.secondaryValue !== undefined && (
                   <div
-                    className="w-full max-w-[20px] rounded-t-[4px] bg-[#D9A52E] transition-opacity group-hover:opacity-85"
+                    className="w-full max-w-[20px] rounded-t-[4px] bg-[#D5A52B] transition-opacity group-hover:opacity-85"
                     style={{ height: `${Math.max(8, secondaryPct)}%` }}
                     title={`${item.label} (${secondaryLabel}): ${item.secondaryValue}`}
                   />
                 )}
               </div>
-              <span className="text-[11px] font-medium text-[#64748B] tabular-nums">
+              <span className="text-[11px] font-medium text-[#64748B] dark:text-[#A3B4CC] tabular-nums">
                 {item.label}
               </span>
             </div>
@@ -98,9 +98,9 @@ export interface LineDatum {
 
 export function AdminLineChart({
   data,
-  seriesLabel = 'Enrolled Players (Demo)',
-  strokeColor = '#071A36',
-  accentColor = '#D9A52E',
+  seriesLabel = 'Enrolled Players',
+  strokeColor = '#60A5FA',
+  accentColor = '#D5A52B',
 }: {
   data: LineDatum[];
   seriesLabel?: string;
@@ -133,21 +133,21 @@ export function AdminLineChart({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2 text-xs">
-        <span className="inline-flex items-center gap-1.5 font-medium text-[#071A36]">
+        <span className="inline-flex items-center gap-1.5 font-medium text-[#07152C] dark:text-white">
           <span
             className="h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: accentColor }}
           />
           <span>{seriesLabel}</span>
         </span>
-        <span className="font-mono font-semibold text-[#071A36] tabular-nums">
+        <span className="font-mono font-semibold text-[#07152C] dark:text-[#D5A52B] tabular-nums">
           {activeIndex !== null && points[activeIndex]
             ? `${points[activeIndex].label}: ${points[activeIndex].value}`
             : `Latest: ${data[data.length - 1]?.value ?? 0}`}
         </span>
       </div>
 
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA]/70 p-3">
+      <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA]/80 p-3 dark:border-white/10 dark:bg-[#07152C]/75">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="h-44 w-full overflow-visible"
@@ -163,14 +163,14 @@ export function AdminLineChart({
                 x2={width - padX}
                 y1={yPos}
                 y2={yPos}
-                stroke="#E2E8F0"
+                className="stroke-[#E2E8F0] dark:stroke-white/10"
                 strokeDasharray="3 3"
               />
             );
           })}
 
           {areaPoints && (
-            <polygon points={areaPoints} fill={accentColor} fillOpacity="0.16" />
+            <polygon points={areaPoints} fill={accentColor} fillOpacity="0.18" />
           )}
 
           {polylinePoints && (
@@ -203,7 +203,7 @@ export function AdminLineChart({
                 x={pt.x}
                 y={height - 2}
                 textAnchor="middle"
-                className="fill-[#64748B] text-[10px] font-medium"
+                className="fill-[#64748B] dark:fill-[#A3B4CC] text-[10px] font-medium"
               >
                 {pt.label}
               </text>
@@ -227,7 +227,7 @@ export function AdminDonutBreakdown({
 
   return (
     <div className="space-y-3">
-      <div className="flex h-3 w-full overflow-hidden rounded-full bg-[#F5F7FA] border border-[#E2E8F0]">
+      <div className="flex h-3 w-full overflow-hidden rounded-full bg-[#F5F7FA] border border-[#E2E8F0] dark:bg-[#07152C] dark:border-white/10">
         {segments.map((seg) => {
           const pct = (seg.count / total) * 100;
           if (pct <= 0) return null;
@@ -247,16 +247,16 @@ export function AdminDonutBreakdown({
           return (
             <div
               key={seg.label}
-              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA]/60 px-3 py-2 text-xs"
+              className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA]/70 px-3 py-2 text-xs dark:border-white/10 dark:bg-[#162B4D]/70"
             >
-              <span className="inline-flex items-center gap-2 font-medium text-[#071A36]">
+              <span className="inline-flex items-center gap-2 font-medium text-[#07152C] dark:text-[#E2E8F0]">
                 <span
                   className="h-2.5 w-2.5 rounded-full shrink-0"
                   style={{ backgroundColor: seg.color }}
                 />
                 <span>{seg.label}</span>
               </span>
-              <span className="font-mono font-bold text-[#071A36] tabular-nums">
+              <span className="font-mono font-bold text-[#07152C] dark:text-white tabular-nums">
                 {seg.count} ({pct}%)
               </span>
             </div>

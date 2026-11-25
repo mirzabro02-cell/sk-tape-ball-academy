@@ -5,13 +5,13 @@ export const ADMISSIONS_PAGE_CONTENT = {
   kicker: 'Admissions & Onboarding',
   title: 'Join SK Tape Ball Academy',
   description:
-    'From initial trial evaluation to structured batch placement in Sabzazar, Lahore — follow a straightforward four-step pathway designed for dedicated players.',
+    'From online admission application to structured batch placement in Sabzazar, Lahore — follow a straightforward four-step pathway designed for dedicated players.',
   steps: [
     {
       step: '01',
-      title: 'Book a Free Trial or Register Interest',
+      title: 'Submit Admission Registration',
       description:
-        'Submit a trial request or admission application online with basic player and guardian contact details.',
+        'Complete the online registration form with player details, guardian contact information, and preferred training track.',
     },
     {
       step: '02',
@@ -59,7 +59,7 @@ export const ADMISSIONS_PAGE_CONTENT = {
     {
       question: 'Does submitting the online registration form immediately confirm a seat?',
       answer:
-        'No. Online registrations initiate your admission review and trial evaluation. Final batch confirmation is provided directly by academy staff.',
+        'No. Online registrations initiate your admission review and diagnostic evaluation. Final batch confirmation is provided directly by academy staff.',
     },
     {
       question: 'Do beginners need prior tournament experience to apply?',
@@ -67,9 +67,9 @@ export const ADMISSIONS_PAGE_CONTENT = {
         'No. Our Beginner Foundation Program is built specifically for newcomers developing batting stance, bowling rhythm, and catching confidence from scratch.',
     },
     {
-      question: 'Can I book a free trial before enrolling?',
+      question: 'How can I check my submitted registration status?',
       answer:
-        'Yes. Prospective players are encouraged to request an evaluation session via Book Free Trial before finalizing their track.',
+        'Save your Application Reference ID after submitting the registration form and check progress anytime on the Track Application page.',
     },
   ],
 } as const;
@@ -113,14 +113,6 @@ export const PREFERRED_BATCH_OPTIONS: SelectOption[] = [
   { label: 'Weekend Schedule', value: 'weekend' },
 ];
 
-export const PREFERRED_TRIAL_TIME_OPTIONS: SelectOption[] = [
-  { label: 'Select preferred trial window', value: '' },
-  { label: 'Morning Assessment Window', value: 'morning-window' },
-  { label: 'Afternoon Assessment Window', value: 'afternoon-window' },
-  { label: 'Evening Floodlight Window', value: 'evening-window' },
-  { label: 'Weekend Trial Window', value: 'weekend-window' },
-];
-
 export const FEES_PAGE_CONTENT = {
   kicker: 'Membership & Fee Information',
   title: 'Training Packages & Onboarding Consultation',
@@ -128,9 +120,9 @@ export const FEES_PAGE_CONTENT = {
     'Fee plans are aligned with your recommended training track, session frequency, and personal coaching goals in Sabzazar, Lahore.',
   consultationPoints: [
     {
-      title: 'Trial Evaluation First',
+      title: 'Diagnostic Placement First',
       detail:
-        'Book a free evaluation session first so coaches can assess your batting, bowling, fielding, and fitness readiness before recommending a program.',
+        'Submit an admission application so coaches can review your batting, bowling, fielding, and fitness readiness before recommending a program.',
     },
     {
       title: 'Transparent Program Placement',
@@ -147,12 +139,12 @@ export const FEES_PAGE_CONTENT = {
     {
       question: 'How do I receive exact fee details for a program?',
       answer:
-        'Submit a Free Trial Request or Registration Inquiry, or contact the academy office directly so staff can share the fee plan matching your selected track.',
+        'Submit an online registration application or contact the academy desk directly so staff can share the fee plan matching your selected track.',
     },
     {
-      question: 'Can I attend a trial before committing to a monthly package?',
+      question: 'Are fee details finalized before batch assignment?',
       answer:
-        'Yes. Prospective players are welcome to attend an initial trial assessment before completing full batch enrollment.',
+        'Yes. Academy staff confirm batch schedule availability and exact fee terms with the player or guardian prior to active enrollment.',
     },
   ],
 } as const;
@@ -160,8 +152,7 @@ export const FEES_PAGE_CONTENT = {
 export type FaqCategory =
   | 'Admission FAQs'
   | 'Training FAQs'
-  | 'Membership FAQs'
-  | 'Trial Session FAQs';
+  | 'Membership FAQs';
 
 export interface FaqEntry {
   id: string;
@@ -175,7 +166,6 @@ export const FAQ_CATEGORIES: Array<'All' | FaqCategory> = [
   'Admission FAQs',
   'Training FAQs',
   'Membership FAQs',
-  'Trial Session FAQs',
 ];
 
 export const FAQS_DATA: FaqEntry[] = [
@@ -184,7 +174,7 @@ export const FAQS_DATA: FaqEntry[] = [
     category: 'Admission FAQs',
     question: 'How do I apply for admission to SK Tape Ball Academy?',
     answer:
-      'Complete the online registration form on the Register page or book a free trial session first. Our staff will review your details and follow up with assessment and batch placement options.',
+      'Complete the online registration form on the Register page. Our staff will review your details and follow up with diagnostic assessment and batch placement options.',
   },
   {
     id: 'adm-2',
@@ -199,6 +189,13 @@ export const FAQS_DATA: FaqEntry[] = [
     question: 'Where is SK Tape Ball Academy currently located?',
     answer:
       'Following our launch on 18 August 2024 in Faisalabad, SK Tape Ball Academy operates in Sabzazar, Lahore, Pakistan.',
+  },
+  {
+    id: 'adm-4',
+    category: 'Admission FAQs',
+    question: 'What happens during the initial player assessment?',
+    answer:
+      'Coaches review your batting stance, shot tendencies, bowling speed and line control, catching reflexes, and fitness readiness to recommend the best starting program.',
   },
   {
     id: 'trn-1',
@@ -226,20 +223,6 @@ export const FAQS_DATA: FaqEntry[] = [
     category: 'Membership FAQs',
     question: 'How are program fees shared?',
     answer:
-      'Program packages and coaching fee details are shared directly by academy administration during onboarding and trial review, or when published in our official Fees overview.',
-  },
-  {
-    id: 'trl-1',
-    category: 'Trial Session FAQs',
-    question: 'Is my free trial confirmed immediately when I submit the form?',
-    answer:
-      'No. Submitting the form logs a trial request. Your assessment slot is confirmed once academy staff review availability and follow up with you.',
-  },
-  {
-    id: 'trl-2',
-    category: 'Trial Session FAQs',
-    question: 'What happens during the free trial assessment?',
-    answer:
-      'Coaches assess your batting stance, shot tendencies, bowling speed and line control, catching reflexes, and fitness readiness to recommend the best starting program.',
+      'Program packages and coaching fee details are shared directly by academy administration during admission review, or when published in our official Fees overview.',
   },
 ];

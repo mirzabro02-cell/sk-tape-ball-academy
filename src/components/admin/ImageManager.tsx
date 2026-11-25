@@ -58,7 +58,6 @@ async function compressForLocalPreview(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 
-  // If already compact (< 260 KB raw file), keep original encoding
   if (file.size <= 260 * 1024) {
     return rawDataUrl;
   }
@@ -111,8 +110,8 @@ export function ImageManager({
     aspectRatio === 'square'
       ? 'aspect-square max-w-[240px]'
       : aspectRatio === '4/3'
-        ? 'aspect-[4/3]'
-        : 'aspect-video';
+        ? 'aspect-[4/3] max-w-[340px]'
+        : 'aspect-video max-w-[440px]';
 
   function updateTransform(patch: Partial<ImageTransformConfig>) {
     onChange({
@@ -137,7 +136,6 @@ export function ImageManager({
 
     setIsBusy(true);
     try {
-      // Production Supabase mode: upload strictly to Supabase Storage bucket 'academy-media'
       if (isSupabaseConfigured && rawSupabase) {
         const cleanExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
         const objectPath = `${storageFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${cleanExt}`;
@@ -171,7 +169,6 @@ export function ImageManager({
         return;
       }
 
-      // Unconfigured local preview mode: optimize size cleanly before storing in browser state
       const optimizedDataUrl = await compressForLocalPreview(file);
       if (optimizedDataUrl.length > 900_000) {
         setStatusError(
@@ -238,11 +235,13 @@ export function ImageManager({
   }
 
   return (
-    <div className="space-y-3 rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA]/60 p-4">
+    <div className="space-y-3 rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA]/80 p-4 dark:border-white/10 dark:bg-[#07152C]/80">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-sm font-semibold text-[#071A36]">{label}</p>
-          {helperText && <p className="text-xs text-[#64748B]">{helperText}</p>}
+          <p className="text-sm font-semibold text-[#07152C] dark:text-white">{label}</p>
+          {helperText && (
+            <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">{helperText}</p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -253,8 +252,8 @@ export function ImageManager({
               className={cn(
                 'inline-flex h-9 items-center gap-1.5 rounded-[9px] border px-3 text-xs font-semibold transition-colors cursor-pointer',
                 adjustOpen
-                  ? 'border-[#071A36] bg-[#071A36] text-white'
-                  : 'border-[#E2E8F0] bg-white text-[#071A36] hover:border-[#071A36]/40',
+                  ? 'border-[#D5A52B] bg-[#D5A52B] text-[#050D1B]'
+                  : 'border-[#E2E8F0] bg-white text-[#07152C] hover:border-[#07152C]/40 dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:border-[#D5A52B]/60',
               )}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
@@ -266,7 +265,7 @@ export function ImageManager({
             <button
               type="button"
               onClick={handleRemove}
-              className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-[#C8202B]/30 bg-white px-3 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 transition-colors cursor-pointer"
+              className="inline-flex h-9 items-center gap-1.5 rounded-[9px] border border-[#C8202B]/30 bg-white px-3 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 dark:border-[#F87171]/35 dark:bg-[#162B4D] dark:text-[#FCA5A5] dark:hover:bg-[#C8202B]/20 transition-colors cursor-pointer"
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
               <span>Remove</span>
@@ -275,11 +274,11 @@ export function ImageManager({
         </div>
       </div>
 
-      {/* Live Preview */}
-      <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3">
+      {/* Bounded Live Preview */}
+      <div className="rounded-[12px] border border-[#E2E8F0] bg-white p-3 dark:border-white/10 dark:bg-[#0F213B]">
         <div
           className={cn(
-            'mx-auto w-full overflow-hidden rounded-[10px] border border-[#E2E8F0] bg-[#071A36]',
+            'mx-auto w-full overflow-hidden rounded-[10px] border border-[#E2E8F0] bg-[#07152C] dark:border-white/10 dark:bg-[#050D1B]',
             aspectClass,
           )}
         >
@@ -295,16 +294,16 @@ export function ImageManager({
 
       {/* Hidden-by-default Image Adjustment Controller */}
       {adjustOpen && value.src && (
-        <div className="space-y-4 rounded-[12px] border border-[#071A36]/20 bg-white p-4">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E2E8F0] pb-2.5">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#071A36]">
+        <div className="space-y-4 rounded-[12px] border border-[#07152C]/20 bg-white p-4 dark:border-[#D5A52B]/35 dark:bg-[#0F213B]">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E2E8F0] pb-2.5 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#07152C] dark:text-white">
               Image Positioning &amp; Framing
             </p>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => updateTransform(DEFAULT_IMAGE_TRANSFORM)}
-                className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
+                className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#07152C] hover:bg-[#F5F7FA] dark:border-white/15 dark:text-white dark:hover:bg-[#162B4D] cursor-pointer"
               >
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />
                 <span>Reset</span>
@@ -312,7 +311,7 @@ export function ImageManager({
               <button
                 type="button"
                 onClick={() => setAdjustOpen(false)}
-                className="inline-flex h-8 items-center gap-1 rounded-[8px] bg-[#D9A52E] px-3 text-[11px] font-bold text-[#050D1B] hover:bg-[#c59424] cursor-pointer"
+                className="inline-flex h-8 items-center gap-1 rounded-[8px] bg-[#D5A52B] px-3 text-[11px] font-bold text-[#050D1B] hover:bg-[#E2B84A] cursor-pointer"
               >
                 <Check className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Done</span>
@@ -323,7 +322,7 @@ export function ImageManager({
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Fit vs Fill */}
             <div className="space-y-1.5">
-              <p className="text-xs font-semibold text-[#071A36]">Display Mode</p>
+              <p className="text-xs font-semibold text-[#07152C] dark:text-white">Display Mode</p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -331,8 +330,8 @@ export function ImageManager({
                   className={cn(
                     'inline-flex h-9 items-center justify-center gap-1.5 rounded-[8px] border text-xs font-semibold cursor-pointer',
                     value.transform.fit === 'cover'
-                      ? 'border-[#071A36] bg-[#071A36] text-white'
-                      : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36]',
+                      ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                      : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-[#E2E8F0]',
                   )}
                 >
                   <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -344,8 +343,8 @@ export function ImageManager({
                   className={cn(
                     'inline-flex h-9 items-center justify-center gap-1.5 rounded-[8px] border text-xs font-semibold cursor-pointer',
                     value.transform.fit === 'contain'
-                      ? 'border-[#071A36] bg-[#071A36] text-white'
-                      : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36]',
+                      ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                      : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-[#E2E8F0]',
                   )}
                 >
                   <Minimize2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -356,9 +355,9 @@ export function ImageManager({
 
             {/* Zoom Controls */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-semibold text-[#071A36]">
+              <div className="flex items-center justify-between text-xs font-semibold text-[#07152C] dark:text-white">
                 <span>Zoom</span>
-                <span className="font-mono text-[#64748B] tabular-nums">
+                <span className="font-mono text-[#64748B] dark:text-[#A3B4CC] tabular-nums">
                   {value.transform.scale.toFixed(2)}x
                 </span>
               </div>
@@ -369,7 +368,7 @@ export function ImageManager({
                     updateTransform({ scale: clamp(value.transform.scale - 0.1, 1, 2.5) })
                   }
                   aria-label="Zoom out"
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] hover:bg-[#E2E8F0]/50 cursor-pointer"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] hover:bg-[#E2E8F0]/50 dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:bg-[#1E3963] cursor-pointer"
                 >
                   <ZoomOut className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -381,7 +380,7 @@ export function ImageManager({
                   step={0.05}
                   value={value.transform.scale}
                   onChange={(e) => updateTransform({ scale: Number(e.target.value) })}
-                  className="w-full accent-[#071A36]"
+                  className="w-full accent-[#D5A52B]"
                 />
                 <button
                   type="button"
@@ -389,7 +388,7 @@ export function ImageManager({
                     updateTransform({ scale: clamp(value.transform.scale + 0.1, 1, 2.5) })
                   }
                   aria-label="Zoom in"
-                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] hover:bg-[#E2E8F0]/50 cursor-pointer"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] hover:bg-[#E2E8F0]/50 dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:bg-[#1E3963] cursor-pointer"
                 >
                   <ZoomIn className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -400,9 +399,9 @@ export function ImageManager({
           {/* Position Nudge + Sliders */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold text-[#071A36]">
+              <div className="flex items-center justify-between text-xs font-semibold text-[#07152C] dark:text-white">
                 <span>Horizontal Position</span>
-                <span className="font-mono text-[#64748B] tabular-nums">
+                <span className="font-mono text-[#64748B] dark:text-[#A3B4CC] tabular-nums">
                   {value.transform.posX}%
                 </span>
               </div>
@@ -411,7 +410,7 @@ export function ImageManager({
                   type="button"
                   onClick={() => updateTransform({ posX: clamp(value.transform.posX - 5, 0, 100) })}
                   aria-label="Move left"
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] cursor-pointer"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-white cursor-pointer"
                 >
                   <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -423,13 +422,13 @@ export function ImageManager({
                   step={1}
                   value={value.transform.posX}
                   onChange={(e) => updateTransform({ posX: Number(e.target.value) })}
-                  className="w-full accent-[#071A36]"
+                  className="w-full accent-[#D5A52B]"
                 />
                 <button
                   type="button"
                   onClick={() => updateTransform({ posX: clamp(value.transform.posX + 5, 0, 100) })}
                   aria-label="Move right"
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] cursor-pointer"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-white cursor-pointer"
                 >
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -437,9 +436,9 @@ export function ImageManager({
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs font-semibold text-[#071A36]">
+              <div className="flex items-center justify-between text-xs font-semibold text-[#07152C] dark:text-white">
                 <span>Vertical Position</span>
-                <span className="font-mono text-[#64748B] tabular-nums">
+                <span className="font-mono text-[#64748B] dark:text-[#A3B4CC] tabular-nums">
                   {value.transform.posY}%
                 </span>
               </div>
@@ -448,7 +447,7 @@ export function ImageManager({
                   type="button"
                   onClick={() => updateTransform({ posY: clamp(value.transform.posY - 5, 0, 100) })}
                   aria-label="Move up"
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] cursor-pointer"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-white cursor-pointer"
                 >
                   <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -460,13 +459,13 @@ export function ImageManager({
                   step={1}
                   value={value.transform.posY}
                   onChange={(e) => updateTransform({ posY: Number(e.target.value) })}
-                  className="w-full accent-[#071A36]"
+                  className="w-full accent-[#D5A52B]"
                 />
                 <button
                   type="button"
                   onClick={() => updateTransform({ posY: clamp(value.transform.posY + 5, 0, 100) })}
                   aria-label="Move down"
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] cursor-pointer"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] dark:border-white/15 dark:bg-[#162B4D] dark:text-white cursor-pointer"
                 >
                   <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -476,9 +475,9 @@ export function ImageManager({
         </div>
       )}
 
-      {/* Source Tabs: Upload from PC | Image URL */}
+      {/* Source Tabs: Upload from Device | Image URL */}
       <div className="space-y-3">
-        <div className="inline-flex rounded-[9px] border border-[#E2E8F0] bg-white p-1 gap-1">
+        <div className="inline-flex rounded-[9px] border border-[#E2E8F0] bg-white p-1 gap-1 dark:border-white/15 dark:bg-[#0F213B]">
           <button
             type="button"
             onClick={() => {
@@ -488,8 +487,8 @@ export function ImageManager({
             className={cn(
               'inline-flex items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-xs font-semibold cursor-pointer',
               sourceMode === 'upload'
-                ? 'bg-[#071A36] text-white'
-                : 'text-[#64748B] hover:text-[#071A36]',
+                ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                : 'text-[#64748B] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:text-white',
             )}
           >
             <Upload className="h-3.5 w-3.5" aria-hidden="true" />
@@ -504,8 +503,8 @@ export function ImageManager({
             className={cn(
               'inline-flex items-center gap-1.5 rounded-[7px] px-3 py-1.5 text-xs font-semibold cursor-pointer',
               sourceMode === 'url'
-                ? 'bg-[#071A36] text-white'
-                : 'text-[#64748B] hover:text-[#071A36]',
+                ? 'bg-[#07152C] text-white dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                : 'text-[#64748B] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:text-white',
             )}
           >
             <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
@@ -526,12 +525,14 @@ export function ImageManager({
               type="button"
               disabled={isBusy}
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex h-10 items-center gap-2 rounded-[10px] border border-[#071A36]/20 bg-white px-4 text-xs font-semibold text-[#071A36] hover:border-[#071A36]/50 hover:bg-[#F5F7FA] disabled:opacity-50 cursor-pointer"
+              className="inline-flex h-10 items-center gap-2 rounded-[10px] border border-[#07152C]/20 bg-white px-4 text-xs font-semibold text-[#07152C] hover:border-[#07152C]/50 hover:bg-[#F5F7FA] disabled:opacity-50 dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:border-[#D5A52B]/60 cursor-pointer"
             >
-              <Upload className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
+              <Upload className="h-3.5 w-3.5 text-[#D5A52B]" aria-hidden="true" />
               <span>{isBusy ? 'Processing...' : value.src ? 'Replace Image File' : 'Choose Image File'}</span>
             </button>
-            <span className="text-[11px] text-[#64748B]">JPG, PNG, or WebP · Max 5 MB</span>
+            <span className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
+              JPG, PNG, or WebP · Max 5 MB
+            </span>
           </div>
         ) : (
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -540,13 +541,13 @@ export function ImageManager({
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               placeholder="https://example.com/photo.jpg"
-              className="h-10 flex-1 rounded-[10px] border border-[#E2E8F0] bg-white px-3.5 text-xs text-[#071A36] placeholder:text-[#64748B]/70 focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/50"
+              className="h-10 flex-1 rounded-[10px] border border-[#E2E8F0] bg-white px-3.5 text-xs text-[#07152C] placeholder:text-[#64748B]/70 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 dark:border-white/15 dark:bg-[#0F213B] dark:text-white dark:placeholder:text-[#8499B8]"
             />
             <button
               type="button"
               disabled={isBusy || !urlInput.trim()}
               onClick={() => void handleApplyUrl()}
-              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-[10px] bg-[#071A36] px-4 text-xs font-semibold text-white hover:bg-[#0c274e] disabled:opacity-50 cursor-pointer shrink-0"
+              className="inline-flex h-10 items-center justify-center gap-1.5 rounded-[10px] bg-[#D5A52B] px-4 text-xs font-semibold text-[#050D1B] hover:bg-[#E2B84A] disabled:opacity-50 cursor-pointer shrink-0"
             >
               <span>{isBusy ? 'Checking...' : 'Apply URL'}</span>
             </button>
@@ -555,7 +556,7 @@ export function ImageManager({
 
         {presetAssets && presetAssets.length > 0 && (
           <div className="pt-1">
-            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#64748B] mb-1.5">
+            <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC] mb-1.5">
               Or choose an existing academy asset
             </label>
             <select
@@ -569,7 +570,7 @@ export function ImageManager({
                   transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
                 });
               }}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-xs text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-xs text-[#07152C] dark:border-white/15 dark:bg-[#0F213B] dark:text-white"
             >
               <option value="">Select bundled asset...</option>
               {presetAssets.map((asset) => (
@@ -585,7 +586,7 @@ export function ImageManager({
       {statusError && (
         <div
           role="alert"
-          className="flex items-start gap-2 rounded-[9px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-3 py-2 text-xs font-medium text-[#C8202B]"
+          className="flex items-start gap-2 rounded-[9px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-3 py-2 text-xs font-medium text-[#C8202B] dark:border-[#F87171]/35 dark:text-[#FCA5A5]"
         >
           <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{statusError}</span>
@@ -593,7 +594,9 @@ export function ImageManager({
       )}
 
       {statusNote && !statusError && (
-        <p className="text-[11px] font-medium text-[#071A36]/80">{statusNote}</p>
+        <p className="text-[11px] font-medium text-[#07152C]/80 dark:text-[#D5A52B]">
+          {statusNote}
+        </p>
       )}
     </div>
   );

@@ -1,24 +1,70 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-deep-navy: #071A36;
+  --color-deep-navy: #07152C;
+  --color-navy-surface: #0F213B;
+  --color-navy-elevated: #162B4D;
   --color-dark-navy: #050D1B;
-  --color-royal-gold: #D9A52E;
+  --color-royal-gold: #D5A52B;
+  --color-royal-gold-hover: #E2B84A;
   --color-cricket-red: #C8202B;
   --color-light-bg: #F5F7FA;
   --color-secondary-text: #64748B;
   --color-academy-border: #E2E8F0;
 
-  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Barlow Condensed", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+:root {
+  --bg-canvas: #F5F7FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #EEF2F6;
+  --bg-deep: #050D1B;
+  --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
+  --text-primary: #07152C;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --accent-gold: #D5A52B;
+  --accent-gold-hover: #E2B84A;
+  --accent-red: #C8202B;
+  --shadow-card: 0 10px 28px -18px rgba(7, 21, 44, 0.16);
+}
+
+.dark {
+  --bg-canvas: #07152C;
+  --bg-surface: #0F213B;
+  --bg-surface-elevated: #162B4D;
+  --bg-deep: #050D1B;
+  --border-subtle: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.20);
+  --text-primary: #FFFFFF;
+  --text-secondary: #B4C4DC;
+  --text-muted: #8499B8;
+  --accent-gold: #D5A52B;
+  --accent-gold-hover: #E2B84A;
+  --accent-red: #E03A45;
+  --shadow-card: 0 16px 38px -20px rgba(0, 0, 0, 0.55);
 }
 
 @layer base {
   html {
     font-family: var(--font-body);
-    color: #071A36;
-    background-color: #F5F7FA;
+    color: var(--text-primary);
+    background-color: var(--bg-canvas);
     scroll-behavior: smooth;
+    overflow-x: clip;
+  }
+
+  body {
+    color: var(--text-primary);
+    background-color: var(--bg-canvas);
+    overflow-x: clip;
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -28,8 +74,21 @@
   }
 }
 
+.font-display {
+  font-family: var(--font-display);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }

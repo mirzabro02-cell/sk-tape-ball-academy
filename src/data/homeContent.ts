@@ -1,15 +1,17 @@
-import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
+import { HERO_STADIUM_VISUAL } from '@/src/assets/branding';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 
 export const HERO_CONTENT = {
-  tagline: 'WHERE DREAMS MEET OPPORTUNITIES.',
-  headline: 'Structured Tape Ball Cricket Coaching for Competitive Match Readiness',
+  tagline: 'Train · Play · Excel',
+  motto: 'WHERE DREAMS MEET OPPORTUNITIES.',
+  headlineTop: 'SK Tape Ball',
+  headlineAccent: 'Academy',
   supportingText:
-    'Operating in Sabzazar, Lahore — SK Tape Ball Academy combines ~200 athletic conditioning exercises, structured batting and bowling drill methods, and focused fielding routines under disciplined coaching.',
-  imageSrc: heroImg,
-  imageAlt: 'Floodlit SK Tape Ball Academy practice pitch with cricket bat and taped ball at twilight',
-  primaryCta: { label: 'Explore Programs', to: '/programs' },
-  secondaryCta: { label: 'Book Free Trial', to: '/book-trial' },
+    'Building disciplined tape ball cricketers in Sabzazar, Lahore through ~200 athletic fitness exercises, structured batting methods, pace & spin mastery, and competitive league play.',
+  imageSrc: HERO_STADIUM_VISUAL,
+  imageAlt: 'SK Tape Ball Academy player in dark navy kit hitting a taped cricket ball under floodlights',
+  primaryCta: { label: 'Register Now', to: '/register' },
+  secondaryCta: { label: 'Explore Programs', to: '/programs' },
 } as const;
 
 export const ACADEMY_INTRO_CONTENT = {

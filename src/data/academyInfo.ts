@@ -89,7 +89,7 @@ export const ABOUT_PAGE_CONTENT = {
       step: 'Stage 01',
       title: 'Player Diagnostic Assessment',
       description:
-        'Trial evaluation identifying natural strengths, technical weaknesses, movement baseline, and athletic fitness level.',
+        'Initial onboarding evaluation identifying natural strengths, technical weaknesses, movement baseline, and athletic fitness level.',
     },
     {
       step: 'Stage 02',
@@ -164,7 +164,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
     ],
     relatedSlugs: ['batting', 'fast-bowling', 'fielding'],
     scheduleAndFeeNote:
-      'Integrated across weekly sessions in Sabzazar, Lahore. Reach out via Trial Booking or Registration for batch onboarding details.',
+      'Integrated across weekly sessions in Sabzazar, Lahore. Submit a Registration Application for batch placement details.',
   },
   {
     slug: 'batting',
@@ -199,7 +199,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
     ],
     relatedSlugs: ['fast-bowling', 'fitness-agility', 'personal-coaching'],
     scheduleAndFeeNote:
-      'Assessment begins during your trial session in Sabzazar, Lahore. Apply online to schedule your evaluation.',
+      'Diagnostic assessment begins upon registration review in Sabzazar, Lahore. Apply online to schedule onboarding.',
   },
   {
     slug: 'fast-bowling',
@@ -374,7 +374,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
     ],
     relatedSlugs: ['fitness-agility', 'batting', 'fielding'],
     scheduleAndFeeNote:
-      'Book a free trial assessment so coaches can recommend your ideal starting group.',
+      'Submit an online registration application so coaches can recommend your ideal starting group.',
   },
   {
     slug: 'advanced',
@@ -425,7 +425,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
       'Deep individual assessment of batting mechanics or bowling action',
       'Targeted correction of technical flaws using progressive drill methods',
       'Custom conditioning blocks aligned with individual fitness priorities',
-      'Focused preparation for trials or competitive tournament seasons',
+      'Focused preparation for competitive tournament seasons',
     ],
     trainingObjectives: [
       'Accelerate technical corrections with uninterrupted coach guidance',
@@ -434,7 +434,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
     ],
     suitablePlayers: [
       'Players looking for targeted 1-on-1 technical refinement',
-      'Cricketers preparing for squad trials or key leagues',
+      'Cricketers preparing for squad selections or key leagues',
       'Beginners or competitive players preferring personalized pacing',
     ],
     trainingApproach: [
@@ -444,7 +444,7 @@ export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
     ],
     relatedSlugs: ['batting', 'fast-bowling', 'advanced'],
     scheduleAndFeeNote:
-      'Contact the academy or submit an inquiry to arrange 1-on-1 session availability.',
+      'Contact the academy or submit a registration application to arrange 1-on-1 session availability.',
   },
 ];
 

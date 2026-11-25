@@ -13,13 +13,6 @@ export interface AcademyCoachPlaceholder {
   specialtyPlaceholder: string;
 }
 
-export interface TrialRequestDraft {
-  playerName: string;
-  guardianOrContact: string;
-  preferredProgram: string;
-  notes: string;
-}
-
 export interface RegistrationDraft {
   fullName: string;
   email: string;

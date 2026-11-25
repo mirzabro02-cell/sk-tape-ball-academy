@@ -28,10 +28,10 @@ export function AccountPageShell({
   return (
     <div className={`mx-auto w-full ${WIDTH_CLASSES[maxWidth]} space-y-6`}>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <OfficialLogo tone="light" />
+        <OfficialLogo tone="auto" />
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#071A36] hover:text-[#C8202B] transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#07152C] hover:text-[#C8202B] dark:text-[#B4C4DC] dark:hover:text-[#D5A52B] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Back to Home</span>
@@ -39,13 +39,13 @@ export function AccountPageShell({
       </div>
 
       <Card tone="navy" padding="lg" className="space-y-2">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#D9A52E]">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
           {kicker}
         </p>
         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
           {title}
         </h1>
-        <p className="text-sm leading-relaxed text-white/80">{description}</p>
+        <p className="text-sm leading-relaxed text-[#B4C4DC]">{description}</p>
       </Card>
 
       {children}

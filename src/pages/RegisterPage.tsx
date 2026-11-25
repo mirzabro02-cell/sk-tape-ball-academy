@@ -242,20 +242,27 @@ export function RegisterPage() {
         title="Student Registration Form"
         description="Complete student, guardian, and training preferences below to submit an admission application for SK Tape Ball Academy."
         actions={
-          <Button to="/book-trial" variant="outlineLight" size="lg">
-            Prefer a Free Trial First?
-          </Button>
+          <>
+            <Button to="/admissions" variant="outlineLight" size="lg">
+              View Admissions Guide
+            </Button>
+            <Button to="/application-status" variant="outlineLight" size="lg">
+              Track Application
+            </Button>
+          </>
         }
       />
 
       <form onSubmit={handleSubmit} noValidate className="space-y-8">
         {/* Section 1: Student Information */}
         <Card padding="lg" className="space-y-6">
-          <div className="border-b border-[#E2E8F0] pb-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B]">
+          <div className="border-b border-[#E2E8F0] pb-4 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
               Section 01
             </p>
-            <h2 className="mt-1 text-xl font-bold text-[#071A36]">Student Information</h2>
+            <h2 className="mt-1 text-xl font-bold text-[#07152C] dark:text-white">
+              Student Information
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -279,9 +286,9 @@ export function RegisterPage() {
                 required
               />
               {calculatedAge !== null && (
-                <p className="text-xs font-medium text-[#071A36]">
+                <p className="text-xs font-medium text-[#07152C] dark:text-white">
                   Calculated Age: <span className="font-bold tabular-nums">{calculatedAge}</span> years{' '}
-                  <span className="text-[#64748B]">
+                  <span className="text-[#64748B] dark:text-[#7F95B8]">
                     ({isMinor ? 'Under 18 — Guardian consent required below' : 'Adult applicant (18+)'})
                   </span>
                 </p>
@@ -326,11 +333,11 @@ export function RegisterPage() {
 
         {/* Section 2: Guardian Information */}
         <Card padding="lg" className="space-y-6">
-          <div className="border-b border-[#E2E8F0] pb-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B]">
+          <div className="border-b border-[#E2E8F0] pb-4 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
               Section 02
             </p>
-            <h2 className="mt-1 text-xl font-bold text-[#071A36]">
+            <h2 className="mt-1 text-xl font-bold text-[#07152C] dark:text-white">
               Guardian / Primary Contact Information
             </h2>
           </div>
@@ -389,11 +396,13 @@ export function RegisterPage() {
 
         {/* Section 3: Training Information */}
         <Card padding="lg" className="space-y-6">
-          <div className="border-b border-[#E2E8F0] pb-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B]">
+          <div className="border-b border-[#E2E8F0] pb-4 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
               Section 03
             </p>
-            <h2 className="mt-1 text-xl font-bold text-[#071A36]">Training Preferences</h2>
+            <h2 className="mt-1 text-xl font-bold text-[#07152C] dark:text-white">
+              Training Preferences
+            </h2>
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -422,7 +431,7 @@ export function RegisterPage() {
                 value={form.preferredBatch}
                 onChange={(e) => updateField('preferredBatch', e.target.value)}
                 error={errors.preferredBatch}
-                helperText="Exact batch lane and schedule timings are confirmed after assessment."
+                helperText="Exact batch lane and schedule timings are confirmed after registration review."
                 required
               />
             </div>
@@ -440,36 +449,41 @@ export function RegisterPage() {
 
         {/* Section 4: Consent */}
         <Card padding="lg" className="space-y-5">
-          <div className="border-b border-[#E2E8F0] pb-4">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B]">
+          <div className="border-b border-[#E2E8F0] pb-4 dark:border-white/10">
+            <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B] dark:text-[#D5A52B]">
               Section 04
             </p>
-            <h2 className="mt-1 text-xl font-bold text-[#071A36]">Consent &amp; Policies</h2>
+            <h2 className="mt-1 text-xl font-bold text-[#07152C] dark:text-white">
+              Consent &amp; Policies
+            </h2>
           </div>
 
           <div className="space-y-4">
             {isMinor && (
-              <div className="rounded-[12px] border border-[#D9A52E] bg-[#D9A52E]/10 p-4 space-y-2">
+              <div className="rounded-[12px] border border-[#D5A52B] bg-[#D5A52B]/10 p-4 space-y-2">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={form.guardianConsent}
                     onChange={(e) => updateField('guardianConsent', e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-[#071A36] accent-[#071A36]"
+                    className="mt-1 h-4 w-4 rounded border-[#07152C] accent-[#D5A52B]"
                   />
-                  <span className="text-sm text-[#071A36]">
+                  <span className="text-sm text-[#07152C] dark:text-white">
                     <strong className="font-semibold">
                       Guardian Consent (Required for Under-18 Applicants):
                     </strong>{' '}
                     As parent or legal guardian of this minor applicant (age {calculatedAge}), I consent to their evaluation and participation under the{' '}
-                    <Link to="/child-safety" className="underline font-semibold hover:text-[#C8202B]">
+                    <Link
+                      to="/child-safety"
+                      className="underline font-semibold hover:text-[#C8202B] dark:hover:text-[#D5A52B]"
+                    >
                       Child Safety Policy
                     </Link>
                     .
                   </span>
                 </label>
                 {errors.guardianConsent && (
-                  <p className="text-xs font-semibold text-[#C8202B]">
+                  <p className="text-xs font-semibold text-[#C8202B] dark:text-[#F87171]">
                     {errors.guardianConsent}
                   </p>
                 )}
@@ -482,38 +496,49 @@ export function RegisterPage() {
                   type="checkbox"
                   checked={form.privacyConsent}
                   onChange={(e) => updateField('privacyConsent', e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-[#071A36] accent-[#071A36]"
+                  className="mt-1 h-4 w-4 rounded border-[#07152C] accent-[#D5A52B]"
                 />
-                <span className="text-sm text-[#071A36]">
+                <span className="text-sm text-[#07152C] dark:text-[#E2E8F0]">
                   I have read and agree to the{' '}
-                  <Link to="/privacy-policy" className="underline font-semibold hover:text-[#C8202B]">
+                  <Link
+                    to="/privacy-policy"
+                    className="underline font-semibold hover:text-[#C8202B] dark:hover:text-[#D5A52B]"
+                  >
                     Privacy Policy
                   </Link>{' '}
                   and{' '}
-                  <Link to="/admission-policy" className="underline font-semibold hover:text-[#C8202B]">
+                  <Link
+                    to="/admission-policy"
+                    className="underline font-semibold hover:text-[#C8202B] dark:hover:text-[#D5A52B]"
+                  >
                     Admission Policy
                   </Link>
-                  . <span className="text-[#C8202B]">*</span>
+                  . <span className="text-[#C8202B] dark:text-[#F87171]">*</span>
                 </span>
               </label>
               {errors.privacyConsent && (
-                <p className="text-xs font-semibold text-[#C8202B]">{errors.privacyConsent}</p>
+                <p className="text-xs font-semibold text-[#C8202B] dark:text-[#F87171]">
+                  {errors.privacyConsent}
+                </p>
               )}
             </div>
 
-            <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4">
+            <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 dark:border-white/10 dark:bg-[#07152C]">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.photographyConsent}
                   onChange={(e) => updateField('photographyConsent', e.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-[#071A36] accent-[#071A36]"
+                  className="mt-1 h-4 w-4 rounded border-[#07152C] accent-[#D5A52B]"
                 />
-                <span className="text-sm text-[#64748B]">
-                  <strong className="text-[#071A36]">Optional Photography Consent:</strong> I allow SK Tape Ball Academy to capture training photos/clips per the{' '}
+                <span className="text-sm text-[#475569] dark:text-[#B4C4DC]">
+                  <strong className="text-[#07152C] dark:text-white">
+                    Optional Photography Consent:
+                  </strong>{' '}
+                  I allow SK Tape Ball Academy to capture training photos/clips per the{' '}
                   <Link
                     to="/photography-consent"
-                    className="underline font-semibold text-[#071A36] hover:text-[#C8202B]"
+                    className="underline font-semibold text-[#07152C] hover:text-[#C8202B] dark:text-white dark:hover:text-[#D5A52B]"
                   >
                     Photography Consent Policy
                   </Link>
@@ -526,7 +551,7 @@ export function RegisterPage() {
           {Object.keys(errors).length > 0 && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>Please review and resolve the highlighted validation errors above.</span>
@@ -536,7 +561,7 @@ export function RegisterPage() {
           {submissionError && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/35 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/35 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{submissionError}</span>
@@ -564,7 +589,7 @@ export function RegisterPage() {
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <Link
                 to="/application-status"
-                className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+                className="font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
               >
                 Track Application
               </Link>

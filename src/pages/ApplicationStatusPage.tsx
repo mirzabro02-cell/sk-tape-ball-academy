@@ -27,29 +27,33 @@ const STATUS_BADGE_STYLES: Record<
   { badgeClass: string; Icon: typeof Clock; summary: string }
 > = {
   Pending: {
-    badgeClass: 'border-[#D9A52E]/50 bg-[#D9A52E]/15 text-[#071A36]',
+    badgeClass:
+      'border-[#D5A52B]/50 bg-[#D5A52B]/15 text-[#07152C] dark:text-[#D5A52B]',
     Icon: Clock,
     summary: 'Your application has been logged and is awaiting initial staff review.',
   },
   'Under Review': {
-    badgeClass: 'border-[#071A36]/25 bg-[#071A36] text-white',
+    badgeClass:
+      'border-[#07152C]/25 bg-[#07152C] text-white dark:border-white/15 dark:bg-[#162B4D]',
     Icon: Search,
     summary: 'Admissions staff are reviewing player background and batch availability.',
   },
   Approved: {
-    badgeClass: 'border-[#D9A52E] bg-[#071A36] text-[#D9A52E]',
+    badgeClass: 'border-[#D5A52B] bg-[#07152C] text-[#D5A52B]',
     Icon: CheckCircle2,
     summary:
       'Your application has been approved. Please follow onboarding guidance from academy staff.',
   },
   Rejected: {
-    badgeClass: 'border-[#C8202B]/40 bg-[#C8202B]/10 text-[#C8202B]',
+    badgeClass:
+      'border-[#C8202B]/40 bg-[#C8202B]/10 text-[#C8202B] dark:text-[#FCA5A5]',
     Icon: XCircle,
     summary:
       'This application was not approved for the requested intake. Contact our desk for details.',
   },
   'More Information Required': {
-    badgeClass: 'border-[#C8202B]/40 bg-[#F5F7FA] text-[#C8202B]',
+    badgeClass:
+      'border-[#C8202B]/40 bg-[#F5F7FA] text-[#C8202B] dark:bg-[#0F213B] dark:text-[#FCA5A5]',
     Icon: AlertCircle,
     summary:
       'Additional details are needed before completing review. Please contact academy admissions.',
@@ -157,7 +161,7 @@ export function ApplicationStatusPage() {
           {lookupError && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{lookupError}</span>
@@ -172,7 +176,7 @@ export function ApplicationStatusPage() {
 
             <Link
               to="/register"
-              className="text-sm font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+              className="text-sm font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
             >
               Submit New Registration
             </Link>
@@ -185,12 +189,12 @@ export function ApplicationStatusPage() {
           <div className="flex items-start gap-3">
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#C8202B]" aria-hidden="true" />
             <div className="space-y-1.5">
-              <h2 className="text-base font-bold text-[#071A36]">
+              <h2 className="text-base font-bold text-[#07152C] dark:text-white">
                 No Matching Application Found
               </h2>
-              <p className="text-sm leading-relaxed text-[#64748B]">
+              <p className="text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
                 We could not find an application matching reference{' '}
-                <strong className="text-[#071A36]">{reference.trim()}</strong>. Double-check the reference ID issued when submitting your registration, or contact SK Tape Ball Academy for assistance.
+                <strong className="text-[#07152C] dark:text-white">{reference.trim()}</strong>. Double-check the reference ID issued when submitting your registration, or contact SK Tape Ball Academy for assistance.
               </p>
             </div>
           </div>
@@ -207,13 +211,13 @@ export function ApplicationStatusPage() {
 
       {matchedApplication && statusMeta && (
         <Card padding="lg" className="space-y-6">
-          <div className="rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA] p-5 space-y-4">
+          <div className="rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA] p-5 space-y-4 dark:border-white/10 dark:bg-[#07152C]">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="space-y-0.5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#7F95B8]">
                   Reference ID
                 </p>
-                <p className="font-mono text-sm font-bold text-[#071A36]">
+                <p className="font-mono text-sm font-bold text-[#07152C] dark:text-white">
                   {matchedApplication.referencePlaceholder}
                 </p>
               </div>
@@ -229,26 +233,33 @@ export function ApplicationStatusPage() {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 border-t border-[#E2E8F0] pt-4 text-sm sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 border-t border-[#E2E8F0] pt-4 text-sm sm:grid-cols-3 dark:border-white/10">
               <div>
-                <p className="text-xs text-[#64748B]">Applicant</p>
-                <p className="font-semibold text-[#071A36]">{matchedApplication.applicantName}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#7F95B8]">Applicant</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {matchedApplication.applicantName}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Program</p>
-                <p className="font-semibold text-[#071A36]">{matchedApplication.requestedProgram}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#7F95B8]">Program</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {matchedApplication.requestedProgram}
+                </p>
               </div>
               <div>
-                <p className="text-xs text-[#64748B]">Submitted</p>
-                <p className="font-semibold text-[#071A36]">{matchedApplication.submittedLabel}</p>
+                <p className="text-xs text-[#64748B] dark:text-[#7F95B8]">Submitted</p>
+                <p className="font-semibold text-[#07152C] dark:text-white">
+                  {matchedApplication.submittedLabel}
+                </p>
               </div>
             </div>
 
-            <p className="text-sm text-[#64748B]">{statusMeta.summary}</p>
+            <p className="text-sm text-[#475569] dark:text-[#B4C4DC]">{statusMeta.summary}</p>
 
             {matchedApplication.reviewerNotes && (
-              <div className="rounded-[10px] border border-[#E2E8F0] bg-white p-3.5 text-xs text-[#64748B]">
-                <strong className="text-[#071A36]">Notes:</strong> {matchedApplication.reviewerNotes}
+              <div className="rounded-[10px] border border-[#E2E8F0] bg-white p-3.5 text-xs text-[#475569] dark:border-white/10 dark:bg-[#0F213B] dark:text-[#B4C4DC]">
+                <strong className="text-[#07152C] dark:text-white">Notes:</strong>{' '}
+                {matchedApplication.reviewerNotes}
               </div>
             )}
           </div>

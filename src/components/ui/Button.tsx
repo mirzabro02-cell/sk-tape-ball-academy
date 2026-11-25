@@ -28,17 +28,17 @@ export type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#D9A52E] text-[#050D1B] hover:bg-[#c59424] active:bg-[#b5861e] border border-transparent shadow-xs',
+    'bg-[#D5A52B] text-[#050D1B] hover:bg-[#E2B84A] active:bg-[#C39522] border border-transparent shadow-sm',
   secondary:
-    'bg-[#071A36] text-white hover:bg-[#0c274e] active:bg-[#050D1B] border border-transparent shadow-xs',
+    'bg-[#07152C] text-white hover:bg-[#0F213B] active:bg-[#050D1B] border border-transparent shadow-sm dark:bg-[#162B4D] dark:hover:bg-[#1E3963] dark:border-white/10',
   accent:
-    'bg-[#C8202B] text-white hover:bg-[#b01a24] active:bg-[#99151e] border border-transparent shadow-xs',
+    'bg-[#C8202B] text-white hover:bg-[#B01A24] active:bg-[#99151E] border border-transparent shadow-sm',
   outline:
-    'bg-white text-[#071A36] border border-[#E2E8F0] hover:border-[#071A36]/40 hover:bg-[#F5F7FA]',
+    'bg-white text-[#07152C] border border-[#E2E8F0] hover:border-[#07152C]/40 hover:bg-[#F5F7FA] dark:bg-[#0F213B] dark:text-white dark:border-white/15 dark:hover:border-[#D5A52B]/60 dark:hover:bg-[#162B4D]',
   outlineLight:
-    'bg-transparent text-white border border-white/25 hover:bg-white/10 hover:border-white/45',
+    'bg-white/5 text-white border border-white/25 hover:bg-white/12 hover:border-[#D5A52B]/60',
   ghost:
-    'bg-transparent text-[#071A36] border border-transparent hover:bg-[#071A36]/5',
+    'bg-transparent text-[#07152C] border border-transparent hover:bg-[#07152C]/5 dark:text-white/85 dark:hover:bg-white/10',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -57,7 +57,7 @@ export function Button(props: ButtonProps) {
   } = props;
 
   const classes = cn(
-    'inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold tracking-tight whitespace-nowrap shrink-0 transition-all duration-150 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+    'inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold tracking-tight whitespace-nowrap shrink-0 transition-all duration-150 ease-out cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#07152C] disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.99]',
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth && 'w-full',

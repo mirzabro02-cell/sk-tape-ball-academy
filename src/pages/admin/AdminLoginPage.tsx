@@ -9,6 +9,7 @@ import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
 import { PasswordInput } from '@/src/components/ui/PasswordInput';
+import { ThemeToggle } from '@/src/components/ui/ThemeToggle';
 
 export function AdminLoginPage() {
   useDocumentTitle('Management Portal Sign In');
@@ -72,7 +73,11 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050D1B] flex flex-col justify-center px-4 py-12 text-white">
+    <div className="min-h-screen bg-[#07152C] flex flex-col justify-center px-4 py-12 text-white relative">
+      <div className="fixed top-4 right-4 z-20">
+        <ThemeToggle variant="header" />
+      </div>
+
       <div className="mx-auto w-full max-w-md space-y-6">
         <div className="flex flex-col items-center text-center space-y-3">
           <img
@@ -81,18 +86,21 @@ export function AdminLoginPage() {
             className="h-20 w-auto object-contain"
           />
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#D9A52E]">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#D5A52B]">
               Protected Management Access
             </p>
-            <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-white">
+            <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-white">
               {ACADEMY_BRAND.name}
             </h1>
           </div>
         </div>
 
-        <Card padding="lg" className="bg-white text-[#071A36] border-[#E2E8F0]">
+        <Card
+          padding="lg"
+          className="bg-white text-[#07152C] border-[#E2E8F0] dark:bg-[#0F213B] dark:text-white dark:border-white/15"
+        >
           {!isSupabaseMode && (
-            <div className="mb-4 rounded-[10px] border border-[#D9A52E]/60 bg-[#D9A52E]/10 px-3.5 py-2.5 text-[11px] leading-relaxed text-[#071A36]">
+            <div className="mb-4 rounded-[10px] border border-[#D5A52B]/60 bg-[#D5A52B]/12 px-3.5 py-2.5 text-[11px] leading-relaxed text-[#07152C] dark:text-[#F0CB65]">
               <strong className="font-bold">Local Preview Mode (Supabase Unconfigured):</strong>{' '}
               Browser-only operator login is active for offline/preview testing. Configure{' '}
               <code className="font-mono">VITE_SUPABASE_URL</code> and{' '}
@@ -101,16 +109,16 @@ export function AdminLoginPage() {
             </div>
           )}
 
-          <div className="space-y-1.5 border-b border-[#E2E8F0] pb-4 mb-5">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#071A36]">
-              <Lock className="h-4 w-4 text-[#D9A52E]" aria-hidden="true" />
+          <div className="space-y-1.5 border-b border-[#E2E8F0] pb-4 mb-5 dark:border-white/10">
+            <div className="flex items-center gap-2 text-xs font-bold text-[#07152C] dark:text-white">
+              <Lock className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
               <span>
                 {isFirstTimeSetup
                   ? 'Initial Local Preview Operator Setup'
                   : 'Administrator Sign In'}
               </span>
             </div>
-            <p className="text-xs leading-relaxed text-[#64748B]">
+            <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">
               {isFirstTimeSetup
                 ? 'Set a local preview email and password for this browser while Supabase is unconfigured.'
                 : isSupabaseMode
@@ -162,7 +170,7 @@ export function AdminLoginPage() {
             {errorMessage && (
               <div
                 role="alert"
-                className="flex items-start gap-2 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-3.5 py-2.5 text-xs font-semibold text-[#C8202B]"
+                className="flex items-start gap-2 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-3.5 py-2.5 text-xs font-semibold text-[#C8202B] dark:border-[#F87171]/35 dark:text-[#FCA5A5]"
               >
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{errorMessage}</span>
@@ -170,7 +178,7 @@ export function AdminLoginPage() {
             )}
 
             {lockoutRemainingSec > 0 && (
-              <p className="text-xs font-semibold text-[#C8202B] tabular-nums">
+              <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5] tabular-nums">
                 Sign in temporarily paused ({lockoutRemainingSec}s remaining).
               </p>
             )}
@@ -196,7 +204,7 @@ export function AdminLoginPage() {
         <div className="text-center">
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/70 hover:text-[#D9A52E] transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-white/75 hover:text-[#D5A52B] transition-colors"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Return to Public Website</span>

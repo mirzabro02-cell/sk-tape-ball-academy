@@ -8,6 +8,6 @@ export const ACADEMY_BRAND = {
   contactDefaults: {
     whatsappLabel: 'WhatsApp Inquiry',
     addressLabel: 'Sabzazar, Lahore, Pakistan',
-    locationDetailNote: 'Exact academy ground address is shared upon inquiry and trial confirmation.',
+    locationDetailNote: 'Exact academy ground address is shared upon inquiry and registration confirmation.',
   },
 } as const;

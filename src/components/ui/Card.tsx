@@ -12,9 +12,12 @@ export interface CardProps {
 }
 
 const TONE_CLASSES: Record<NonNullable<CardProps['tone']>, string> = {
-  light: 'bg-white border border-[#E2E8F0] text-[#071A36]',
-  navy: 'bg-[#071A36] border border-white/10 text-white',
-  muted: 'bg-[#F5F7FA] border border-[#E2E8F0] text-[#071A36]',
+  light:
+    'bg-white border border-[#E2E8F0] text-[#07152C] shadow-[var(--shadow-card)] dark:bg-[#0F213B] dark:border-white/10 dark:text-white',
+  navy:
+    'bg-[#07152C] border border-white/12 text-white shadow-[var(--shadow-card)] dark:bg-[#050D1B] dark:border-white/12',
+  muted:
+    'bg-[#F5F7FA] border border-[#E2E8F0] text-[#07152C] dark:bg-[#162B4D]/75 dark:border-white/10 dark:text-white',
 };
 
 const PADDING_CLASSES: Record<NonNullable<CardProps['padding']>, string> = {
@@ -35,13 +38,13 @@ export function Card({
   if (interactive && !prefersReduced) {
     return (
       <motion.div
-        whileHover={{ y: -2 }}
-        transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+        whileHover={{ y: -3 }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           'rounded-[16px] transition-colors duration-150',
           TONE_CLASSES[tone],
           PADDING_CLASSES[padding],
-          'hover:border-[#D9A52E]/60',
+          'hover:border-[#D5A52B]/60 dark:hover:border-[#D5A52B]/55',
           className,
         )}
       >
@@ -56,7 +59,7 @@ export function Card({
         'rounded-[16px] transition-colors duration-150',
         TONE_CLASSES[tone],
         PADDING_CLASSES[padding],
-        interactive && 'hover:border-[#D9A52E]/60',
+        interactive && 'hover:border-[#D5A52B]/60 dark:hover:border-[#D5A52B]/55',
         className,
       )}
     >

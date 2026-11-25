@@ -54,34 +54,36 @@ export function AdminToastProvider({ children }: { children: ReactNode }) {
             key={toast.id}
             role="status"
             className={cn(
-              'pointer-events-auto flex items-start gap-3 rounded-[12px] border bg-white p-4 shadow-lg',
+              'pointer-events-auto flex items-start gap-3 rounded-[12px] border bg-white p-4 shadow-xl dark:bg-[#0F213B]',
               toast.tone === 'warning'
-                ? 'border-[#C8202B]/40'
+                ? 'border-[#C8202B]/40 dark:border-[#F87171]/40'
                 : toast.tone === 'info'
-                  ? 'border-[#071A36]/25'
-                  : 'border-[#D9A52E]',
+                  ? 'border-[#07152C]/25 dark:border-white/20'
+                  : 'border-[#D5A52B]',
             )}
           >
             <span className="mt-0.5 shrink-0">
               {toast.tone === 'warning' ? (
-                <AlertCircle className="h-4 w-4 text-[#C8202B]" aria-hidden="true" />
+                <AlertCircle className="h-4 w-4 text-[#C8202B] dark:text-[#FCA5A5]" aria-hidden="true" />
               ) : toast.tone === 'info' ? (
-                <Info className="h-4 w-4 text-[#071A36]" aria-hidden="true" />
+                <Info className="h-4 w-4 text-[#07152C] dark:text-[#60A5FA]" aria-hidden="true" />
               ) : (
-                <CheckCircle2 className="h-4 w-4 text-[#D9A52E]" aria-hidden="true" />
+                <CheckCircle2 className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
               )}
             </span>
             <div className="flex-1 space-y-0.5 text-left">
-              <p className="text-xs font-bold text-[#071A36]">{toast.title}</p>
+              <p className="text-xs font-bold text-[#07152C] dark:text-white">{toast.title}</p>
               {toast.description && (
-                <p className="text-xs leading-relaxed text-[#64748B]">{toast.description}</p>
+                <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">
+                  {toast.description}
+                </p>
               )}
             </div>
             <button
               type="button"
               onClick={() => dismissToast(toast.id)}
               aria-label="Dismiss notification"
-              className="rounded-[6px] p-1 text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#071A36] cursor-pointer"
+              className="rounded-[6px] p-1 text-[#64748B] hover:bg-[#F5F7FA] hover:text-[#07152C] dark:text-[#A3B4CC] dark:hover:bg-[#162B4D] dark:hover:text-white cursor-pointer"
             >
               <X className="h-3.5 w-3.5" aria-hidden="true" />
             </button>

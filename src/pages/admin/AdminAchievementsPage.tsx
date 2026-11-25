@@ -132,7 +132,7 @@ export function AdminAchievementsPage() {
           />
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:items-start">
           {items.map((item) => (
             <Card key={item.id} padding="sm" className="flex flex-col justify-between gap-4">
               <div className="flex flex-col sm:flex-row gap-4">
@@ -145,9 +145,9 @@ export function AdminAchievementsPage() {
                   />
                 )}
 
-                <div className="space-y-1.5 flex-1">
+                <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-[11px] font-semibold text-[#C8202B]">
+                    <span className="text-[11px] font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
                       {item.category}
                       {item.datePlaceholder ? ` · ${item.datePlaceholder}` : ''}
                     </span>
@@ -156,22 +156,29 @@ export function AdminAchievementsPage() {
                       variant={item.published ? 'success' : 'neutral'}
                     />
                   </div>
-                  <h2 className="text-base font-bold text-[#071A36]">{item.title}</h2>
+                  <h2 className="text-base font-bold text-[#07152C] dark:text-white">
+                    {item.title}
+                  </h2>
                   {item.playerName && (
-                    <p className="text-xs font-semibold text-[#071A36]">
-                      Recipient: <span className="text-[#64748B]">{item.playerName}</span>
+                    <p className="text-xs font-semibold text-[#07152C] dark:text-[#E2E8F0]">
+                      Recipient:{' '}
+                      <span className="text-[#64748B] dark:text-[#A3B4CC]">
+                        {item.playerName}
+                      </span>
                     </p>
                   )}
-                  <p className="text-xs leading-relaxed text-[#64748B]">{item.description}</p>
+                  <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">
+                    {item.description}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
+              <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setDeleteTarget(item)}
                   aria-label={`Delete ${item.title}`}
-                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -251,16 +258,16 @@ export function AdminAchievementsPage() {
             onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer">
+          <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 accent-[#071A36]"
+              className="h-4 w-4 accent-[#D5A52B]"
             />
             <span>Publish on public Achievements showcase</span>
           </label>
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

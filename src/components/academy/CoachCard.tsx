@@ -12,9 +12,9 @@ export function CoachCard({ coach }: CoachCardProps) {
   const coachRouteSlug = coach.slug || coach.id;
 
   return (
-    <Card interactive padding="sm" className="overflow-hidden flex flex-col">
+    <Card interactive padding="sm" className="h-full overflow-hidden flex flex-col">
       {coach.imageSrc ? (
-        <div className="aspect-[4/3] w-full overflow-hidden rounded-[12px] border border-[#E2E8F0] bg-[#071A36]">
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-[12px] border border-[#E2E8F0] bg-[#07152C] dark:border-white/10">
           <MediaImage
             src={coach.imageSrc}
             alt={coach.fullName}
@@ -24,8 +24,8 @@ export function CoachCard({ coach }: CoachCardProps) {
           />
         </div>
       ) : (
-        <div className="aspect-[4/3] w-full rounded-[12px] border border-[#E2E8F0] bg-[#071A36] flex flex-col items-center justify-center gap-2.5 text-center p-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#D9A52E]/40 bg-[#050D1B] text-[#D9A52E] text-base font-bold">
+        <div className="aspect-[4/3] w-full rounded-[12px] border border-[#E2E8F0] bg-[#07152C] dark:border-white/10 flex flex-col items-center justify-center gap-2.5 text-center p-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#D5A52B]/40 bg-[#050D1B] text-[#D5A52B] text-base font-bold">
             {coach.avatarLabel || <UserRound className="h-7 w-7" aria-hidden="true" />}
           </div>
           <span className="text-xs font-medium tracking-wide text-white/80">
@@ -36,17 +36,23 @@ export function CoachCard({ coach }: CoachCardProps) {
 
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-xs font-semibold text-[#C8202B]">{coach.roleTitle}</p>
-          <h3 className="text-lg font-bold text-[#071A36]">{coach.fullName}</h3>
+          <p className="text-xs font-semibold text-[#C8202B] dark:text-[#D5A52B]">
+            {coach.roleTitle}
+          </p>
+          <h3 className="text-lg font-bold text-[#07152C] dark:text-white">{coach.fullName}</h3>
           {coach.experienceLabel && (
-            <p className="text-xs font-medium text-[#64748B]">{coach.experienceLabel}</p>
+            <p className="text-xs font-medium text-[#64748B] dark:text-[#7F95B8]">
+              {coach.experienceLabel}
+            </p>
           )}
           {coach.bio && (
-            <p className="pt-1 text-sm leading-relaxed text-[#64748B] line-clamp-3">{coach.bio}</p>
+            <p className="pt-1 text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC] line-clamp-3">
+              {coach.bio}
+            </p>
           )}
         </div>
 
-        <div className="border-t border-[#E2E8F0] pt-4">
+        <div className="border-t border-[#E2E8F0] pt-4 dark:border-white/10">
           <Button to={`/coaches/${coachRouteSlug}`} variant="outline" size="sm" fullWidth>
             <span>View Profile</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

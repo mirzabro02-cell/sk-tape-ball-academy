@@ -5,7 +5,7 @@ import { buildMediaTransformStyle } from '@/src/components/ui/MediaImage';
 import { cn } from '@/src/utils/cn';
 
 export interface OfficialLogoProps {
-  tone?: 'light' | 'dark';
+  tone?: 'auto' | 'light' | 'dark';
   to?: string;
   onClick?: () => void;
   className?: string;
@@ -14,7 +14,7 @@ export interface OfficialLogoProps {
 }
 
 export function OfficialLogo({
-  tone = 'light',
+  tone = 'auto',
   to = '/',
   onClick,
   className,
@@ -22,7 +22,8 @@ export function OfficialLogo({
   size = 'md',
 }: OfficialLogoProps) {
   const { state } = useAcademyState();
-  const isDarkSurface = tone === 'dark';
+  const isForcedDark = tone === 'dark';
+  const isForcedLight = tone === 'light';
 
   const logoSrc = state.siteSettings.logo.src || OFFICIAL_LOGO_CONFIG.src;
   const logoTransform = state.siteSettings.logo.transform;
@@ -36,16 +37,24 @@ export function OfficialLogo({
       to={to}
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-3 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E] rounded-[10px] py-0.5',
+        'inline-flex items-center gap-3 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B] rounded-[10px] py-0.5',
         className,
       )}
     >
-      <span className={cn('inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[8px]', boxSize)}>
+      <span
+        className={cn(
+          'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[8px]',
+          boxSize,
+        )}
+      >
         <img
           src={logoSrc}
           alt={`${academyName} Official Crest`}
           referrerPolicy="no-referrer"
-          style={buildMediaTransformStyle({ ...logoTransform, fit: logoTransform?.fit ?? 'contain' })}
+          style={buildMediaTransformStyle({
+            ...logoTransform,
+            fit: logoTransform?.fit ?? 'contain',
+          })}
           className="h-full w-full"
         />
       </span>
@@ -53,8 +62,12 @@ export function OfficialLogo({
       {showWordmark && (
         <span
           className={cn(
-            'font-[var(--font-heading)] text-[15px] sm:text-lg font-bold tracking-tight whitespace-nowrap shrink-0',
-            isDarkSurface ? 'text-white' : 'text-[#071A36]',
+            'font-display text-lg sm:text-xl font-extrabold uppercase tracking-wide whitespace-nowrap shrink-0',
+            isForcedDark
+              ? 'text-white'
+              : isForcedLight
+                ? 'text-[#07152C]'
+                : 'text-[#07152C] dark:text-white',
           )}
         >
           {academyName}

@@ -24,19 +24,19 @@ export const LEGAL_DOCUMENTS: LegalDocumentData[] = [
       {
         heading: '01. Information Collected',
         body: [
-          'When you submit a trial request, admission registration, or contact inquiry, SK Tape Ball Academy collects only the details needed to coordinate player evaluation and academy communication, such as player name, date of birth, area of residence, guardian contact information, and training preferences.',
+          'When you submit an admission registration or contact inquiry, SK Tape Ball Academy collects only the details needed to coordinate player evaluation and academy communication, such as player name, date of birth, area of residence, guardian contact information, and training preferences.',
         ],
       },
       {
         heading: '02. Purpose of Data Use',
         body: [
-          'Information is used strictly for reviewing free trial requests, coordinating admission onboarding, verifying guardian consent for minor athletes, and sharing official schedule or event updates.',
+          'Information is used strictly for reviewing admission registrations, coordinating player assessments, verifying guardian consent for minor athletes, and sharing official schedule or event updates.',
         ],
       },
       {
         heading: '03. Minor & Guardian Protections',
         body: [
-          'Applicants under 18 years of age require verified parent or legal guardian contact information and explicit guardian consent prior to participating in training or trials.',
+          'Applicants under 18 years of age require verified parent or legal guardian contact information and explicit guardian consent prior to participating in training or onboarding assessments.',
         ],
       },
     ],
@@ -56,9 +56,9 @@ export const LEGAL_DOCUMENTS: LegalDocumentData[] = [
         ],
       },
       {
-        heading: '02. Trial Requests & Admissions',
+        heading: '02. Admissions & Batch Placement',
         body: [
-          'Submitting an online trial booking or admission registration initiates a review by academy staff and does not automatically confirm a training slot until staff confirm placement.',
+          'Submitting an online admission registration initiates a review by academy staff and does not automatically confirm a training slot until staff confirm placement.',
         ],
       },
       {
@@ -86,7 +86,7 @@ export const LEGAL_DOCUMENTS: LegalDocumentData[] = [
       {
         heading: '02. Guardian Consent Requirement',
         body: [
-          'Every applicant under the age of 18 must provide valid parent or legal guardian details and consent prior to joining any trial or practice session.',
+          'Every applicant under the age of 18 must provide valid parent or legal guardian details and consent prior to joining any practice or assessment session.',
         ],
       },
       {
@@ -158,7 +158,7 @@ export const LEGAL_DOCUMENTS: LegalDocumentData[] = [
       {
         heading: '01. Optional & Separate Consent',
         body: [
-          'Photography and video consent is completely optional and collected separately from admission agreements. Declining media consent never affects eligibility for trials or training.',
+          'Photography and video consent is completely optional and collected separately from admission agreements. Declining media consent never affects eligibility for training or admission.',
         ],
       },
       {

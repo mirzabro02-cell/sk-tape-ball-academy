@@ -128,7 +128,7 @@ export function AdminAdmissionsPage() {
         <div className="space-y-3">
           <div className="relative max-w-md">
             <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B] dark:text-[#8499B8]"
               aria-hidden="true"
             />
             <input
@@ -136,7 +136,7 @@ export function AdminAdmissionsPage() {
               placeholder="Search by applicant name, reference, or program..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#07152C] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 dark:border-white/15 dark:bg-[#07152C] dark:text-white dark:placeholder:text-[#8499B8]"
             />
           </div>
 
@@ -148,8 +148,8 @@ export function AdminAdmissionsPage() {
                 onClick={() => setStatusFilter(st)}
                 className={`rounded-[10px] border px-3 py-1.5 text-xs font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                   statusFilter === st
-                    ? 'border-[#071A36] bg-[#071A36] text-white'
-                    : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#071A36] hover:border-[#071A36]/40'
+                    ? 'border-[#07152C] bg-[#07152C] text-white dark:border-[#D5A52B] dark:bg-[#D5A52B] dark:text-[#050D1B]'
+                    : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] hover:border-[#07152C]/40 dark:border-white/15 dark:bg-[#162B4D] dark:text-[#E2E8F0]'
                 }`}
               >
                 {st}
@@ -158,7 +158,7 @@ export function AdminAdmissionsPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0]">
+        <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0] dark:border-white/10">
           {filteredApps.length === 0 ? (
             <AdminEmptyState
               title={
@@ -175,8 +175,8 @@ export function AdminAdmissionsPage() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-[#F5F7FA] text-[#64748B]">
-                  <tr className="border-b border-[#E2E8F0]">
+                <thead className="bg-[#F5F7FA] text-[#64748B] dark:bg-[#07152C] dark:text-[#A3B4CC]">
+                  <tr className="border-b border-[#E2E8F0] dark:border-white/10">
                     <th className="px-4 py-3 font-semibold">Reference</th>
                     <th className="px-4 py-3 font-semibold">Applicant</th>
                     <th className="px-4 py-3 font-semibold">Program</th>
@@ -184,19 +184,26 @@ export function AdminAdmissionsPage() {
                     <th className="px-4 py-3 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#E2E8F0] bg-white">
+                <tbody className="divide-y divide-[#E2E8F0] bg-white dark:divide-white/10 dark:bg-[#0F213B]">
                   {filteredApps.map((app) => (
-                    <tr key={app.id} className="hover:bg-[#F5F7FA]/60">
-                      <td className="px-4 py-3 font-mono font-semibold text-[#071A36] whitespace-nowrap">
+                    <tr
+                      key={app.id}
+                      className="hover:bg-[#F5F7FA]/60 dark:hover:bg-[#162B4D]/60"
+                    >
+                      <td className="px-4 py-3 font-mono font-semibold text-[#07152C] dark:text-[#D5A52B] whitespace-nowrap">
                         {app.referencePlaceholder}
                       </td>
                       <td className="px-4 py-3">
-                        <p className="font-bold text-[#071A36]">{app.applicantName}</p>
-                        <p className="text-[11px] text-[#64748B]">
+                        <p className="font-bold text-[#07152C] dark:text-white">
+                          {app.applicantName}
+                        </p>
+                        <p className="text-[11px] text-[#64748B] dark:text-[#A3B4CC]">
                           Age {app.age} {app.isMinor ? '(Minor · Guardian Listed)' : '(Adult)'}
                         </p>
                       </td>
-                      <td className="px-4 py-3 text-[#071A36]">{app.requestedProgram}</td>
+                      <td className="px-4 py-3 text-[#07152C] dark:text-[#E2E8F0]">
+                        {app.requestedProgram}
+                      </td>
                       <td className="px-4 py-3">
                         <AdminStatusBadge
                           label={app.convertedToStudent ? 'Enrolled as Student' : app.status}
@@ -247,24 +254,30 @@ export function AdminAdmissionsPage() {
       >
         {reviewingApp && (
           <form onSubmit={handleSaveDecision} className="space-y-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 text-xs">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 text-xs dark:border-white/10 dark:bg-[#07152C]">
               <div>
-                <p className="text-[#64748B]">Applicant Age</p>
-                <p className="font-bold text-[#071A36] tabular-nums">
+                <p className="text-[#64748B] dark:text-[#A3B4CC]">Applicant Age</p>
+                <p className="font-bold text-[#07152C] dark:text-white tabular-nums">
                   {reviewingApp.age} years ({reviewingApp.isMinor ? 'Minor' : 'Adult'})
                 </p>
               </div>
               <div>
-                <p className="text-[#64748B]">Guardian / Emergency Contact</p>
-                <p className="font-bold text-[#071A36]">{reviewingApp.guardianName}</p>
+                <p className="text-[#64748B] dark:text-[#A3B4CC]">Guardian / Emergency Contact</p>
+                <p className="font-bold text-[#07152C] dark:text-white">
+                  {reviewingApp.guardianName}
+                </p>
               </div>
               <div>
-                <p className="text-[#64748B]">Contact Details</p>
-                <p className="font-bold text-[#071A36]">{reviewingApp.contactPlaceholder}</p>
+                <p className="text-[#64748B] dark:text-[#A3B4CC]">Contact Details</p>
+                <p className="font-bold text-[#07152C] dark:text-white">
+                  {reviewingApp.contactPlaceholder}
+                </p>
               </div>
               <div>
-                <p className="text-[#64748B]">Requested Program</p>
-                <p className="font-bold text-[#071A36]">{reviewingApp.requestedProgram}</p>
+                <p className="text-[#64748B] dark:text-[#A3B4CC]">Requested Program</p>
+                <p className="font-bold text-[#07152C] dark:text-white">
+                  {reviewingApp.requestedProgram}
+                </p>
               </div>
             </div>
 
@@ -285,10 +298,10 @@ export function AdminAdmissionsPage() {
               label="Reviewer Notes"
               value={reviewerNotes}
               onChange={(e) => setReviewerNotes(e.target.value)}
-              placeholder="Document trial feedback, missing guardian details, or batch note..."
+              placeholder="Document evaluation feedback, missing guardian details, or batch note..."
             />
 
-            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
               <Button
                 type="button"
                 variant="outline"
@@ -314,8 +327,10 @@ export function AdminAdmissionsPage() {
       >
         {convertApp && (
           <div className="space-y-4">
-            <p className="text-xs leading-relaxed text-[#64748B]">
-              Select the initial batch for <strong className="text-[#071A36]">{convertApp.applicantName}</strong> ({convertApp.requestedProgram}).
+            <p className="text-xs leading-relaxed text-[#64748B] dark:text-[#A3B4CC]">
+              Select the initial batch for{' '}
+              <strong className="text-[#07152C] dark:text-white">{convertApp.applicantName}</strong>{' '}
+              ({convertApp.requestedProgram}).
             </p>
             <Select
               label="Assign Initial Batch"
@@ -326,7 +341,7 @@ export function AdminAdmissionsPage() {
                 ...state.batches.map((b) => ({ value: b.id, label: b.name })),
               ]}
             />
-            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+            <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
               <Button
                 type="button"
                 variant="outline"

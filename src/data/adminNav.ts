@@ -9,7 +9,6 @@ export interface AdminSidebarItem {
     | 'Layers'
     | 'Calendar'
     | 'FileCheck2'
-    | 'CalendarClock'
     | 'CreditCard'
     | 'ClipboardList'
     | 'Trophy'
@@ -48,7 +47,6 @@ export const ADMIN_SIDEBAR_GROUPS: AdminSidebarGroup[] = [
     heading: 'ADMISSIONS',
     items: [
       { label: 'Applications', path: '/sk-portal/admissions', iconName: 'FileCheck2' },
-      { label: 'Trial Bookings', path: '/sk-portal/trial-bookings', iconName: 'CalendarClock' },
     ],
   },
   {
@@ -92,7 +90,6 @@ export const ADMIN_ROUTE_META: Record<string, AdminRouteMeta> = {
   '/sk-portal/batches': { title: 'Batch Management', group: 'Academy Management' },
   '/sk-portal/schedules': { title: 'Schedule Management', group: 'Academy Management' },
   '/sk-portal/admissions': { title: 'Admission Management', group: 'Admissions' },
-  '/sk-portal/trial-bookings': { title: 'Trial Booking Management', group: 'Admissions' },
   '/sk-portal/fees': { title: 'Fees Management', group: 'Operations' },
   '/sk-portal/attendance': { title: 'Attendance Management', group: 'Operations' },
   '/sk-portal/matches': { title: 'Matches & Events Management', group: 'Operations' },

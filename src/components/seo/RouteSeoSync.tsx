@@ -19,18 +19,18 @@ const ROUTE_DESCRIPTIONS: Record<string, string> = {
     'Verified academy milestones and player highlights at SK Tape Ball Academy.',
   '/gallery':
     'Training session visuals and academy highlights from SK Tape Ball Academy.',
+  '/updates':
+    'Official announcements, training updates, and academy notices published by SK Tape Ball Academy.',
   '/admissions':
     'Step-by-step admissions guide, onboarding requirements, and registration instructions.',
   '/fees':
     'Fee inquiry and membership guidance for SK Tape Ball Academy.',
   '/faqs':
-    'Answers to common questions on admissions, training disciplines, free trials, and policies.',
+    'Answers to common questions on admissions, training disciplines, schedules, and academy policies.',
   '/contact':
-    'Contact SK Tape Ball Academy in Sabzazar, Lahore for admissions inquiries and free trials.',
+    'Contact SK Tape Ball Academy in Sabzazar, Lahore for admissions inquiries and coaching guidance.',
   '/register':
     'Submit a student admission inquiry to SK Tape Ball Academy with guardian consent where required.',
-  '/book-trial':
-    'Submit a free tape ball cricket evaluation trial request at SK Tape Ball Academy.',
   '/login': 'Sign in to the SK Tape Ball Academy member and guardian portal.',
   '/forgot-password': 'Password recovery instructions for SK Tape Ball Academy member accounts.',
   '/reset-password': 'Set a new password for your SK Tape Ball Academy account.',

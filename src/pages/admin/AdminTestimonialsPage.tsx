@@ -126,8 +126,10 @@ export function AdminTestimonialsPage() {
               <div className="space-y-3">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <h2 className="text-sm font-bold text-[#071A36]">{t.authorName}</h2>
-                    <p className="text-xs text-[#64748B]">{t.authorRole}</p>
+                    <h2 className="text-sm font-bold text-[#07152C] dark:text-white">
+                      {t.authorName}
+                    </h2>
+                    <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">{t.authorRole}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <AdminStatusBadge
@@ -140,12 +142,12 @@ export function AdminTestimonialsPage() {
                     />
                   </div>
                 </div>
-                <blockquote className="text-xs leading-relaxed text-[#071A36]">
+                <blockquote className="text-xs leading-relaxed text-[#07152C] dark:text-[#E2E8F0]">
                   &ldquo;{t.content}&rdquo;
                 </blockquote>
               </div>
 
-              <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+              <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                 <Button
                   type="button"
                   variant="outline"
@@ -178,7 +180,7 @@ export function AdminTestimonialsPage() {
                   type="button"
                   onClick={() => setDeleteTarget(t)}
                   aria-label={`Delete testimonial from ${t.authorName}`}
-                  className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -224,16 +226,16 @@ export function AdminTestimonialsPage() {
               { value: 'Archived', label: 'Archived' },
             ]}
           />
-          <label className="inline-flex items-center gap-2.5 text-sm text-[#071A36] cursor-pointer">
+          <label className="inline-flex items-center gap-2.5 text-sm text-[#07152C] dark:text-[#E2E8F0] cursor-pointer">
             <input
               type="checkbox"
               checked={published}
               onChange={(e) => setPublished(e.target.checked)}
-              className="h-4 w-4 accent-[#071A36]"
+              className="h-4 w-4 accent-[#D5A52B]"
             />
             <span>Published on public homepage</span>
           </label>
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>

@@ -23,27 +23,37 @@ export function PageHero({
   const prefersReduced = useReducedMotion();
 
   return (
-    <section className="rounded-[18px] bg-[#071A36] px-6 py-9 sm:px-10 sm:py-12 text-white border border-[#050D1B]">
+    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#07152C] via-[#0E203E] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/12 shadow-[var(--shadow-card)]">
+      {/* Subtle stadium floodlight accent */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#D5A52B]/12 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D5A52B]/45 to-transparent"
+      />
+
       <motion.div
-        initial={prefersReduced ? false : { opacity: 0, y: 8 }}
+        initial={prefersReduced ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: prefersReduced ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center"
+        transition={{ duration: prefersReduced ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="relative grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center"
       >
         <div className={aside ? 'lg:col-span-7 space-y-4' : 'lg:col-span-10 space-y-4'}>
           {breadcrumbs && breadcrumbs.length > 0 && (
             <Breadcrumbs items={breadcrumbs} tone="dark" />
           )}
 
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#D9A52E]">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#D5A52B]">
             {kicker}
           </p>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] font-extrabold leading-[1.12] tracking-tight text-white">
+          <h1 className="font-display text-3xl sm:text-5xl font-extrabold uppercase leading-[1.04] tracking-tight text-white">
             {title}
           </h1>
 
-          <p className="max-w-2xl text-sm sm:text-base leading-relaxed text-white/80">
+          <p className="max-w-2xl text-sm sm:text-base leading-relaxed text-[#C2D0E3]">
             {description}
           </p>
 

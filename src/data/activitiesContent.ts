@@ -40,7 +40,7 @@ export const SCHEDULE_INFO_GUIDELINES = [
   {
     title: 'Batch Placement After Assessment',
     description:
-      'New applicants complete a trial evaluation so coaches can assign an appropriate group and training schedule.',
+      'New applicants complete an admission diagnostic evaluation so coaches can assign an appropriate group and training schedule.',
   },
   {
     title: 'Reporting & Warm-Up Protocol',

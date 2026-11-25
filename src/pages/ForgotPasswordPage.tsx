@@ -68,7 +68,7 @@ export function ForgotPasswordPage() {
           {error && (
             <div
               role="alert"
-              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/10 px-4 py-3 text-sm text-[#C8202B] dark:text-[#FCA5A5]"
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{error}</span>
@@ -78,14 +78,14 @@ export function ForgotPasswordPage() {
           {submittedEmail && (
             <div
               role="status"
-              className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-4 space-y-2 text-sm text-[#071A36]"
+              className="rounded-[12px] border border-[#07152C]/20 bg-[#F5F7FA] p-4 space-y-2 text-sm text-[#07152C] dark:border-white/15 dark:bg-[#07152C] dark:text-[#E2E8F0]"
             >
               <div className="flex items-center gap-2 font-bold">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
                 <span>Recovery Request Noted</span>
               </div>
-              <p className="leading-relaxed text-[#64748B]">
-                If <strong className="text-[#071A36]">{submittedEmail}</strong> is associated with an active enrolled account, please contact SK Tape Ball Academy administration to reset access credentials directly.
+              <p className="leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
+                If <strong className="text-[#07152C] dark:text-white">{submittedEmail}</strong> is associated with an active enrolled account, please contact SK Tape Ball Academy administration to reset access credentials directly.
               </p>
             </div>
           )}
@@ -103,16 +103,16 @@ export function ForgotPasswordPage() {
           </Button>
         </form>
 
-        <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-sm dark:border-white/10">
           <Link
             to="/login"
-            className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
+            className="font-semibold text-[#07152C] underline-offset-4 hover:text-[#C8202B] hover:underline dark:text-[#D5A52B] dark:hover:text-white"
           >
             Back to Login
           </Link>
           <Link
             to="/contact"
-            className="text-[#64748B] font-medium hover:text-[#071A36]"
+            className="text-[#475569] font-medium hover:text-[#07152C] dark:text-[#B4C4DC] dark:hover:text-white"
           >
             Contact Support Desk
           </Link>

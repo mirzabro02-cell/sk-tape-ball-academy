@@ -203,42 +203,50 @@ export function AdminBatchesPage() {
             return (
               <Card key={batch.id} padding="md" className="space-y-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B] dark:text-[#A3B4CC]">
                       {batch.programTitle}
                     </p>
-                    <h2 className="text-base font-bold text-[#071A36]">{batch.name}</h2>
+                    <h2 className="text-base font-bold text-[#07152C] dark:text-white truncate">
+                      {batch.name}
+                    </h2>
                   </div>
                   <AdminStatusBadge label={batch.status} variant={BATCH_STATUS_BADGE[batch.status]} />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
+                <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs dark:border-white/10 dark:bg-[#07152C]">
                   <div>
-                    <p className="text-[#64748B]">Assigned Coach</p>
-                    <p className="font-semibold text-[#071A36]">{batch.coachName}</p>
+                    <p className="text-[#64748B] dark:text-[#A3B4CC]">Assigned Coach</p>
+                    <p className="font-semibold text-[#07152C] dark:text-white">
+                      {batch.coachName}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#64748B]">Session Timing</p>
-                    <p className="font-semibold text-[#071A36]">{batch.timingPlaceholder}</p>
+                    <p className="text-[#64748B] dark:text-[#A3B4CC]">Session Timing</p>
+                    <p className="font-semibold text-[#07152C] dark:text-white">
+                      {batch.timingPlaceholder}
+                    </p>
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-[#071A36]">Capacity Utilization</span>
-                    <span className="font-mono font-bold text-[#071A36] tabular-nums">
+                    <span className="font-semibold text-[#07152C] dark:text-[#E2E8F0]">
+                      Capacity Utilization
+                    </span>
+                    <span className="font-mono font-bold text-[#07152C] dark:text-[#D5A52B] tabular-nums">
                       {batch.assignedStudentIds.length} / {batch.capacity} ({fillPct}%)
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0] dark:bg-[#07152C]">
                     <div
-                      className="h-full bg-[#D9A52E]"
+                      className="h-full bg-[#D5A52B]"
                       style={{ width: `${fillPct === 0 ? 0 : Math.max(4, fillPct)}%` }}
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+                <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3 dark:border-white/10">
                   <Button
                     type="button"
                     variant="outline"
@@ -261,7 +269,7 @@ export function AdminBatchesPage() {
                     type="button"
                     onClick={() => setDeleteTarget(batch)}
                     aria-label={`Delete ${batch.name}`}
-                    className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                    className="inline-flex h-10 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/10 dark:border-[#F87171]/35 dark:text-[#FCA5A5] cursor-pointer"
                   >
                     <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
@@ -327,8 +335,12 @@ export function AdminBatchesPage() {
             onChange={(e) => setTimingPlaceholder(e.target.value)}
             placeholder="e.g. Mon, Wed, Fri · 6:00 PM – 8:00 PM"
           />
-          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          {formError && (
+            <p className="text-xs font-semibold text-[#C8202B] dark:text-[#FCA5A5]">
+              {formError}
+            </p>
+          )}
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
@@ -347,7 +359,7 @@ export function AdminBatchesPage() {
       >
         <div className="space-y-4">
           {state.students.length === 0 ? (
-            <p className="text-xs text-[#64748B] py-4 text-center">
+            <p className="text-xs text-[#64748B] dark:text-[#A3B4CC] py-4 text-center">
               No student records exist yet. Add students in Student Management first.
             </p>
           ) : (
@@ -357,7 +369,7 @@ export function AdminBatchesPage() {
                 return (
                   <label
                     key={stu.id}
-                    className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs cursor-pointer"
+                    className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs dark:border-white/10 dark:bg-[#07152C] cursor-pointer"
                   >
                     <span className="flex items-center gap-3">
                       <input
@@ -368,11 +380,13 @@ export function AdminBatchesPage() {
                             checked ? prev.filter((id) => id !== stu.id) : [...prev, stu.id],
                           )
                         }
-                        className="h-4 w-4 accent-[#071A36]"
+                        className="h-4 w-4 accent-[#D5A52B]"
                       />
                       <span>
-                        <strong className="block text-[#071A36]">{stu.fullName}</strong>
-                        <span className="text-[#64748B]">
+                        <strong className="block text-[#07152C] dark:text-white">
+                          {stu.fullName}
+                        </strong>
+                        <span className="text-[#64748B] dark:text-[#A3B4CC]">
                           {stu.studentCode} · {stu.program}
                         </span>
                       </span>
@@ -382,7 +396,7 @@ export function AdminBatchesPage() {
               })}
             </div>
           )}
-          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
+          <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
             <Button
               type="button"
               variant="outline"
