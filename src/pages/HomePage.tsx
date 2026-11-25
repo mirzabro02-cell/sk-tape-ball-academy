@@ -12,8 +12,6 @@ import { MatchesEventsSection } from '@/src/components/home/MatchesEventsSection
 import { GalleryPreviewSection } from '@/src/components/home/GalleryPreviewSection';
 import { TestimonialsSection } from '@/src/components/home/TestimonialsSection';
 import { UpdatesPreviewSection } from '@/src/components/home/UpdatesPreviewSection';
-import { ContactPreviewSection } from '@/src/components/home/ContactPreviewSection';
-import { FinalCtaSection } from '@/src/components/home/FinalCtaSection';
 
 export function HomePage() {
   useDocumentTitle();
@@ -39,8 +37,6 @@ export function HomePage() {
         {isSectionVisible('gallery') && <GalleryPreviewSection />}
         {isSectionVisible('testimonials') && <TestimonialsSection />}
         {isSectionVisible('blog') && <UpdatesPreviewSection />}
-        {isSectionVisible('contact') && <ContactPreviewSection />}
-        <FinalCtaSection />
       </PageContainer>
     </div>
   );

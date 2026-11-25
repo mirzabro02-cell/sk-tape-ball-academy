@@ -134,7 +134,7 @@ export function AdminGalleryPage() {
       />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1 gap-1 dark:border-white/15 dark:bg-[#0F213B]">
+        <div className="flex flex-wrap rounded-[10px] border border-[#E2E8F0] bg-white p-1 gap-1 dark:border-white/15 dark:bg-[#0F213B]">
           {(
             [
               { id: 'all', label: 'All Media' },
