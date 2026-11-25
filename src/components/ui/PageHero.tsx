@@ -23,21 +23,25 @@ export function PageHero({
   const prefersReduced = useReducedMotion();
 
   return (
-    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#07152C] via-[#0E203E] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/12 shadow-[var(--shadow-card)]">
-      {/* Subtle stadium floodlight accent */}
+    <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[#07152C] via-[#0F213B] to-[#050D1B] px-6 py-9 sm:px-10 sm:py-12 text-white border border-white/14 shadow-[var(--shadow-card)]">
+      {/* Subtle stadium floodlight & diagonal pitch accent */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#D5A52B]/12 blur-3xl"
+        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#D5A52B]/14 blur-3xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D5A52B]/45 to-transparent"
+        className="pointer-events-none absolute -left-24 -bottom-24 h-52 w-52 rounded-full bg-[#1E3F73]/28 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D5A52B]/55 to-transparent"
       />
 
       <motion.div
         initial={prefersReduced ? false : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: prefersReduced ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: prefersReduced ? 0 : 0.32, ease: [0.22, 1, 0.36, 1] }}
         className="relative grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center"
       >
         <div className={aside ? 'lg:col-span-7 space-y-4' : 'lg:col-span-10 space-y-4'}>
@@ -49,7 +53,7 @@ export function PageHero({
             {kicker}
           </p>
 
-          <h1 className="font-display text-3xl sm:text-5xl font-extrabold uppercase leading-[1.04] tracking-tight text-white">
+          <h1 className="font-display text-3xl sm:text-5xl font-extrabold uppercase leading-[1.03] tracking-tight text-white">
             {title}
           </h1>
 

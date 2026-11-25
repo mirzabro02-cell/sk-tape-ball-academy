@@ -13,29 +13,97 @@ export function ThemeToggle({
   showLabel = false,
   className,
 }: ThemeToggleProps) {
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark, setTheme } = useTheme();
+
+  if (showLabel) {
+    return (
+      <div
+        role="group"
+        aria-label="Theme mode selector"
+        className={cn(
+          'inline-flex items-center rounded-full border p-1 transition-colors duration-150',
+          'border-[#CBD5E1] bg-white dark:border-white/15 dark:bg-[#0F213B]',
+          className,
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => setTheme('light')}
+          aria-pressed={!isDark}
+          aria-label="Activate Light Mode"
+          className={cn(
+            'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
+            !isDark
+              ? 'bg-[#D5A52B] text-[#050D1B] shadow-xs'
+              : 'text-[#8499B8] hover:text-white',
+          )}
+        >
+          <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Light</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setTheme('dark')}
+          aria-pressed={isDark}
+          aria-label="Activate Dark Mode"
+          className={cn(
+            'inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
+            isDark
+              ? 'bg-[#D5A52B] text-[#050D1B] shadow-xs'
+              : 'text-[#475569] hover:text-[#07152C]',
+          )}
+        >
+          <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+          <span>Dark</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <button
-      type="button"
-      onClick={toggleTheme}
-      aria-label={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-      title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+    <div
+      role="group"
+      aria-label="Theme mode selector"
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-[10px] border transition-colors duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
-        showLabel ? 'h-10 px-3 text-xs font-semibold' : 'h-10 w-10',
+        'inline-flex h-10 items-center rounded-full border p-1 transition-colors duration-150 shrink-0',
         variant === 'header'
-          ? 'border-white/15 bg-white/5 text-white hover:border-[#D5A52B]/60 hover:bg-white/10 hover:text-[#D5A52B]'
-          : 'border-[#E2E8F0] bg-[#F5F7FA] text-[#07152C] hover:border-[#D5A52B] hover:bg-white dark:border-white/15 dark:bg-[#162B4D] dark:text-white dark:hover:border-[#D5A52B]/60 dark:hover:text-[#D5A52B]',
+          ? 'border-[#CBD5E1] bg-[#F5F7FA] dark:border-white/15 dark:bg-[#0A1933]'
+          : 'border-[#CBD5E1] bg-[#F5F7FA] dark:border-white/15 dark:bg-[#162B4D]',
         className,
       )}
     >
-      {isDark ? (
-        <Sun className="h-4 w-4 text-[#D5A52B]" aria-hidden="true" />
-      ) : (
-        <Moon className="h-4 w-4 text-[#07152C] dark:text-[#D5A52B]" aria-hidden="true" />
-      )}
-      {showLabel && <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>}
-    </button>
+      <button
+        type="button"
+        onClick={() => setTheme('light')}
+        aria-pressed={!isDark}
+        aria-label="Switch to Light Mode"
+        title="Light Mode"
+        className={cn(
+          'inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
+          !isDark
+            ? 'bg-[#D5A52B] text-[#050D1B] shadow-xs'
+            : 'text-[#8499B8] hover:text-white',
+        )}
+      >
+        <Sun className="h-4 w-4" aria-hidden="true" />
+      </button>
+
+      <button
+        type="button"
+        onClick={() => setTheme('dark')}
+        aria-pressed={isDark}
+        aria-label="Switch to Dark Mode"
+        title="Dark Mode"
+        className={cn(
+          'inline-flex h-8 w-8 items-center justify-center rounded-full transition-all duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
+          isDark
+            ? 'bg-[#D5A52B] text-[#050D1B] shadow-xs'
+            : 'text-[#475569] hover:text-[#07152C]',
+        )}
+      >
+        <Moon className="h-4 w-4" aria-hidden="true" />
+      </button>
+    </div>
   );
 }

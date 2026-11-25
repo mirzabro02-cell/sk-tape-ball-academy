@@ -26,7 +26,7 @@ export function Textarea({
       {label && (
         <label
           htmlFor={textareaId}
-          className="text-sm font-medium text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
+          className="text-sm font-semibold text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
         >
           <span>{label}</span>
           {required && (
@@ -42,10 +42,10 @@ export function Textarea({
         required={required}
         aria-invalid={Boolean(error)}
         className={cn(
-          'min-h-[108px] w-full rounded-[10px] border bg-white px-4 py-3 text-sm text-[#07152C] placeholder:text-[#64748B]/75 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 focus:border-[#07152C] dark:bg-[#07152C] dark:text-white dark:placeholder:text-[#8499B8] dark:focus:border-[#D5A52B]',
+          'min-h-[112px] w-full rounded-[10px] border bg-white px-4 py-3 text-sm text-[#07152C] placeholder:text-[#64748B]/80 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#7F95B8] dark:focus:border-[#D5A52B]',
           error
-            ? 'border-[#C8202B] dark:border-[#F87171]'
-            : 'border-[#E2E8F0] dark:border-white/15',
+            ? 'border-[#C8202B] focus:border-[#C8202B] focus:ring-[#C8202B]/30 dark:border-[#F87171] dark:focus:border-[#F87171]'
+            : 'border-[#CBD5E1] hover:border-[#94A3B8] dark:border-white/15 dark:hover:border-white/28',
           className,
         )}
         {...rest}

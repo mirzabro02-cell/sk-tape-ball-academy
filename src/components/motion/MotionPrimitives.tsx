@@ -15,7 +15,7 @@ export function RevealSection({
   children,
   className,
   delay = 0,
-  yOffset = 18,
+  yOffset = 14,
 }: RevealSectionProps) {
   const shouldReduceMotion = useReducedMotion();
 
@@ -27,8 +27,8 @@ export function RevealSection({
     <motion.div
       initial={{ opacity: 0, y: yOffset }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.1 }}
-      transition={{ duration: 0.48, delay, ease: PREMIUM_EASE }}
+      viewport={{ once: true, amount: 0.08 }}
+      transition={{ duration: 0.38, delay, ease: PREMIUM_EASE }}
       className={className}
     >
       {children}
@@ -40,18 +40,18 @@ const staggerContainerVariants: Variants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.04,
+      staggerChildren: 0.05,
+      delayChildren: 0.03,
     },
   },
 };
 
 const staggerItemVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 12 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.42, ease: PREMIUM_EASE },
+    transition: { duration: 0.34, ease: PREMIUM_EASE },
   },
 };
 
@@ -103,7 +103,7 @@ export function StaggerItem({
 
 export function AnimatedCounter({
   value,
-  durationMs = 700,
+  durationMs = 680,
   suffix = '',
   prefix = '',
 }: {
@@ -163,9 +163,9 @@ export function PageTransition({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: PREMIUM_EASE }}
+      transition={{ duration: 0.24, ease: PREMIUM_EASE }}
       className={className}
     >
       {children}

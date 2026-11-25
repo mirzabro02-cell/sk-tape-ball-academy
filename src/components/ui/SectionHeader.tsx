@@ -41,8 +41,8 @@ export function SectionHeader({
               isForcedDark
                 ? 'text-[#D5A52B]'
                 : isForcedLight
-                  ? 'text-[#C8202B]'
-                  : 'text-[#C8202B] dark:text-[#D5A52B]',
+                  ? 'text-[#1E3F73]'
+                  : 'text-[#1E3F73] dark:text-[#D5A52B]',
             )}
           >
             {kicker}

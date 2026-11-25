@@ -25,7 +25,7 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
   );
 
   return (
-    <div className="divide-y divide-[#E2E8F0] dark:divide-white/10 rounded-[16px] border border-[#E2E8F0] dark:border-white/10 bg-white dark:bg-[#0F213B] overflow-hidden shadow-[var(--shadow-card)]">
+    <div className="divide-y divide-[#E2E8F0] dark:divide-white/10 rounded-[16px] border border-[#E2E8F0] dark:border-white/12 bg-white dark:bg-gradient-to-b dark:from-[#112647] dark:to-[#0A1933] overflow-hidden shadow-[var(--shadow-card)]">
       {items.map((item, idx) => {
         const itemKey = item.id ?? String(idx);
         const isOpen = openKey === itemKey;
@@ -36,11 +36,11 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
               type="button"
               aria-expanded={isOpen}
               onClick={() => setOpenKey(isOpen ? null : itemKey)}
-              className="flex w-full items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 text-left hover:bg-[#F5F7FA]/70 dark:hover:bg-white/5 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D5A52B]"
+              className="flex w-full items-center justify-between gap-4 px-5 py-4 sm:px-6 sm:py-5 text-left hover:bg-[#F5F7FA]/80 dark:hover:bg-white/6 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#D5A52B]"
             >
               <div className="space-y-1">
                 {item.category && (
-                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#C8202B] dark:text-[#D5A52B]">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#1E3F73] dark:text-[#D5A52B]">
                     {item.category}
                   </p>
                 )}
@@ -63,10 +63,10 @@ export function FaqAccordion({ items, defaultOpenIndex = 0 }: FaqAccordionProps)
                   initial={prefersReduced ? false : { height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={prefersReduced ? undefined : { height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="border-t border-[#E2E8F0] dark:border-white/10 bg-[#F5F7FA]/70 dark:bg-[#07152C]/65 px-5 py-4 sm:px-6 text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
+                  <div className="border-t border-[#E2E8F0] dark:border-white/10 bg-[#F5F7FA]/75 dark:bg-[#07152C]/70 px-5 py-4 sm:px-6 text-sm leading-relaxed text-[#475569] dark:text-[#B4C4DC]">
                     {item.answer}
                   </div>
                 </motion.div>

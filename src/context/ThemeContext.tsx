@@ -38,6 +38,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.remove('dark');
       root.style.colorScheme = 'light';
     }
+
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) {
+      themeColorMeta.setAttribute('content', theme === 'dark' ? '#07152C' : '#F5F7FA');
+    }
+
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, theme);
     } catch {

@@ -18,10 +18,10 @@ export function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col overflow-x-clip bg-[#F5F7FA] text-[#07152C] transition-colors duration-200 dark:bg-[#07152C] dark:text-white">
+    <div className="min-h-screen flex flex-col overflow-x-clip bg-[var(--bg-canvas)] text-[var(--text-primary)] transition-colors duration-200">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#07152C] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D5A52B] focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-[10px] focus:bg-[#07152C] focus:px-4 focus:py-2.5 focus:text-xs focus:font-bold focus:text-[#D5A52B] focus:shadow-lg focus:ring-2 focus:ring-[#D5A52B]"
       >
         Skip to main content
       </a>

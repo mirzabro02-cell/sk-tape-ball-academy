@@ -29,7 +29,7 @@ export function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="text-sm font-medium text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
+          className="text-sm font-semibold text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
         >
           <span>{label}</span>
           {required && (
@@ -45,10 +45,10 @@ export function Select({
           required={required}
           aria-invalid={Boolean(error)}
           className={cn(
-            'h-[48px] w-full appearance-none rounded-[10px] border bg-white pl-4 pr-10 text-sm text-[#07152C] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 focus:border-[#07152C] dark:bg-[#07152C] dark:text-white dark:focus:border-[#D5A52B]',
+            'h-[48px] w-full appearance-none rounded-[10px] border bg-white pl-4 pr-10 text-sm text-[#07152C] transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:focus:border-[#D5A52B]',
             error
-              ? 'border-[#C8202B] dark:border-[#F87171]'
-              : 'border-[#E2E8F0] dark:border-white/15',
+              ? 'border-[#C8202B] focus:border-[#C8202B] focus:ring-[#C8202B]/30 dark:border-[#F87171] dark:focus:border-[#F87171]'
+              : 'border-[#CBD5E1] hover:border-[#94A3B8] dark:border-white/15 dark:hover:border-white/28',
             className,
           )}
           {...rest}

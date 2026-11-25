@@ -1,4 +1,4 @@
-import { useId, useState, type InputHTMLAttributes } from 'react';
+import { useId, useState, type InputHTMLAttributes, type ReactNode } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/src/utils/cn';
 
@@ -7,12 +7,14 @@ export interface PasswordInputProps
   label: string;
   helperText?: string;
   error?: string;
+  leftIcon?: ReactNode;
 }
 
 export function PasswordInput({
   label,
   helperText,
   error,
+  leftIcon,
   className,
   id,
   required,
@@ -26,7 +28,7 @@ export function PasswordInput({
     <div className="flex flex-col gap-1.5 w-full">
       <label
         htmlFor={inputId}
-        className="text-sm font-medium text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
+        className="text-sm font-semibold text-[#07152C] dark:text-[#E2E8F0] flex items-center gap-1"
       >
         <span>{label}</span>
         {required && (
@@ -37,16 +39,25 @@ export function PasswordInput({
       </label>
 
       <div className="relative">
+        {leftIcon && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#64748B] dark:text-[#8499B8]"
+          >
+            {leftIcon}
+          </span>
+        )}
         <input
           id={inputId}
           type={visible ? 'text' : 'password'}
           required={required}
           aria-invalid={Boolean(error)}
           className={cn(
-            'h-[48px] w-full rounded-[10px] border bg-white pl-4 pr-12 text-sm text-[#07152C] placeholder:text-[#64748B]/75 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/60 focus:border-[#07152C] dark:bg-[#07152C] dark:text-white dark:placeholder:text-[#8499B8] dark:focus:border-[#D5A52B]',
+            'h-[48px] w-full rounded-[10px] border bg-white text-sm text-[#07152C] placeholder:text-[#64748B]/80 transition-[border-color,box-shadow,background-color] duration-150 focus:outline-none focus:ring-2 focus:ring-[#D5A52B]/40 focus:border-[#07152C] disabled:opacity-60 disabled:cursor-not-allowed dark:bg-[#09172E] dark:text-white dark:placeholder:text-[#7F95B8] dark:focus:border-[#D5A52B]',
+            leftIcon ? 'pl-10 pr-12' : 'pl-4 pr-12',
             error
-              ? 'border-[#C8202B] dark:border-[#F87171]'
-              : 'border-[#E2E8F0] dark:border-white/15',
+              ? 'border-[#C8202B] focus:border-[#C8202B] focus:ring-[#C8202B]/30 dark:border-[#F87171] dark:focus:border-[#F87171]'
+              : 'border-[#CBD5E1] hover:border-[#94A3B8] dark:border-white/15 dark:hover:border-white/28',
             className,
           )}
           {...rest}

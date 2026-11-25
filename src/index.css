@@ -6,8 +6,10 @@
   --color-navy-surface: #0F213B;
   --color-navy-elevated: #162B4D;
   --color-dark-navy: #050D1B;
+  --color-navy-blue: #1E3F73;
   --color-royal-gold: #D5A52B;
   --color-royal-gold-hover: #E2B84A;
+  --color-royal-gold-active: #C2931F;
   --color-cricket-red: #C8202B;
   --color-light-bg: #F5F7FA;
   --color-secondary-text: #64748B;
@@ -24,15 +26,24 @@
   --bg-surface: #FFFFFF;
   --bg-surface-elevated: #EEF2F6;
   --bg-deep: #050D1B;
+  --bg-header: rgba(255, 255, 255, 0.94);
+  --bg-input: #FFFFFF;
+  --surface-card-gradient: linear-gradient(180deg, #FFFFFF 0%, #FAFBFD 100%);
   --border-subtle: #E2E8F0;
   --border-strong: #CBD5E1;
+  --border-gold: rgba(213, 165, 43, 0.55);
   --text-primary: #07152C;
   --text-secondary: #475569;
   --text-muted: #64748B;
   --accent-gold: #D5A52B;
   --accent-gold-hover: #E2B84A;
   --accent-red: #C8202B;
-  --shadow-card: 0 10px 28px -18px rgba(7, 21, 44, 0.16);
+  --accent-blue: #1E3F73;
+  --shadow-card: 0 10px 28px -18px rgba(7, 21, 44, 0.14);
+  --shadow-card-hover: 0 18px 36px -18px rgba(7, 21, 44, 0.22);
+  --shadow-gold: 0 8px 22px -6px rgba(213, 165, 43, 0.45);
+  --shadow-gold-hover: 0 12px 28px -6px rgba(213, 165, 43, 0.65);
+  --shadow-header: 0 8px 24px -14px rgba(7, 21, 44, 0.12);
 }
 
 .dark {
@@ -40,15 +51,24 @@
   --bg-surface: #0F213B;
   --bg-surface-elevated: #162B4D;
   --bg-deep: #050D1B;
-  --border-subtle: rgba(255, 255, 255, 0.10);
+  --bg-header: rgba(7, 21, 44, 0.92);
+  --bg-input: #09172E;
+  --surface-card-gradient: linear-gradient(180deg, #112647 0%, #0A1933 100%);
+  --border-subtle: rgba(255, 255, 255, 0.11);
   --border-strong: rgba(255, 255, 255, 0.20);
+  --border-gold: rgba(213, 165, 43, 0.60);
   --text-primary: #FFFFFF;
   --text-secondary: #B4C4DC;
   --text-muted: #8499B8;
   --accent-gold: #D5A52B;
   --accent-gold-hover: #E2B84A;
   --accent-red: #E03A45;
-  --shadow-card: 0 16px 38px -20px rgba(0, 0, 0, 0.55);
+  --accent-blue: #2B599E;
+  --shadow-card: 0 18px 42px -20px rgba(0, 0, 0, 0.62);
+  --shadow-card-hover: 0 22px 48px -18px rgba(2, 8, 19, 0.85);
+  --shadow-gold: 0 8px 24px -6px rgba(213, 165, 43, 0.52);
+  --shadow-gold-hover: 0 14px 32px -6px rgba(213, 165, 43, 0.72);
+  --shadow-header: 0 12px 32px -12px rgba(3, 9, 20, 0.75);
 }
 
 @layer base {
@@ -58,12 +78,15 @@
     background-color: var(--bg-canvas);
     scroll-behavior: smooth;
     overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     color: var(--text-primary);
     background-color: var(--bg-canvas);
     overflow-x: clip;
+    line-height: 1.6;
     transition: background-color 180ms ease, color 180ms ease;
   }
 
@@ -76,10 +99,20 @@
 
 .font-display {
   font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+.card-surface-gradient {
+  background: var(--surface-card-gradient);
 }
 
 @media (prefers-reduced-motion: reduce) {

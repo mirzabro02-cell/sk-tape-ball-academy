@@ -37,13 +37,13 @@ export function OfficialLogo({
       to={to}
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-3 whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B] rounded-[10px] py-0.5',
+        'group inline-flex items-center gap-2.5 sm:gap-3 whitespace-nowrap shrink-0 rounded-[10px] py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D5A52B]',
         className,
       )}
     >
       <span
         className={cn(
-          'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[8px]',
+          'inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[8px] transition-transform duration-150 group-hover:scale-[1.03] motion-reduce:group-hover:scale-100',
           boxSize,
         )}
       >
@@ -62,7 +62,7 @@ export function OfficialLogo({
       {showWordmark && (
         <span
           className={cn(
-            'font-display text-lg sm:text-xl font-extrabold uppercase tracking-wide whitespace-nowrap shrink-0',
+            'font-display text-lg sm:text-[21px] font-extrabold uppercase tracking-wide whitespace-nowrap shrink-0 leading-none',
             isForcedDark
               ? 'text-white'
               : isForcedLight

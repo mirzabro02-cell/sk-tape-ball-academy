@@ -1,5 +1,14 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Clock, ExternalLink, Mail, MapPin, Phone } from 'lucide-react';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Clock,
+  ExternalLink,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+} from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { FOOTER_ADMISSIONS_LINKS, FOOTER_PRIMARY_LINKS } from '@/src/data/navigation';
 import { sanitizeExternalUrl } from '@/src/utils/validation';
@@ -23,18 +32,31 @@ export function Footer() {
     { id: 'tiktok', label: 'TikTok', url: sanitizeExternalUrl(siteSettings.socials.tiktok) },
   ].filter((item): item is { id: string; label: string; url: string } => Boolean(item.url));
 
-  const founderLine = [siteSettings.founderName ? `Founded by ${siteSettings.founderName}` : '', siteSettings.launchedNote]
+  const founderLine = [
+    siteSettings.founderName ? `Founded by ${siteSettings.founderName}` : '',
+    siteSettings.launchedNote,
+  ]
     .filter(Boolean)
     .join(' · ');
 
   return (
-    <footer className="relative border-t border-white/10 bg-[#050D1B] text-white">
+    <footer className="relative overflow-hidden border-t border-white/10 bg-gradient-to-b from-[#07152C] to-[#050D1B] text-white">
       <div
-        className="h-[2px] w-full bg-gradient-to-r from-[#07152C] via-[#D5A52B] to-[#C8202B]"
+        className="h-[2.5px] w-full bg-gradient-to-r from-[#07152C] via-[#D5A52B] to-[#C8202B]"
         aria-hidden="true"
       />
 
-      <PageContainer className="py-12 sm:py-16">
+      {/* Restrained diagonal stadium corner accents inspired by reference */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rotate-45 bg-gradient-to-tr from-[#D5A52B]/14 via-[#D5A52B]/4 to-transparent"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 top-10 h-64 w-64 -rotate-45 bg-gradient-to-bl from-[#D5A52B]/12 via-[#1E3F73]/18 to-transparent"
+      />
+
+      <PageContainer className="relative py-12 sm:py-16">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-4 space-y-5">
             <OfficialLogo tone="dark" size="lg" />
@@ -47,14 +69,19 @@ export function Footer() {
                 {siteSettings.footerBio}
               </p>
               {founderLine && (
-                <p className="text-xs font-medium text-[#7F95B8]">
+                <p className="text-xs font-medium text-[#8499B8]">
                   {founderLine}
                 </p>
               )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
-              <Button to="/register" variant="primary" size="sm">
+              <Button
+                to="/register"
+                variant="primary"
+                size="sm"
+                rightIcon={<ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />}
+              >
                 Register Now
               </Button>
               <Button to="/programs" variant="outlineLight" size="sm">
@@ -63,25 +90,29 @@ export function Footer() {
             </div>
           </div>
 
-          <nav aria-label="Academy Links" className="lg:col-span-2 space-y-3.5">
+          <nav aria-label="Quick Links" className="lg:col-span-2 space-y-3.5">
             <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
-              Academy
+              Quick Links
             </h3>
             <ul className="space-y-2.5">
               {FOOTER_PRIMARY_LINKS.map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className="inline-flex items-center text-sm text-[#B4C4DC] transition-colors duration-150 hover:text-[#D5A52B]"
+                    className="group inline-flex items-center gap-1.5 text-sm text-[#B4C4DC] transition-colors duration-150 hover:text-[#D5A52B]"
                   >
-                    {item.label}
+                    <ArrowRight
+                      className="h-3 w-3 text-[#D5A52B]/75 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[#D5A52B]"
+                      aria-hidden="true"
+                    />
+                    <span>{item.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <nav aria-label="Admissions Links" className="lg:col-span-3 space-y-3.5">
+          <nav aria-label="Admissions and Explore" className="lg:col-span-3 space-y-3.5">
             <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
               Admissions &amp; Explore
             </h3>
@@ -90,9 +121,13 @@ export function Footer() {
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className="inline-flex items-center text-sm text-[#B4C4DC] transition-colors duration-150 hover:text-[#D5A52B]"
+                    className="group inline-flex items-center gap-1.5 text-sm text-[#B4C4DC] transition-colors duration-150 hover:text-[#D5A52B]"
                   >
-                    {item.label}
+                    <ArrowRight
+                      className="h-3 w-3 text-[#D5A52B]/75 transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-[#D5A52B]"
+                      aria-hidden="true"
+                    />
+                    <span>{item.label}</span>
                   </Link>
                 </li>
               ))}
@@ -101,7 +136,7 @@ export function Footer() {
 
           <div className="lg:col-span-3 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-[0.16em] text-[#D5A52B]">
-              Contact &amp; Ground
+              Academy Info
             </h3>
 
             <ul className="space-y-3 text-sm text-[#B4C4DC]">
@@ -162,7 +197,7 @@ export function Footer() {
                 <WhatsAppCta variant="inline" />
               </div>
             ) : (
-              <div className="rounded-[12px] border border-white/10 bg-[#0F213B]/80 px-3.5 py-2.5 text-xs leading-relaxed text-[#B4C4DC]">
+              <div className="rounded-[12px] border border-white/12 bg-[#0F213B]/85 px-3.5 py-2.5 text-xs leading-relaxed text-[#B4C4DC]">
                 Direct inquiries:{' '}
                 <Link
                   to="/contact"
@@ -176,8 +211,8 @@ export function Footer() {
 
             {socialChannels.length > 0 && (
               <div className="pt-2 border-t border-white/10 space-y-2">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#7F95B8]">
-                  Official Channels
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8499B8]">
+                  Follow Us
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {socialChannels.map((channel) => (
@@ -186,7 +221,7 @@ export function Footer() {
                       href={channel.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-[8px] border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/85 hover:border-[#D5A52B]/60 hover:text-[#D5A52B] transition-colors"
+                      className="inline-flex items-center gap-1 rounded-[8px] border border-white/15 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-white/90 hover:border-[#D5A52B]/65 hover:text-[#D5A52B] transition-colors"
                     >
                       <span>{channel.label}</span>
                       <ExternalLink className="h-3 w-3 opacity-75" aria-hidden="true" />
@@ -195,24 +230,32 @@ export function Footer() {
                 </div>
               </div>
             )}
+
+            <div className="flex items-start gap-2.5 rounded-[12px] border border-[#D5A52B]/25 bg-[#0F213B]/65 px-3.5 py-2.5">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#D5A52B]" aria-hidden="true" />
+              <div className="text-xs leading-snug">
+                <p className="font-bold text-white">Trusted Academy</p>
+                <p className="text-[#8499B8]">Structured training &amp; player discipline</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-[#7F95B8] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-[#8499B8] sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {currentYear} {siteSettings.academyName}. All rights reserved.
           </p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link to="/privacy-policy" className="hover:text-white transition-colors">
+            <Link to="/privacy-policy" className="hover:text-[#D5A52B] transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/terms" className="hover:text-white transition-colors">
+            <Link to="/terms" className="hover:text-[#D5A52B] transition-colors">
               Terms &amp; Conditions
             </Link>
-            <Link to="/admission-policy" className="hover:text-white transition-colors">
+            <Link to="/admission-policy" className="hover:text-[#D5A52B] transition-colors">
               Admission Policy
             </Link>
-            <Link to="/child-safety" className="hover:text-white transition-colors">
+            <Link to="/child-safety" className="hover:text-[#D5A52B] transition-colors">
               Child Safety Policy
             </Link>
           </div>
