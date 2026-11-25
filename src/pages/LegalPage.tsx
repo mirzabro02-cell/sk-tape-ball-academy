@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { AlertTriangle, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { LEGAL_DOCUMENTS } from '@/src/data/legalContent';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { cn } from '@/src/utils/cn';
@@ -21,7 +21,7 @@ export function LegalPage({ slug }: LegalPageProps) {
     <div className="space-y-10 sm:space-y-12">
       <PageHero
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: doc.title }]}
-        kicker="Draft Policy Document"
+        kicker="Academy Policy"
         title={doc.title}
         description={doc.summary}
         actions={
@@ -31,21 +31,7 @@ export function LegalPage({ slug }: LegalPageProps) {
         }
       />
 
-      {/* Mandatory Draft Placeholder Legal Notice */}
-      <Card className="border-[#D9A52E] bg-[#D9A52E]/10" padding="md">
-        <div className="flex items-start gap-3">
-          <AlertTriangle
-            className="mt-0.5 h-5 w-5 shrink-0 text-[#071A36]"
-            aria-hidden="true"
-          />
-          <div className="space-y-1 text-sm text-[#071A36]">
-            <p className="font-bold">Draft Placeholder Legal Content</p>
-            <p className="leading-relaxed text-[#071A36]/85">{doc.draftNotice}</p>
-          </div>
-        </div>
-      </Card>
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
         <aside className="lg:col-span-4">
           <Card padding="md" className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#64748B]">

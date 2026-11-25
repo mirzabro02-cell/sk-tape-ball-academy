@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { ClipboardList, Pencil, Plus } from 'lucide-react';
-import { INITIAL_ADMIN_MATCHES } from '@/src/data/adminMockData';
+import { ClipboardList, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminMatch, MatchRecordStatus } from '@/src/types/admin';
 import {
-  AdminDemoNotice,
+  AdminConfirmDialog,
+  AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatusBadge,
@@ -25,18 +26,19 @@ const MATCH_BADGE: Record<MatchRecordStatus, 'navy' | 'success' | 'warning'> = {
 export function AdminMatchesPage() {
   useDocumentTitle('Matches & Events Management');
   const { showToast } = useAdminToast();
+  const { state, setMatches } = useAcademyState();
 
-  const [matches, setMatches] = useState<AdminMatch[]>(INITIAL_ADMIN_MATCHES);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AdminMatch | null>(null);
   const [scorecardMatch, setScorecardMatch] = useState<AdminMatch | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminMatch | null>(null);
 
   const [title, setTitle] = useState('');
-  const [matchType, setMatchType] = useState<AdminMatch['matchType']>('Practice Match');
-  const [academyTeam, setAcademyTeam] = useState('SK Academy XI (Demo)');
+  const [matchType, setMatchType] = useState<AdminMatch['matchType']>('Night Tape Ball Event');
+  const [academyTeam, setAcademyTeam] = useState('SK Tape Ball Academy XI');
   const [opponentTeam, setOpponentTeam] = useState('');
-  const [datePlaceholder, setDatePlaceholder] = useState('[Match Date Pending]');
-  const [locationPlaceholder, setLocationPlaceholder] = useState('SK Academy Ground (Placeholder)');
+  const [datePlaceholder, setDatePlaceholder] = useState('');
+  const [locationPlaceholder, setLocationPlaceholder] = useState(state.siteSettings.locationText);
   const [status, setStatus] = useState<MatchRecordStatus>('Upcoming');
 
   const [academyScore, setAcademyScore] = useState('');
@@ -46,11 +48,11 @@ export function AdminMatchesPage() {
   function openCreate() {
     setEditing(null);
     setTitle('');
-    setMatchType('Practice Match');
-    setAcademyTeam('SK Academy XI (Demo)');
+    setMatchType('Night Tape Ball Event');
+    setAcademyTeam('SK Tape Ball Academy XI');
     setOpponentTeam('');
-    setDatePlaceholder('[Match Date Pending]');
-    setLocationPlaceholder('SK Academy Ground (Placeholder)');
+    setDatePlaceholder('');
+    setLocationPlaceholder(state.siteSettings.locationText);
     setStatus('Upcoming');
     setFormOpen(true);
   }
@@ -84,34 +86,34 @@ export function AdminMatchesPage() {
           m.id === editing.id
             ? {
                 ...m,
-                title,
+                title: title.trim(),
                 matchType,
-                academyTeam,
-                opponentTeam,
-                datePlaceholder,
-                locationPlaceholder,
+                academyTeam: academyTeam.trim(),
+                opponentTeam: opponentTeam.trim(),
+                datePlaceholder: datePlaceholder.trim() || 'Date TBD',
+                locationPlaceholder: locationPlaceholder.trim() || state.siteSettings.locationText,
                 status,
               }
             : m,
         ),
       );
-      showToast('Match Updated (Preview)', `${title} updated in demonstration fixtures.`);
+      showToast('Match Updated', `${title.trim()} saved.`);
     } else {
       const next: AdminMatch = {
         id: `match-${Date.now()}`,
-        title,
+        title: title.trim(),
         matchType,
-        academyTeam,
-        opponentTeam,
-        datePlaceholder,
-        locationPlaceholder,
+        academyTeam: academyTeam.trim(),
+        opponentTeam: opponentTeam.trim(),
+        datePlaceholder: datePlaceholder.trim() || 'Date TBD',
+        locationPlaceholder: locationPlaceholder.trim() || state.siteSettings.locationText,
         status,
         academyScore: 'TBD',
         opponentScore: 'TBD',
-        resultSummary: 'Fixture scheduled in demonstration mode.',
+        resultSummary: 'Scheduled academy competition fixture.',
       };
       setMatches((prev) => [next, ...prev]);
-      showToast('Match Created (Preview)', `${title} added to fixture list.`);
+      showToast('Match Created', `${next.title} added to schedule.`);
     }
     setFormOpen(false);
   }
@@ -124,26 +126,23 @@ export function AdminMatchesPage() {
         m.id === scorecardMatch.id
           ? {
               ...m,
-              academyScore,
-              opponentScore,
-              resultSummary,
+              academyScore: academyScore.trim(),
+              opponentScore: opponentScore.trim(),
+              resultSummary: resultSummary.trim(),
               status: 'Completed',
             }
           : m,
       ),
     );
-    showToast(
-      'Scorecard Saved (Preview)',
-      `${scorecardMatch.title} scorecard updated in session state.`,
-    );
+    showToast('Scorecard Saved', `${scorecardMatch.title} marked Completed.`);
     setScorecardMatch(null);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Matches & Events Management"
-        description="Schedule academy tape ball fixtures, manage team details, and log sample match scorecards."
+        description="Publish academy-organized tape ball leagues, single-wicket events, and match scorecards."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -152,65 +151,81 @@ export function AdminMatchesPage() {
         }
       />
 
-      <AdminDemoNotice />
+      {state.matches.length === 0 ? (
+        <Card padding="md">
+          <AdminEmptyState
+            title="No matches or league events published yet"
+            description="Create a fixture when announcing an academy tape ball league or single-wicket competition."
+            action={
+              <Button type="button" variant="primary" size="sm" onClick={openCreate}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Create First Match / Event</span>
+              </Button>
+            }
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:items-start">
+          {state.matches.map((m) => (
+            <Card key={m.id} padding="md" className="space-y-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                    {m.matchType}
+                  </p>
+                  <h2 className="text-base font-bold text-[#071A36]">{m.title}</h2>
+                </div>
+                <AdminStatusBadge label={m.status} variant={MATCH_BADGE[m.status]} />
+              </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {matches.map((m) => (
-          <Card key={m.id} padding="md" className="space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                  {m.matchType}
+              <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
+                <div>
+                  <p className="text-[#64748B]">{m.academyTeam}</p>
+                  <p className="font-mono font-bold text-[#071A36]">{m.academyScore}</p>
+                </div>
+                <div>
+                  <p className="text-[#64748B]">{m.opponentTeam}</p>
+                  <p className="font-mono font-bold text-[#071A36]">{m.opponentScore}</p>
+                </div>
+              </div>
+
+              <div className="text-xs text-[#64748B] space-y-1">
+                <p>
+                  <strong className="text-[#071A36]">Date &amp; Venue:</strong> {m.datePlaceholder} ·{' '}
+                  {m.locationPlaceholder}
                 </p>
-                <h2 className="text-base font-bold text-[#071A36]">{m.title}</h2>
+                <p>
+                  <strong className="text-[#071A36]">Summary:</strong> {m.resultSummary}
+                </p>
               </div>
-              <AdminStatusBadge label={m.status} variant={MATCH_BADGE[m.status]} />
-            </div>
 
-            <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
-              <div>
-                <p className="text-[#64748B]">{m.academyTeam}</p>
-                <p className="font-mono font-bold text-[#071A36]">{m.academyScore}</p>
+              <div className="flex flex-wrap justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openScorecard(m)}
+                >
+                  <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Scorecard</span>
+                </Button>
+                <Button type="button" variant="secondary" size="sm" onClick={() => openEdit(m)}>
+                  <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Edit</span>
+                </Button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(m)}
+                  aria-label={`Delete ${m.title}`}
+                  className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
               </div>
-              <div>
-                <p className="text-[#64748B]">{m.opponentTeam}</p>
-                <p className="font-mono font-bold text-[#071A36]">{m.opponentScore}</p>
-              </div>
-            </div>
-
-            <div className="text-xs text-[#64748B] space-y-1">
-              <p>
-                <strong className="text-[#071A36]">Date &amp; Location:</strong>{' '}
-                {m.datePlaceholder} · {m.locationPlaceholder}
-              </p>
-              <p>
-                <strong className="text-[#071A36]">Summary:</strong> {m.resultSummary}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap justify-end gap-2 border-t border-[#E2E8F0] pt-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => openScorecard(m)}
-              >
-                <ClipboardList className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Scorecard</span>
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => openEdit(m)}
-              >
-                <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Edit</span>
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <AdminModal
         open={formOpen}
@@ -222,6 +237,7 @@ export function AdminMatchesPage() {
             label="Match / Event Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g. SK Floodlit Tape Ball League — Opening Night"
             required
           />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -230,9 +246,9 @@ export function AdminMatchesPage() {
               value={matchType}
               onChange={(e) => setMatchType(e.target.value as AdminMatch['matchType'])}
               options={[
+                { value: 'Night Tape Ball Event', label: 'Tape Ball League / Night Event' },
+                { value: 'Inter-Batch Challenge', label: 'Single-Wicket / Inter-Batch Event' },
                 { value: 'Practice Match', label: 'Practice Match' },
-                { value: 'Inter-Batch Challenge', label: 'Inter-Batch Challenge' },
-                { value: 'Night Tape Ball Event', label: 'Night Tape Ball Event' },
               ]}
             />
             <Select
@@ -246,24 +262,25 @@ export function AdminMatchesPage() {
               ]}
             />
             <Input
-              label="Academy Team"
+              label="Academy Squad"
               value={academyTeam}
               onChange={(e) => setAcademyTeam(e.target.value)}
               required
             />
             <Input
-              label="Opponent / Visiting Team"
+              label="Opponent / Participating Side"
               value={opponentTeam}
               onChange={(e) => setOpponentTeam(e.target.value)}
               required
             />
             <Input
-              label="Date Placeholder"
+              label="Match Date"
               value={datePlaceholder}
               onChange={(e) => setDatePlaceholder(e.target.value)}
+              placeholder="e.g. Saturday, 12 Dec 2026 · 7:30 PM"
             />
             <Input
-              label="Location Placeholder"
+              label="Venue / Ground"
               value={locationPlaceholder}
               onChange={(e) => setLocationPlaceholder(e.target.value)}
             />
@@ -283,7 +300,6 @@ export function AdminMatchesPage() {
         open={Boolean(scorecardMatch)}
         onClose={() => setScorecardMatch(null)}
         title={`Scorecard — ${scorecardMatch?.title ?? ''}`}
-        subtitle="Demonstration scorecard interface"
         maxWidth="md"
       >
         {scorecardMatch && (
@@ -292,14 +308,14 @@ export function AdminMatchesPage() {
               label={`${scorecardMatch.academyTeam} Score`}
               value={academyScore}
               onChange={(e) => setAcademyScore(e.target.value)}
-              placeholder="e.g. 92/4 (8 Overs — Demo)"
+              placeholder="e.g. 92/4 (8 Overs)"
               required
             />
             <Input
               label={`${scorecardMatch.opponentTeam} Score`}
               value={opponentScore}
               onChange={(e) => setOpponentScore(e.target.value)}
-              placeholder="e.g. 85/6 (8 Overs — Demo)"
+              placeholder="e.g. 85/6 (8 Overs)"
               required
             />
             <Textarea
@@ -324,6 +340,20 @@ export function AdminMatchesPage() {
           </form>
         )}
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          setMatches((prev) => prev.filter((m) => m.id !== deleteTarget.id));
+          showToast('Match Deleted', `${deleteTarget.title} removed.`, 'warning');
+        }}
+        title="Delete Match / Event"
+        message={`Remove "${deleteTarget?.title ?? ''}" from matches and events?`}
+        confirmLabel="Delete Match"
+        tone="danger"
+      />
     </div>
   );
 }

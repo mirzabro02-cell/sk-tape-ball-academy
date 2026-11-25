@@ -33,9 +33,9 @@ export function FaqsPage() {
     <div className="space-y-12 sm:space-y-16">
       <PageHero
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'FAQs' }]}
-        kicker="Help & Support (Sample Placeholders)"
+        kicker="Help & Support"
         title="Frequently Asked Questions"
-        description="Search or browse categorized questions covering admissions, training programs, membership, and free trial sessions. Unverified answers are clearly marked as placeholder content."
+        description="Search or browse questions covering admissions, structured training programs, league play, and free trial assessments at SK Tape Ball Academy."
       />
 
       {/* Search & Category Controls */}
@@ -48,7 +48,7 @@ export function FaqsPage() {
           <input
             type="search"
             aria-label="Search frequently asked questions"
-            placeholder="Search questions by keyword (e.g., trial, age, fees, kit)..."
+            placeholder="Search questions by keyword (e.g., trial, batting, fees, kit)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="h-[52px] w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-11 pr-11 text-sm text-[#071A36] placeholder:text-[#64748B]/75 focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/60 focus:border-[#071A36]"
@@ -98,7 +98,7 @@ export function FaqsPage() {
               No Matching Questions Found
             </p>
             <p className="text-sm text-[#64748B]">
-              Try a broader search term or reset category filters to browse all sample FAQs.
+              Try a broader search term or reset category filters to browse all FAQs.
             </p>
             <div className="pt-1 flex justify-center gap-3">
               <Button

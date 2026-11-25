@@ -1,3 +1,5 @@
+import type { ImageTransformConfig } from './media';
+
 export type StudentStatus = 'Active' | 'Trial' | 'Inactive' | 'On Hold';
 export type CoachStatus = 'Active' | 'Part-Time' | 'On Leave';
 export type BatchStatus = 'Open' | 'Full' | 'Upcoming' | 'Archived';
@@ -36,6 +38,7 @@ export interface AdminStudent {
 
 export interface AdminCoach {
   id: string;
+  slug?: string;
   fullName: string;
   roleTitle: string;
   specialties: string[];
@@ -44,6 +47,9 @@ export interface AdminCoach {
   experienceLabel: string;
   avatarLabel: string;
   bio: string;
+  imageSrc?: string | null;
+  imageTransform?: ImageTransformConfig;
+  published?: boolean;
 }
 
 export interface AdminProgram {
@@ -53,6 +59,7 @@ export interface AdminProgram {
   category: 'Skill Track' | 'Level Track' | 'Individual Coaching';
   description: string;
   imagePath: string;
+  imageTransform?: ImageTransformConfig;
   published: boolean;
   enrolledDemoCount: number;
 }
@@ -169,6 +176,7 @@ export interface AdminAchievement {
   datePlaceholder: string;
   description: string;
   imagePath: string;
+  imageTransform?: ImageTransformConfig;
   published: boolean;
 }
 
@@ -179,6 +187,7 @@ export interface AdminMediaItem {
   category: 'Training Drills' | 'Match Highlights' | 'Bowling Clinic' | 'Campus & Ground';
   caption: string;
   assetPath: string;
+  imageTransform?: ImageTransformConfig;
   published: boolean;
   uploadedLabel: string;
 }
@@ -199,6 +208,7 @@ export interface AdminBlogPost {
   category: string;
   tags: string[];
   featuredImage: string;
+  imageTransform?: ImageTransformConfig;
   bodyText: string;
   status: BlogPostStatus;
   seoTitle: string;

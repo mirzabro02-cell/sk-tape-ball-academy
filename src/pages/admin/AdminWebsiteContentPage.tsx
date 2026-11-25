@@ -1,12 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { Eye, Save } from 'lucide-react';
-import { INITIAL_WEBSITE_CONTENT_SECTIONS } from '@/src/data/adminMockData';
+import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
+import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminWebsiteContentSection } from '@/src/types/admin';
-import {
-  AdminDemoNotice,
-  AdminPageHeader,
-} from '@/src/components/admin/AdminPrimitives';
+import { containsUnsafeHtml } from '@/src/utils/validation';
+import { AdminPageHeader } from '@/src/components/admin/AdminPrimitives';
+import { ImageManager } from '@/src/components/admin/ImageManager';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -16,43 +17,56 @@ import { Textarea } from '@/src/components/ui/Textarea';
 export function AdminWebsiteContentPage() {
   useDocumentTitle('Website Content Management');
   const { showToast } = useAdminToast();
+  const { state, setWebsiteSections, updateSiteSettings } = useAcademyState();
 
-  const [sections, setSections] = useState<AdminWebsiteContentSection[]>(
-    INITIAL_WEBSITE_CONTENT_SECTIONS,
-  );
-  const [selectedId, setSelectedId] = useState(INITIAL_WEBSITE_CONTENT_SECTIONS[0].id);
-
+  const sections = state.websiteSections;
+  const [selectedId, setSelectedId] = useState(sections[0]?.id ?? 'hero');
   const activeSection = sections.find((s) => s.id === selectedId) ?? sections[0];
 
   function updateField<K extends keyof AdminWebsiteContentSection>(
     field: K,
     value: AdminWebsiteContentSection[K],
   ) {
-    setSections((prev) =>
+    if (!activeSection) return;
+    setWebsiteSections((prev) =>
       prev.map((sec) => (sec.id === activeSection.id ? { ...sec, [field]: value } : sec)),
     );
   }
 
   function handleSaveSection(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSections((prev) =>
+    if (!activeSection) return;
+    if (
+      containsUnsafeHtml([
+        activeSection.headline,
+        activeSection.subheadline,
+        activeSection.ctaLabel,
+        activeSection.bodyNotes,
+      ])
+    ) {
+      showToast(
+        'Blocked Unsafe Input',
+        'HTML tags (< or >) are not permitted in website text.',
+        'warning',
+      );
+      return;
+    }
+
+    setWebsiteSections((prev) =>
       prev.map((sec) =>
-        sec.id === activeSection.id
-          ? { ...sec, lastUpdatedLabel: 'Updated in Session Preview' }
-          : sec,
+        sec.id === activeSection.id ? { ...sec, lastUpdatedLabel: 'Updated' } : sec,
       ),
     );
-    showToast(
-      'CMS Section Saved (Frontend Preview)',
-      `"${activeSection.label}" changes stored in current browser session only.`,
-    );
+    showToast('Content Updated', `"${activeSection.label}" changes saved.`);
   }
 
+  if (!activeSection) return null;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Website Content Management (CMS)"
-        description="Edit public website section headlines, supporting copy, and calls to action with live safe previews."
+        description="Update section headlines, supporting copy, and homepage hero/about images."
         actions={
           <Button to="/" variant="outline" size="sm">
             <Eye className="h-4 w-4" aria-hidden="true" />
@@ -61,13 +75,10 @@ export function AdminWebsiteContentPage() {
         }
       />
 
-      <AdminDemoNotice text="Changes update the CMS demonstration preview state in this session. Database-backed CMS persistence will connect in a later phase." />
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* Section Selector List */}
-        <Card padding="sm" className="lg:col-span-4 space-y-1.5">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+        <Card padding="sm" className="lg:col-span-4 space-y-1">
           <p className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-[#64748B]">
-            Website Sections (11)
+            Website Sections ({sections.length})
           </p>
           <div className="space-y-1">
             {sections.map((sec) => {
@@ -97,8 +108,7 @@ export function AdminWebsiteContentPage() {
           </div>
         </Card>
 
-        {/* Editor + Live Preview */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-5">
           <Card padding="lg" className="space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E2E8F0] pb-3">
               <div>
@@ -126,14 +136,47 @@ export function AdminWebsiteContentPage() {
                 onChange={(e) => updateField('ctaLabel', e.target.value)}
               />
               <Textarea
-                label="Editorial Notes / Managed Body Copy"
+                label="Section Copy / Summary"
                 value={activeSection.bodyNotes}
                 onChange={(e) => updateField('bodyNotes', e.target.value)}
               />
+
+              {activeSection.id === 'hero' && (
+                <ImageManager
+                  label="Hero Backdrop Image"
+                  value={state.siteSettings.heroMedia}
+                  onChange={(heroMedia) =>
+                    updateSiteSettings((prev) => ({ ...prev, heroMedia }))
+                  }
+                  aspectRatio="16/9"
+                  presetAssets={[
+                    { label: 'Floodlit Pitch Backdrop', src: heroImg },
+                    { label: 'Practice Lanes', src: lanesImg },
+                  ]}
+                  storageFolder="hero"
+                />
+              )}
+
+              {activeSection.id === 'about' && (
+                <ImageManager
+                  label="About Section Image"
+                  value={state.siteSettings.aboutMedia}
+                  onChange={(aboutMedia) =>
+                    updateSiteSettings((prev) => ({ ...prev, aboutMedia }))
+                  }
+                  aspectRatio="4/3"
+                  presetAssets={[
+                    { label: 'Practice Lanes', src: lanesImg },
+                    { label: 'Floodlit Pitch Backdrop', src: heroImg },
+                  ]}
+                  storageFolder="about"
+                />
+              )}
+
               <div className="flex justify-end pt-2">
                 <Button type="submit" variant="primary" size="sm">
                   <Save className="h-4 w-4" aria-hidden="true" />
-                  <span>Save Section Preview</span>
+                  <span>Save Section</span>
                 </Button>
               </div>
             </form>
@@ -141,7 +184,7 @@ export function AdminWebsiteContentPage() {
 
           <Card tone="navy" padding="lg" className="space-y-3">
             <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#D9A52E]">
-              Live Section Preview Placeholder
+              Live Preview
             </p>
             <h3 className="text-xl font-extrabold text-white">{activeSection.headline}</h3>
             <p className="text-sm text-white/80">{activeSection.subheadline}</p>

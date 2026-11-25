@@ -1,6 +1,8 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AlertCircle } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { TRAINING_PROGRAMS_DATA } from '@/src/data/academyInfo';
 import {
   EXPERIENCE_OPTIONS,
   GENDER_OPTIONAL_OPTIONS,
@@ -67,16 +69,12 @@ const INITIAL_STATE: RegistrationFormState = {
 
 export function RegisterPage() {
   useDocumentTitle('Student Registration');
+  const navigate = useNavigate();
+  const { setApplications } = useAcademyState();
 
   const [form, setForm] = useState<RegistrationFormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isValidating, setIsValidating] = useState(false);
-  const [validatedSummary, setValidatedSummary] = useState<{
-    studentName: string;
-    calculatedAge: number;
-    isMinor: boolean;
-    photographyOptIn: boolean;
-  } | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const calculatedAge = useMemo(
     () => calculateAgeFromDob(form.dateOfBirth),
@@ -95,9 +93,6 @@ export function RegisterPage() {
         delete next[field];
         return next;
       });
-    }
-    if (validatedSummary) {
-      setValidatedSummary(null);
     }
   }
 
@@ -161,7 +156,7 @@ export function RegisterPage() {
     }
 
     if (!form.preferredBatch) {
-      nextErrors.preferredBatch = 'Please choose a preferred batch placeholder.';
+      nextErrors.preferredBatch = 'Please choose a preferred training window.';
     }
 
     if (isMinor && !form.guardianConsent) {
@@ -170,7 +165,7 @@ export function RegisterPage() {
     }
 
     if (!form.privacyConsent) {
-      nextErrors.privacyConsent = 'You must agree to the draft Privacy Policy to continue.';
+      nextErrors.privacyConsent = 'You must agree to the Privacy and Admission policies to continue.';
     }
 
     return nextErrors;
@@ -181,22 +176,48 @@ export function RegisterPage() {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      setValidatedSummary(null);
       return;
     }
 
     setErrors({});
-    setIsValidating(true);
+    setIsSubmitting(true);
+
+    const refCode = `SK-APP-${Math.floor(100000 + Math.random() * 900000)}`;
+    const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.selectedProgram);
+    const programLabel = matchedProgram?.title ?? form.selectedProgram;
+    const studentName = form.studentName.trim();
+
+    setApplications((prev) => [
+      {
+        id: `app-${Date.now()}`,
+        referencePlaceholder: refCode,
+        applicantName: studentName,
+        age: calculatedAge ?? 0,
+        isMinor,
+        guardianName: form.guardianName.trim(),
+        contactPlaceholder: form.whatsappNumber.trim() || form.guardianPhone.trim(),
+        requestedProgram: programLabel,
+        experienceLevel: form.previousExperience,
+        submittedLabel: new Date().toLocaleDateString('en-PK', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        }),
+        status: 'Pending',
+        reviewerNotes: form.additionalMessage.trim()
+          ? `Applicant note: ${form.additionalMessage.trim()} (Window: ${form.preferredBatch})`
+          : `Preferred window: ${form.preferredBatch} · City/Area: ${form.cityArea.trim()}`,
+        convertedToStudent: false,
+      },
+      ...prev,
+    ]);
 
     window.setTimeout(() => {
-      setIsValidating(false);
-      setValidatedSummary({
-        studentName: form.studentName.trim(),
-        calculatedAge: calculatedAge ?? 0,
-        isMinor,
-        photographyOptIn: form.photographyConsent,
-      });
-    }, 350);
+      setIsSubmitting(false);
+      navigate(
+        `/registration-confirmation?ref=${encodeURIComponent(refCode)}&name=${encodeURIComponent(studentName)}`,
+      );
+    }, 250);
   }
 
   return (
@@ -207,22 +228,15 @@ export function RegisterPage() {
           { label: 'Admissions', to: '/admissions' },
           { label: 'Student Registration' },
         ]}
-        kicker="Admission Application (Frontend Preview)"
+        kicker="Academy Admissions"
         title="Student Registration Form"
-        description="Complete all student, guardian, and training details below. This Part 5 form runs client-side validation only and does not submit or store data on a backend server yet."
+        description="Complete student, guardian, and training preferences below to submit an admission application for SK Tape Ball Academy."
         actions={
           <Button to="/book-trial" variant="outlineLight" size="lg">
             Prefer a Free Trial First?
           </Button>
         }
       />
-
-      <Card tone="muted" padding="md" className="flex items-start gap-3">
-        <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#071A36]" aria-hidden="true" />
-        <p className="text-sm text-[#64748B]">
-          <strong className="text-[#071A36]">Frontend-Only Mode:</strong> All required fields, phone formats, date of birth age calculation, and minor guardian consent rules are actively validated in-browser. No personal data is transmitted or saved yet.
-        </p>
-      </Card>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-8">
         {/* Section 1: Student Information */}
@@ -273,7 +287,7 @@ export function RegisterPage() {
 
             <Input
               label="City / Area"
-              placeholder="e.g., City / Neighborhood"
+              placeholder="e.g., Sabzazar, Lahore"
               value={form.cityArea}
               onChange={(e) => updateField('cityArea', e.target.value)}
               error={errors.cityArea}
@@ -283,7 +297,7 @@ export function RegisterPage() {
             <Input
               label="Student Contact Number (Optional)"
               type="tel"
-              placeholder="Optional mobile number"
+              placeholder="03XX XXXXXXX"
               value={form.studentPhone}
               onChange={(e) => updateField('studentPhone', e.target.value)}
               error={errors.studentPhone}
@@ -313,8 +327,8 @@ export function RegisterPage() {
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Input
-              label="Guardian Full Name"
-              placeholder="Parent or guardian full name"
+              label="Guardian / Primary Contact Name"
+              placeholder="Parent, guardian, or adult applicant name"
               value={form.guardianName}
               onChange={(e) => updateField('guardianName', e.target.value)}
               error={errors.guardianName}
@@ -331,9 +345,9 @@ export function RegisterPage() {
             />
 
             <Input
-              label="Guardian Contact Number"
+              label="Contact Phone Number"
               type="tel"
-              placeholder="7–15 digit phone number"
+              placeholder="03XX XXXXXXX"
               value={form.guardianPhone}
               onChange={(e) => updateField('guardianPhone', e.target.value)}
               error={errors.guardianPhone}
@@ -369,7 +383,7 @@ export function RegisterPage() {
             <p className="text-xs font-bold uppercase tracking-wider text-[#C8202B]">
               Section 03
             </p>
-            <h2 className="mt-1 text-xl font-bold text-[#071A36]">Training Information</h2>
+            <h2 className="mt-1 text-xl font-bold text-[#071A36]">Training Preferences</h2>
           </div>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -393,12 +407,12 @@ export function RegisterPage() {
 
             <div className="sm:col-span-2">
               <Select
-                label="Preferred Batch (Placeholder Options)"
+                label="Preferred Training Window"
                 options={PREFERRED_BATCH_OPTIONS}
                 value={form.preferredBatch}
                 onChange={(e) => updateField('preferredBatch', e.target.value)}
                 error={errors.preferredBatch}
-                helperText="Exact batch timings will be confirmed once academy schedules are finalized."
+                helperText="Exact batch lane and schedule timings are confirmed after assessment."
                 required
               />
             </div>
@@ -437,7 +451,7 @@ export function RegisterPage() {
                     <strong className="font-semibold">
                       Guardian Consent (Required for Under-18 Applicants):
                     </strong>{' '}
-                    As parent or legal guardian of this minor applicant (age {calculatedAge}), I consent to their evaluation and participation under the draft{' '}
+                    As parent or legal guardian of this minor applicant (age {calculatedAge}), I consent to their evaluation and participation under the{' '}
                     <Link to="/child-safety" className="underline font-semibold hover:text-[#C8202B]">
                       Child Safety Policy
                     </Link>
@@ -461,7 +475,7 @@ export function RegisterPage() {
                   className="mt-1 h-4 w-4 rounded border-[#071A36] accent-[#071A36]"
                 />
                 <span className="text-sm text-[#071A36]">
-                  I have read and agree to the draft{' '}
+                  I have read and agree to the{' '}
                   <Link to="/privacy-policy" className="underline font-semibold hover:text-[#C8202B]">
                     Privacy Policy
                   </Link>{' '}
@@ -486,7 +500,7 @@ export function RegisterPage() {
                   className="mt-1 h-4 w-4 rounded border-[#071A36] accent-[#071A36]"
                 />
                 <span className="text-sm text-[#64748B]">
-                  <strong className="text-[#071A36]">Optional Photography Consent:</strong> I allow SK Tape Ball Academy to capture training photos/clips per the draft{' '}
+                  <strong className="text-[#071A36]">Optional Photography Consent:</strong> I allow SK Tape Ball Academy to capture training photos/clips per the{' '}
                   <Link
                     to="/photography-consent"
                     className="underline font-semibold text-[#071A36] hover:text-[#C8202B]"
@@ -509,33 +523,10 @@ export function RegisterPage() {
             </div>
           )}
 
-          {validatedSummary && (
-            <div
-              role="status"
-              className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-5 space-y-3"
-            >
-              <div className="flex items-center gap-2 text-sm font-bold text-[#071A36]">
-                <CheckCircle2 className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
-                <span>Frontend Validation Complete — Demonstration Only (Not Submitted)</span>
-              </div>
-              <p className="text-sm leading-relaxed text-[#64748B]">
-                All required inputs for <strong className="text-[#071A36]">{validatedSummary.studentName}</strong> (calculated age: <strong className="text-[#071A36]">{validatedSummary.calculatedAge}</strong>, {validatedSummary.isMinor ? 'minor guardian consent verified' : 'adult applicant'}, photography consent: {validatedSummary.photographyOptIn ? 'opted in' : 'not selected'}) passed validation. Because no backend or database is connected yet, this application has <strong>not</strong> been submitted or saved.
-              </p>
-              <div className="flex flex-wrap items-center gap-3 pt-1">
-                <Button to="/registration-confirmation" variant="secondary" size="sm">
-                  Preview Confirmation Page
-                </Button>
-                <Button to="/application-status" variant="outline" size="sm">
-                  Track Application Status
-                </Button>
-              </div>
-            </div>
-          )}
-
           <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" variant="primary" size="lg" disabled={isValidating}>
-                {isValidating ? 'Validating Registration Form...' : 'Validate Registration Form'}
+              <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting Application...' : 'Submit Application'}
               </Button>
               <Button
                 type="button"
@@ -544,7 +535,6 @@ export function RegisterPage() {
                 onClick={() => {
                   setForm(INITIAL_STATE);
                   setErrors({});
-                  setValidatedSummary(null);
                 }}
               >
                 Clear Form
@@ -557,12 +547,6 @@ export function RegisterPage() {
                 className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
               >
                 Track Application
-              </Link>
-              <Link
-                to="/login"
-                className="font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
-              >
-                Member Login
               </Link>
             </div>
           </div>

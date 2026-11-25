@@ -1,15 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { Pencil, Plus, Users } from 'lucide-react';
-import {
-  INITIAL_ADMIN_BATCHES,
-  INITIAL_ADMIN_COACHES,
-  INITIAL_ADMIN_PROGRAMS,
-  INITIAL_ADMIN_STUDENTS,
-} from '@/src/data/adminMockData';
+import { Pencil, Plus, Trash2, Users } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminBatch, BatchStatus } from '@/src/types/admin';
 import {
-  AdminDemoNotice,
+  AdminConfirmDialog,
+  AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatusBadge,
@@ -30,27 +26,31 @@ const BATCH_STATUS_BADGE: Record<BatchStatus, 'success' | 'warning' | 'danger' |
 export function AdminBatchesPage() {
   useDocumentTitle('Batch Management');
   const { showToast } = useAdminToast();
+  const { state, setBatches } = useAcademyState();
 
-  const [batches, setBatches] = useState<AdminBatch[]>(INITIAL_ADMIN_BATCHES);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AdminBatch | null>(null);
   const [assigningBatch, setAssigningBatch] = useState<AdminBatch | null>(null);
   const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<AdminBatch | null>(null);
+
+  const defaultProgram = state.programs[0]?.title ?? 'Tape Ball Batting';
+  const defaultCoachId = state.coaches[0]?.id ?? '';
 
   const [name, setName] = useState('');
-  const [programTitle, setProgramTitle] = useState(INITIAL_ADMIN_PROGRAMS[0].title);
-  const [coachId, setCoachId] = useState(INITIAL_ADMIN_COACHES[0].id);
+  const [programTitle, setProgramTitle] = useState(defaultProgram);
+  const [coachId, setCoachId] = useState(defaultCoachId);
   const [capacity, setCapacity] = useState('15');
-  const [timingPlaceholder, setTimingPlaceholder] = useState('[Batch Timing Placeholder]');
+  const [timingPlaceholder, setTimingPlaceholder] = useState('');
   const [status, setStatus] = useState<BatchStatus>('Open');
 
   function openCreate() {
     setEditing(null);
     setName('');
-    setProgramTitle(INITIAL_ADMIN_PROGRAMS[0].title);
-    setCoachId(INITIAL_ADMIN_COACHES[0].id);
+    setProgramTitle(defaultProgram);
+    setCoachId(defaultCoachId);
     setCapacity('15');
-    setTimingPlaceholder('[Batch Timing Placeholder]');
+    setTimingPlaceholder('');
     setStatus('Open');
     setFormOpen(true);
   }
@@ -69,7 +69,7 @@ export function AdminBatchesPage() {
   function handleSaveBatch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!name.trim()) return;
-    const coach = INITIAL_ADMIN_COACHES.find((c) => c.id === coachId);
+    const coach = state.coaches.find((c) => c.id === coachId);
     const parsedCap = Math.max(1, Number(capacity) || 12);
 
     if (editing) {
@@ -78,32 +78,32 @@ export function AdminBatchesPage() {
           b.id === editing.id
             ? {
                 ...b,
-                name,
+                name: name.trim(),
                 programTitle,
                 coachId,
-                coachName: coach?.fullName ?? b.coachName,
+                coachName: coach?.fullName ?? 'To Be Assigned',
                 capacity: parsedCap,
-                timingPlaceholder,
+                timingPlaceholder: timingPlaceholder.trim() || 'Schedule to be set',
                 status,
               }
             : b,
         ),
       );
-      showToast('Batch Updated (Preview)', `${name} updated in demonstration session.`);
+      showToast('Batch Updated', `${name.trim()} updated.`);
     } else {
       const next: AdminBatch = {
         id: `batch-${Date.now()}`,
-        name,
+        name: name.trim(),
         programTitle,
         coachId,
-        coachName: coach?.fullName ?? 'Coach Placeholder',
+        coachName: coach?.fullName ?? 'To Be Assigned',
         capacity: parsedCap,
         assignedStudentIds: [],
-        timingPlaceholder,
+        timingPlaceholder: timingPlaceholder.trim() || 'Schedule to be set',
         status,
       };
       setBatches((prev) => [next, ...prev]);
-      showToast('Batch Created (Preview)', `${name} added to demonstration batches.`);
+      showToast('Batch Created', `${next.name} created.`);
     }
     setFormOpen(false);
   }
@@ -127,17 +127,17 @@ export function AdminBatchesPage() {
       ),
     );
     showToast(
-      'Batch Roster Updated (Preview)',
-      `${selectedStudentIds.length} demonstration student(s) assigned to ${assigningBatch.name}.`,
+      'Batch Roster Updated',
+      `${selectedStudentIds.length} student(s) assigned to ${assigningBatch.name}.`,
     );
     setAssigningBatch(null);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Batch Management"
-        description="Create training batches, assign coaches and students, and monitor demonstration slot capacity."
+        description="Organize training batches, assign coaches and enrolled students, and monitor group capacity."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -146,76 +146,97 @@ export function AdminBatchesPage() {
         }
       />
 
-      <AdminDemoNotice />
+      {state.batches.length === 0 ? (
+        <Card padding="md">
+          <AdminEmptyState
+            title="No training batches created yet"
+            description="Create a training batch to group enrolled students by program track, timing, and supervising coach."
+            action={
+              <Button type="button" variant="primary" size="sm" onClick={openCreate}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Create First Batch</span>
+              </Button>
+            }
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:items-start">
+          {state.batches.map((batch) => {
+            const fillPct = Math.min(
+              100,
+              Math.round((batch.assignedStudentIds.length / Math.max(1, batch.capacity)) * 100),
+            );
+            return (
+              <Card key={batch.id} padding="md" className="space-y-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                      {batch.programTitle}
+                    </p>
+                    <h2 className="text-base font-bold text-[#071A36]">{batch.name}</h2>
+                  </div>
+                  <AdminStatusBadge label={batch.status} variant={BATCH_STATUS_BADGE[batch.status]} />
+                </div>
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {batches.map((batch) => {
-          const fillPct = Math.min(
-            100,
-            Math.round((batch.assignedStudentIds.length / Math.max(1, batch.capacity)) * 100),
-          );
-          return (
-            <Card key={batch.id} padding="md" className="space-y-4">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                    {batch.programTitle}
-                  </p>
-                  <h2 className="text-base font-bold text-[#071A36]">{batch.name}</h2>
+                <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
+                  <div>
+                    <p className="text-[#64748B]">Assigned Coach</p>
+                    <p className="font-semibold text-[#071A36]">{batch.coachName}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#64748B]">Session Timing</p>
+                    <p className="font-semibold text-[#071A36]">{batch.timingPlaceholder}</p>
+                  </div>
                 </div>
-                <AdminStatusBadge label={batch.status} variant={BATCH_STATUS_BADGE[batch.status]} />
-              </div>
 
-              <div className="grid grid-cols-2 gap-3 rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 text-xs">
-                <div>
-                  <p className="text-[#64748B]">Assigned Coach</p>
-                  <p className="font-semibold text-[#071A36]">{batch.coachName}</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-[#071A36]">Capacity Utilization</span>
+                    <span className="font-mono font-bold text-[#071A36] tabular-nums">
+                      {batch.assignedStudentIds.length} / {batch.capacity} ({fillPct}%)
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]">
+                    <div
+                      className="h-full bg-[#D9A52E]"
+                      style={{ width: `${fillPct === 0 ? 0 : Math.max(4, fillPct)}%` }}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[#64748B]">Schedule Placeholder</p>
-                  <p className="font-semibold text-[#071A36]">{batch.timingPlaceholder}</p>
-                </div>
-              </div>
 
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#071A36]">Capacity Utilization (Demo)</span>
-                  <span className="font-mono font-bold text-[#071A36] tabular-nums">
-                    {batch.assignedStudentIds.length} / {batch.capacity} ({fillPct}%)
-                  </span>
+                <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openStudentAssignment(batch)}
+                  >
+                    <Users className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Assign Students</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => openEdit(batch)}
+                  >
+                    <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Edit</span>
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteTarget(batch)}
+                    aria-label={`Delete ${batch.name}`}
+                    className="inline-flex h-9 items-center justify-center rounded-[10px] border border-[#C8202B]/30 px-3 text-xs font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-[#E2E8F0]">
-                  <div
-                    className="h-full bg-[#D9A52E]"
-                    style={{ width: `${Math.max(4, fillPct)}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openStudentAssignment(batch)}
-                >
-                  <Users className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Assign Students</span>
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => openEdit(batch)}
-                >
-                  <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Edit Batch</span>
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       <AdminModal
         open={formOpen}
@@ -227,21 +248,24 @@ export function AdminBatchesPage() {
             label="Batch Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Evening Batting Group B (Demo)"
+            placeholder="e.g. Evening Batting Group A"
             required
           />
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Select
-              label="Program Selection"
+              label="Program Track"
               value={programTitle}
               onChange={(e) => setProgramTitle(e.target.value)}
-              options={INITIAL_ADMIN_PROGRAMS.map((p) => ({ value: p.title, label: p.title }))}
+              options={state.programs.map((p) => ({ value: p.title, label: p.title }))}
             />
             <Select
               label="Assigned Coach"
               value={coachId}
               onChange={(e) => setCoachId(e.target.value)}
-              options={INITIAL_ADMIN_COACHES.map((c) => ({ value: c.id, label: c.fullName }))}
+              options={[
+                { value: '', label: 'To Be Assigned' },
+                ...state.coaches.map((c) => ({ value: c.id, label: c.fullName })),
+              ]}
             />
             <Input
               label="Max Capacity"
@@ -264,9 +288,10 @@ export function AdminBatchesPage() {
             />
           </div>
           <Input
-            label="Timing Placeholder"
+            label="Training Timing"
             value={timingPlaceholder}
             onChange={(e) => setTimingPlaceholder(e.target.value)}
+            placeholder="e.g. Mon, Wed, Fri · 6:00 PM – 8:00 PM"
           />
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
@@ -283,40 +308,45 @@ export function AdminBatchesPage() {
         open={Boolean(assigningBatch)}
         onClose={() => setAssigningBatch(null)}
         title={`Assign Students — ${assigningBatch?.name ?? ''}`}
-        subtitle="Select demonstration student profiles to assign to this batch."
         maxWidth="md"
       >
         <div className="space-y-4">
-          <div className="space-y-2 max-h-72 overflow-y-auto">
-            {INITIAL_ADMIN_STUDENTS.map((stu) => {
-              const checked = selectedStudentIds.includes(stu.id);
-              return (
-                <label
-                  key={stu.id}
-                  className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs cursor-pointer"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() =>
-                        setSelectedStudentIds((prev) =>
-                          checked ? prev.filter((id) => id !== stu.id) : [...prev, stu.id],
-                        )
-                      }
-                      className="h-4 w-4 accent-[#071A36]"
-                    />
-                    <span>
-                      <strong className="block text-[#071A36]">{stu.fullName}</strong>
-                      <span className="text-[#64748B]">
-                        {stu.studentCode} · {stu.program}
+          {state.students.length === 0 ? (
+            <p className="text-xs text-[#64748B] py-4 text-center">
+              No student records exist yet. Add students in Student Management first.
+            </p>
+          ) : (
+            <div className="space-y-2 max-h-72 overflow-y-auto">
+              {state.students.map((stu) => {
+                const checked = selectedStudentIds.includes(stu.id);
+                return (
+                  <label
+                    key={stu.id}
+                    className="flex items-center justify-between rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-2.5 text-xs cursor-pointer"
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() =>
+                          setSelectedStudentIds((prev) =>
+                            checked ? prev.filter((id) => id !== stu.id) : [...prev, stu.id],
+                          )
+                        }
+                        className="h-4 w-4 accent-[#071A36]"
+                      />
+                      <span>
+                        <strong className="block text-[#071A36]">{stu.fullName}</strong>
+                        <span className="text-[#64748B]">
+                          {stu.studentCode} · {stu.program}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                </label>
-              );
-            })}
-          </div>
+                  </label>
+                );
+              })}
+            </div>
+          )}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button
               type="button"
@@ -337,6 +367,20 @@ export function AdminBatchesPage() {
           </div>
         </div>
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          setBatches((prev) => prev.filter((b) => b.id !== deleteTarget.id));
+          showToast('Batch Deleted', `${deleteTarget.name} removed.`, 'warning');
+        }}
+        title="Delete Training Batch"
+        message={`Delete batch "${deleteTarget?.name ?? ''}"? Enrolled student records will remain intact.`}
+        confirmLabel="Delete Batch"
+        tone="danger"
+      />
     </div>
   );
 }

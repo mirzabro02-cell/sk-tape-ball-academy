@@ -83,3 +83,42 @@ export function isFutureOrTodayDate(dateString: string): boolean {
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   return target >= todayMidnight;
 }
+
+export function sanitizeExternalUrl(rawUrl?: string | null): string | null {
+  const trimmed = rawUrl?.trim();
+  if (!trimmed) {
+    return null;
+  }
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.toString();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function containsUnsafeHtml(values: string[]): boolean {
+  return values.some((val) => /[<>]/.test(val));
+}
+
+const ALLOWED_IMAGE_MIME = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const ALLOWED_IMAGE_EXT = ['.jpg', '.jpeg', '.png', '.webp'];
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+export function validateImageFile(file: File): string | null {
+  const lowerName = file.name.toLowerCase();
+  const hasValidExt = ALLOWED_IMAGE_EXT.some((ext) => lowerName.endsWith(ext));
+  const hasValidMime = ALLOWED_IMAGE_MIME.has(file.type.toLowerCase());
+
+  if (!hasValidExt || !hasValidMime) {
+    return 'Please choose a valid JPG, PNG, or WebP image file.';
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return 'Image file size must be 5 MB or smaller.';
+  }
+  return null;
+}
+

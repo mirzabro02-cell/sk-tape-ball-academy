@@ -1,21 +1,23 @@
 import { useState, type FormEvent } from 'react';
-import { Bold, Heading2, List, Pencil, Plus } from 'lucide-react';
-import {
-  ADMIN_IMAGE_ASSETS,
-  INITIAL_ADMIN_BLOG_POSTS,
-} from '@/src/data/adminMockData';
+import { Bold, Heading2, List, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { ADMIN_IMAGE_ASSETS } from '@/src/assets/branding';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminBlogPost, BlogPostStatus } from '@/src/types/admin';
+import { createManagedMedia, type ManagedMediaValue } from '@/src/types/media';
 import {
-  AdminDemoNotice,
+  AdminConfirmDialog,
+  AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatusBadge,
 } from '@/src/components/admin/AdminPrimitives';
+import { ImageManager } from '@/src/components/admin/ImageManager';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 import { Select } from '@/src/components/ui/Select';
 import { Textarea } from '@/src/components/ui/Textarea';
 
@@ -29,18 +31,20 @@ function slugifyTitle(value: string): string {
 }
 
 export function AdminBlogPage() {
-  useDocumentTitle('Blog Management');
+  useDocumentTitle('Blog & Updates Management');
   const { showToast } = useAdminToast();
+  const { state, setBlogPosts } = useAcademyState();
 
-  const [posts, setPosts] = useState<AdminBlogPost[]>(INITIAL_ADMIN_BLOG_POSTS);
+  const posts = state.blogPosts;
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AdminBlogPost | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminBlogPost | null>(null);
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
-  const [category, setCategory] = useState('Bowling Technique');
+  const [category, setCategory] = useState('Academy Updates');
   const [tagsText, setTagsText] = useState('');
-  const [featuredImage, setFeaturedImage] = useState(ADMIN_IMAGE_ASSETS[0].path);
+  const [coverMedia, setCoverMedia] = useState<ManagedMediaValue>(createManagedMedia(null));
   const [bodyText, setBodyText] = useState('');
   const [status, setStatus] = useState<BlogPostStatus>('Draft');
   const [seoTitle, setSeoTitle] = useState('');
@@ -50,9 +54,9 @@ export function AdminBlogPage() {
     setEditing(null);
     setTitle('');
     setSlug('');
-    setCategory('Bowling Technique');
+    setCategory('Academy Updates');
     setTagsText('Tape Ball, Coaching');
-    setFeaturedImage(ADMIN_IMAGE_ASSETS[0].path);
+    setCoverMedia(createManagedMedia(null));
     setBodyText('');
     setStatus('Draft');
     setSeoTitle('');
@@ -66,7 +70,7 @@ export function AdminBlogPage() {
     setSlug(post.slug);
     setCategory(post.category);
     setTagsText(post.tags.join(', '));
-    setFeaturedImage(post.featuredImage);
+    setCoverMedia(createManagedMedia(post.featuredImage, post.imageTransform));
     setBodyText(post.bodyText);
     setStatus(post.status);
     setSeoTitle(post.seoTitle);
@@ -88,118 +92,142 @@ export function AdminBlogPage() {
       .filter(Boolean);
 
     if (editing) {
-      setPosts((prev) =>
+      setBlogPosts((prev) =>
         prev.map((p) =>
           p.id === editing.id
             ? {
                 ...p,
-                title,
-                slug,
-                category,
+                title: title.trim(),
+                slug: slug.trim(),
+                category: category.trim(),
                 tags,
-                featuredImage,
+                featuredImage: coverMedia.src || '',
+                imageTransform: coverMedia.transform,
                 bodyText,
                 status,
                 seoTitle,
                 seoDescription,
-                updatedLabel: 'Session Updated',
+                updatedLabel: 'Updated',
               }
             : p,
         ),
       );
-      showToast('Blog Post Updated (Preview)', `"${title}" saved in demonstration state.`);
+      showToast('Article Updated', `"${title.trim()}" saved.`);
     } else {
       const next: AdminBlogPost = {
         id: `blog-${Date.now()}`,
-        title,
-        slug,
-        category,
+        title: title.trim(),
+        slug: slug.trim(),
+        category: category.trim(),
         tags,
-        featuredImage,
+        featuredImage: coverMedia.src || '',
+        imageTransform: coverMedia.transform,
         bodyText,
         status,
-        seoTitle: seoTitle || `${title} | SK Tape Ball Academy`,
+        seoTitle: seoTitle || `${title.trim()} | SK Tape Ball Academy`,
         seoDescription,
-        updatedLabel: 'Session Draft',
+        updatedLabel: 'Drafted',
       };
-      setPosts((prev) => [next, ...prev]);
-      showToast('Blog Post Created (Preview)', `"${title}" created as ${status}.`);
+      setBlogPosts((prev) => [next, ...prev]);
+      showToast('Article Created', `"${next.title}" saved as ${status}.`);
     }
     setFormOpen(false);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
-        title="Blog & Editorial Management"
-        description="Draft coaching articles, manage URL slugs, featured visuals, categories, and SEO metadata."
+        title="Blog & Updates Management"
+        description="Write coaching notes and academy updates with featured imagery and safe structured text."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
-            <span>Create Post</span>
+            <span>Create Article</span>
           </Button>
         }
       />
 
-      <AdminDemoNotice text="Article content uses safe structured text blocks without raw HTML injection or unsafe script execution." />
-
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        {posts.map((post) => (
-          <Card key={post.id} padding="sm" className="flex flex-col justify-between gap-4">
-            <div className="space-y-3">
-              <div className="aspect-video w-full overflow-hidden rounded-[10px] bg-[#071A36]">
-                <img
-                  src={post.featuredImage}
-                  alt={post.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[11px] font-semibold text-[#C8202B]">{post.category}</p>
-                  <h2 className="text-base font-bold text-[#071A36]">{post.title}</h2>
-                  <p className="font-mono text-[11px] text-[#64748B]">/blog/{post.slug}</p>
-                </div>
-                <AdminStatusBadge
-                  label={post.status}
-                  variant={post.status === 'Published' ? 'success' : 'warning'}
-                />
-              </div>
-
-              <p className="text-xs leading-relaxed text-[#64748B] line-clamp-3">
-                {post.bodyText}
-              </p>
-
-              <p className="text-[11px] font-medium text-[#64748B]">
-                Tags: {post.tags.join(' · ') || 'None'}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between border-t border-[#E2E8F0] pt-3">
-              <span className="text-[11px] text-[#64748B]">{post.updatedLabel}</span>
-              <Button type="button" variant="secondary" size="sm" onClick={() => openEdit(post)}>
-                <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Edit Post</span>
+      {posts.length === 0 ? (
+        <Card padding="md">
+          <AdminEmptyState
+            title="No articles drafted yet"
+            description="Create academy announcements or tape ball technique notes here."
+            action={
+              <Button type="button" variant="primary" size="sm" onClick={openCreate}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Create First Article</span>
               </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+            }
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {posts.map((post) => (
+            <Card key={post.id} padding="sm" className="flex flex-col justify-between gap-4">
+              <div className="space-y-3">
+                {post.featuredImage && (
+                  <MediaImage
+                    src={post.featuredImage}
+                    alt={post.title}
+                    transform={post.imageTransform}
+                    className="aspect-video w-full rounded-[10px]"
+                  />
+                )}
+
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-[11px] font-semibold text-[#C8202B]">{post.category}</p>
+                    <h2 className="text-base font-bold text-[#071A36]">{post.title}</h2>
+                  </div>
+                  <AdminStatusBadge
+                    label={post.status}
+                    variant={post.status === 'Published' ? 'success' : 'warning'}
+                  />
+                </div>
+
+                <p className="text-xs leading-relaxed text-[#64748B] line-clamp-3">
+                  {post.bodyText}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-[#E2E8F0] pt-3">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(post)}
+                  aria-label={`Delete ${post.title}`}
+                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+                <Button type="button" variant="secondary" size="sm" onClick={() => openEdit(post)}>
+                  <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Edit</span>
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <AdminModal
         open={formOpen}
         onClose={() => setFormOpen(false)}
-        title={editing ? 'Edit Blog Post' : 'Create Blog Post'}
+        title={editing ? 'Edit Article' : 'Create Article'}
         maxWidth="xl"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          <ImageManager
+            label="Featured Image (Optional)"
+            value={coverMedia}
+            onChange={setCoverMedia}
+            aspectRatio="16/9"
+            presetAssets={ADMIN_IMAGE_ASSETS.map((a) => ({ label: a.label, src: a.path }))}
+            storageFolder="blog"
+          />
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
-              label="Post Title"
+              label="Article Title"
               value={title}
               onChange={(e) => {
                 const nextTitle = e.target.value;
@@ -221,19 +249,8 @@ export function AdminBlogPage() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             />
-            <Input
-              label="Tags (Comma-separated)"
-              value={tagsText}
-              onChange={(e) => setTagsText(e.target.value)}
-            />
             <Select
-              label="Featured Image"
-              value={featuredImage}
-              onChange={(e) => setFeaturedImage(e.target.value)}
-              options={ADMIN_IMAGE_ASSETS.map((a) => ({ value: a.path, label: a.label }))}
-            />
-            <Select
-              label="Publication Status"
+              label="Status"
               value={status}
               onChange={(e) => setStatus(e.target.value as BlogPostStatus)}
               options={[
@@ -243,12 +260,15 @@ export function AdminBlogPage() {
             />
           </div>
 
-          {/* Safe Structured Text Toolbar */}
+          <Input
+            label="Tags (Comma-separated)"
+            value={tagsText}
+            onChange={(e) => setTagsText(e.target.value)}
+          />
+
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-medium text-[#071A36]">
-                Article Content (Safe Structured Editor)
-              </span>
+              <span className="text-sm font-medium text-[#071A36]">Article Body</span>
               <div className="inline-flex items-center gap-1 rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] p-1">
                 <button
                   type="button"
@@ -260,7 +280,7 @@ export function AdminBlogPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => insertFormattingToken('**Key Coaching Cue**')}
+                  onClick={() => insertFormattingToken('**Key Coaching Point**')}
                   className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#071A36] hover:bg-white cursor-pointer"
                 >
                   <Bold className="h-3.5 w-3.5" aria-hidden="true" />
@@ -268,7 +288,7 @@ export function AdminBlogPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => insertFormattingToken('- Drill checklist item')}
+                  onClick={() => insertFormattingToken('- Key drill item')}
                   className="inline-flex items-center gap-1 rounded-[6px] px-2 py-1 text-[11px] font-semibold text-[#071A36] hover:bg-white cursor-pointer"
                 >
                   <List className="h-3.5 w-3.5" aria-hidden="true" />
@@ -281,23 +301,7 @@ export function AdminBlogPage() {
               aria-label="Article Body Content"
               value={bodyText}
               onChange={(e) => setBodyText(e.target.value)}
-              placeholder="Write structured coaching insights..."
               required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-[#E2E8F0] pt-4">
-            <Input
-              label="SEO Title"
-              value={seoTitle}
-              onChange={(e) => setSeoTitle(e.target.value)}
-              placeholder="Search title..."
-            />
-            <Input
-              label="SEO Meta Description"
-              value={seoDescription}
-              onChange={(e) => setSeoDescription(e.target.value)}
-              placeholder="Concise search summary..."
             />
           </div>
 
@@ -306,11 +310,25 @@ export function AdminBlogPage() {
               Cancel
             </Button>
             <Button type="submit" variant="primary" size="sm">
-              {editing ? 'Save Post' : 'Create Post'}
+              {editing ? 'Save Article' : 'Create Article'}
             </Button>
           </div>
         </form>
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          setBlogPosts((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+          showToast('Article Removed', `${deleteTarget.title} deleted.`, 'warning');
+        }}
+        title="Delete Article"
+        message={`Delete "${deleteTarget?.title ?? ''}"?`}
+        confirmLabel="Delete"
+        tone="danger"
+      />
     </div>
   );
 }

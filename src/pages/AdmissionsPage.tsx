@@ -34,6 +34,7 @@ export function AdmissionsPage() {
       {/* Admission Process Steps */}
       <section aria-labelledby="admission-steps-heading" className="space-y-8">
         <SectionHeader
+          id="admission-steps-heading"
           kicker="Step-by-Step Pathway"
           title="Admission Process"
           description="From initial trial assessment to batch placement and ground onboarding."
@@ -57,13 +58,11 @@ export function AdmissionsPage() {
         <Card className="lg:col-span-6 space-y-5" padding="lg">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
-            <h2 className="text-xl font-bold text-[#071A36]">
-              Eligibility Information (Placeholders)
-            </h2>
+            <h2 className="text-xl font-bold text-[#071A36]">Eligibility Standards</h2>
           </div>
 
           <div className="divide-y divide-[#E2E8F0] border-t border-[#E2E8F0]">
-            {ADMISSIONS_PAGE_CONTENT.eligibilityPlaceholders.map((item) => (
+            {ADMISSIONS_PAGE_CONTENT.eligibilityStandards.map((item) => (
               <div key={item.title} className="py-4 space-y-1">
                 <h3 className="text-sm font-bold text-[#071A36]">{item.title}</h3>
                 <p className="text-sm leading-relaxed text-[#64748B]">{item.detail}</p>
@@ -93,7 +92,7 @@ export function AdmissionsPage() {
           </ul>
           <div className="pt-2">
             <Button to="/admission-policy" variant="outlineLight" size="sm">
-              Read Draft Admission Policy
+              Read Admission Policy
             </Button>
           </div>
         </Card>
@@ -102,9 +101,9 @@ export function AdmissionsPage() {
       {/* Frequently Asked Admission Questions */}
       <section aria-labelledby="admission-faqs-heading" className="space-y-6">
         <SectionHeader
+          id="admission-faqs-heading"
           kicker="Common Questions"
           title="Frequently Asked Admission Questions"
-          description="Sample placeholder answers pending official academy confirmation."
           action={
             <Button to="/faqs" variant="outline">
               View All FAQs

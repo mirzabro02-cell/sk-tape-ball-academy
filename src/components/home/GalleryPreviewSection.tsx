@@ -1,29 +1,23 @@
 import { useEffect, useState } from 'react';
 import { ArrowRight, Expand, X } from 'lucide-react';
-import { GALLERY_PREVIEW_ITEMS, type GalleryPreviewItem } from '@/src/data/homeContent';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { GALLERY_CATEGORIES } from '@/src/data/activitiesContent';
 import { useScrollLock } from '@/src/hooks/useScrollLock';
+import type { AdminMediaItem } from '@/src/types/admin';
 import { cn } from '@/src/utils/cn';
 import { Button } from '@/src/components/ui/Button';
 import { MediaImage } from '@/src/components/ui/MediaImage';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
-const GALLERY_FILTERS: Array<'All' | GalleryPreviewItem['category']> = [
-  'All',
-  'Drills',
-  'Facility',
-  'Placeholder',
-];
-
 export function GalleryPreviewSection() {
-  const [activeFilter, setActiveFilter] = useState<'All' | GalleryPreviewItem['category']>('All');
-  const [selectedItem, setSelectedItem] = useState<GalleryPreviewItem | null>(null);
+  const { state } = useAcademyState();
+  const [activeFilter, setActiveFilter] = useState<(typeof GALLERY_CATEGORIES)[number]>('All');
+  const [selectedItem, setSelectedItem] = useState<AdminMediaItem | null>(null);
 
   useScrollLock(Boolean(selectedItem));
 
   useEffect(() => {
-    if (!selectedItem) {
-      return;
-    }
+    if (!selectedItem) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelectedItem(null);
@@ -33,17 +27,26 @@ export function GalleryPreviewSection() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [selectedItem]);
 
-  const visibleItems =
+  const publishedImages = state.gallery.filter(
+    (item) => item.published && item.mediaType === 'image',
+  );
+
+  if (publishedImages.length === 0) {
+    return null;
+  }
+
+  const visibleItems = (
     activeFilter === 'All'
-      ? GALLERY_PREVIEW_ITEMS
-      : GALLERY_PREVIEW_ITEMS.filter((item) => item.category === activeFilter);
+      ? publishedImages
+      : publishedImages.filter((item) => item.category === activeFilter)
+  ).slice(0, 6);
 
   return (
     <section aria-labelledby="gallery-preview-heading" className="space-y-8">
       <SectionHeader
         kicker="Media Gallery"
-        title="Training Ground & Drill Visuals"
-        description="Illustrative cricket visuals paired with reserved slots for official academy match and training photography."
+        title="Training Ground & Session Visuals"
+        description="Practice drills, pace bowling clinics, catching stations, and campus views from SK Tape Ball Academy."
         action={
           <Button to="/gallery" variant="outline">
             <span>View Full Gallery</span>
@@ -53,7 +56,7 @@ export function GalleryPreviewSection() {
       />
 
       <div className="flex flex-wrap items-center gap-1.5 rounded-[12px] border border-[#E2E8F0] bg-white p-1.5 w-fit">
-        {GALLERY_FILTERS.map((filter) => (
+        {GALLERY_CATEGORIES.map((filter) => (
           <button
             key={filter}
             type="button"
@@ -65,7 +68,7 @@ export function GalleryPreviewSection() {
                 : 'text-[#64748B] hover:text-[#071A36] hover:bg-[#F5F7FA]',
             )}
           >
-            {filter === 'Placeholder' ? 'Reserved Slots' : filter}
+            {filter}
           </button>
         ))}
       </div>
@@ -80,11 +83,11 @@ export function GalleryPreviewSection() {
           >
             <div className="relative aspect-[4/3] w-full overflow-hidden">
               <MediaImage
-                src={item.imageSrc}
-                alt={item.imageAlt}
+                src={item.assetPath}
+                alt={item.title}
+                transform={item.imageTransform}
                 fallbackLabel={item.title}
                 className="h-full w-full"
-                imgClassName="transition-transform duration-300 group-hover:scale-[1.03]"
               />
               <span
                 aria-hidden="true"
@@ -96,7 +99,7 @@ export function GalleryPreviewSection() {
 
             <div className="p-4 space-y-1">
               <p className="text-[11px] font-semibold uppercase tracking-wider text-[#C8202B]">
-                {item.isPlaceholderSlot ? 'Reserved Slot' : item.category}
+                {item.category}
               </p>
               <h3 className="text-base font-bold text-[#071A36]">{item.title}</h3>
               <p className="text-xs leading-relaxed text-[#64748B]">{item.caption}</p>
@@ -120,7 +123,7 @@ export function GalleryPreviewSection() {
             <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B]">
-                  {selectedItem.isPlaceholderSlot ? 'Reserved Gallery Slot' : selectedItem.category}
+                  {selectedItem.category}
                 </p>
                 <h3 className="text-lg font-bold text-[#071A36]">{selectedItem.title}</h3>
               </div>
@@ -136,8 +139,9 @@ export function GalleryPreviewSection() {
 
             <div className="aspect-[16/10] w-full bg-[#071A36]">
               <MediaImage
-                src={selectedItem.imageSrc}
-                alt={selectedItem.imageAlt}
+                src={selectedItem.assetPath}
+                alt={selectedItem.title}
+                transform={selectedItem.imageTransform}
                 fallbackLabel={selectedItem.title}
                 className="h-full w-full"
               />
@@ -145,7 +149,12 @@ export function GalleryPreviewSection() {
 
             <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-[#64748B]">{selectedItem.caption}</p>
-              <Button to="/gallery" variant="secondary" size="sm" onClick={() => setSelectedItem(null)}>
+              <Button
+                to="/gallery"
+                variant="secondary"
+                size="sm"
+                onClick={() => setSelectedItem(null)}
+              >
                 Open Gallery Page
               </Button>
             </div>

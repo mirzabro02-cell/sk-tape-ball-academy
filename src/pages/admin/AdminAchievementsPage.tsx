@@ -1,49 +1,51 @@
 import { useState, type FormEvent } from 'react';
-import { Eye, EyeOff, Pencil, Plus } from 'lucide-react';
-import {
-  ADMIN_IMAGE_ASSETS,
-  INITIAL_ADMIN_ACHIEVEMENTS,
-  INITIAL_ADMIN_STUDENTS,
-} from '@/src/data/adminMockData';
+import { Eye, EyeOff, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { ADMIN_IMAGE_ASSETS } from '@/src/assets/branding';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminAchievement } from '@/src/types/admin';
+import { createManagedMedia, type ManagedMediaValue } from '@/src/types/media';
 import {
-  AdminDemoNotice,
+  AdminConfirmDialog,
+  AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatusBadge,
 } from '@/src/components/admin/AdminPrimitives';
+import { ImageManager } from '@/src/components/admin/ImageManager';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
-import { Select } from '@/src/components/ui/Select';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 import { Textarea } from '@/src/components/ui/Textarea';
 
 export function AdminAchievementsPage() {
   useDocumentTitle('Achievements Management');
   const { showToast } = useAdminToast();
+  const { state, setAchievements } = useAcademyState();
 
-  const [items, setItems] = useState<AdminAchievement[]>(INITIAL_ADMIN_ACHIEVEMENTS);
+  const items = state.achievements;
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AdminAchievement | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminAchievement | null>(null);
 
   const [title, setTitle] = useState('');
-  const [playerName, setPlayerName] = useState(INITIAL_ADMIN_STUDENTS[0].fullName);
-  const [category, setCategory] = useState('Academy Recognition');
-  const [datePlaceholder, setDatePlaceholder] = useState('[Quarter Placeholder]');
+  const [playerName, setPlayerName] = useState('');
+  const [category, setCategory] = useState('Tournament Honors');
+  const [datePlaceholder, setDatePlaceholder] = useState('');
   const [description, setDescription] = useState('');
-  const [imagePath, setImagePath] = useState(ADMIN_IMAGE_ASSETS[0].path);
+  const [mediaValue, setMediaValue] = useState<ManagedMediaValue>(createManagedMedia(null));
   const [published, setPublished] = useState(true);
 
   function openAdd() {
     setEditing(null);
     setTitle('');
-    setPlayerName(INITIAL_ADMIN_STUDENTS[0].fullName);
-    setCategory('Academy Recognition');
-    setDatePlaceholder('[Quarter Placeholder]');
+    setPlayerName('');
+    setCategory('Tournament Honors');
+    setDatePlaceholder('');
     setDescription('');
-    setImagePath(ADMIN_IMAGE_ASSETS[0].path);
+    setMediaValue(createManagedMedia(null));
     setPublished(true);
     setFormOpen(true);
   }
@@ -55,7 +57,7 @@ export function AdminAchievementsPage() {
     setCategory(item.category);
     setDatePlaceholder(item.datePlaceholder);
     setDescription(item.description);
-    setImagePath(item.imagePath);
+    setMediaValue(createManagedMedia(item.imagePath, item.imageTransform));
     setPublished(item.published);
     setFormOpen(true);
   }
@@ -64,48 +66,50 @@ export function AdminAchievementsPage() {
     event.preventDefault();
     if (!title.trim() || !description.trim()) return;
 
+    const imagePath = mediaValue.src || '';
+
     if (editing) {
-      setItems((prev) =>
+      setAchievements((prev) =>
         prev.map((i) =>
           i.id === editing.id
-            ? { ...i, title, playerName, category, datePlaceholder, description, imagePath, published }
+            ? {
+                ...i,
+                title: title.trim(),
+                playerName: playerName.trim(),
+                category: category.trim(),
+                datePlaceholder: datePlaceholder.trim(),
+                description: description.trim(),
+                imagePath,
+                imageTransform: mediaValue.transform,
+                published,
+              }
             : i,
         ),
       );
-      showToast('Achievement Updated (Preview)', `${title} updated in demonstration session.`);
+      showToast('Achievement Updated', `${title.trim()} saved.`);
     } else {
       const next: AdminAchievement = {
         id: `ach-${Date.now()}`,
-        title,
-        playerName,
-        category,
-        datePlaceholder,
-        description,
+        title: title.trim(),
+        playerName: playerName.trim(),
+        category: category.trim(),
+        datePlaceholder: datePlaceholder.trim(),
+        description: description.trim(),
         imagePath,
+        imageTransform: mediaValue.transform,
         published,
       };
-      setItems((prev) => [next, ...prev]);
-      showToast('Achievement Added (Preview)', `${title} created in demonstration list.`);
+      setAchievements((prev) => [next, ...prev]);
+      showToast('Achievement Added', `${next.title} created.`);
     }
     setFormOpen(false);
   }
 
-  function togglePublish(item: AdminAchievement) {
-    setItems((prev) =>
-      prev.map((i) => (i.id === item.id ? { ...i, published: !i.published } : i)),
-    );
-    showToast(
-      item.published ? 'Achievement Unpublished (Preview)' : 'Achievement Published (Preview)',
-      `${item.title} visibility updated in session state.`,
-      'info',
-    );
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Achievements Management"
-        description="Manage player awards, training milestones, assigned profiles, and public publish states."
+        description="Manage verified player milestones, tournament honors, imagery, and public visibility."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -114,85 +118,120 @@ export function AdminAchievementsPage() {
         }
       />
 
-      <AdminDemoNotice />
-
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        {items.map((item) => (
-          <Card key={item.id} padding="sm" className="flex flex-col justify-between gap-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="h-32 w-full sm:w-40 shrink-0 overflow-hidden rounded-[10px] bg-[#071A36]">
-                <img
-                  src={item.imagePath}
-                  alt={item.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-
-              <div className="space-y-1.5 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-[11px] font-semibold text-[#C8202B]">
-                    {item.category} · {item.datePlaceholder}
-                  </span>
-                  <AdminStatusBadge
-                    label={item.published ? 'Published' : 'Unpublished'}
-                    variant={item.published ? 'success' : 'neutral'}
+      {items.length === 0 ? (
+        <Card padding="md">
+          <AdminEmptyState
+            title="No achievements published yet"
+            description="Verified tournament honors and player milestones added here appear cleanly on the public Achievements page."
+            action={
+              <Button type="button" variant="primary" size="sm" onClick={openAdd}>
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span>Add First Achievement</span>
+              </Button>
+            }
+          />
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          {items.map((item) => (
+            <Card key={item.id} padding="sm" className="flex flex-col justify-between gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                {item.imagePath && (
+                  <MediaImage
+                    src={item.imagePath}
+                    alt={item.title}
+                    transform={item.imageTransform}
+                    className="h-32 w-full sm:w-40 shrink-0 rounded-[10px]"
                   />
-                </div>
-                <h2 className="text-base font-bold text-[#071A36]">{item.title}</h2>
-                <p className="text-xs font-semibold text-[#071A36]">
-                  Assigned Player: <span className="text-[#64748B]">{item.playerName}</span>
-                </p>
-                <p className="text-xs leading-relaxed text-[#64748B]">{item.description}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 border-t border-[#E2E8F0] pt-3">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => togglePublish(item)}
-              >
-                {item.published ? (
-                  <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                 )}
-                <span>{item.published ? 'Unpublish' : 'Publish'}</span>
-              </Button>
-              <Button type="button" variant="secondary" size="sm" onClick={() => openEdit(item)}>
-                <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>Edit</span>
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+
+                <div className="space-y-1.5 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-[11px] font-semibold text-[#C8202B]">
+                      {item.category}
+                      {item.datePlaceholder ? ` · ${item.datePlaceholder}` : ''}
+                    </span>
+                    <AdminStatusBadge
+                      label={item.published ? 'Published' : 'Hidden'}
+                      variant={item.published ? 'success' : 'neutral'}
+                    />
+                  </div>
+                  <h2 className="text-base font-bold text-[#071A36]">{item.title}</h2>
+                  {item.playerName && (
+                    <p className="text-xs font-semibold text-[#071A36]">
+                      Recipient: <span className="text-[#64748B]">{item.playerName}</span>
+                    </p>
+                  )}
+                  <p className="text-xs leading-relaxed text-[#64748B]">{item.description}</p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(item)}
+                  aria-label={`Delete ${item.title}`}
+                  className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#C8202B]/30 px-2.5 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setAchievements((prev) =>
+                        prev.map((i) =>
+                          i.id === item.id ? { ...i, published: !i.published } : i,
+                        ),
+                      )
+                    }
+                  >
+                    {item.published ? (
+                      <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
+                    ) : (
+                      <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                    )}
+                    <span>{item.published ? 'Hide' : 'Publish'}</span>
+                  </Button>
+                  <Button type="button" variant="secondary" size="sm" onClick={() => openEdit(item)}>
+                    <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Edit</span>
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <AdminModal
         open={formOpen}
         onClose={() => setFormOpen(false)}
         title={editing ? 'Edit Achievement' : 'Add Achievement'}
+        maxWidth="xl"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          <ImageManager
+            label="Achievement Photo (Optional)"
+            value={mediaValue}
+            onChange={setMediaValue}
+            aspectRatio="4/3"
+            presetAssets={ADMIN_IMAGE_ASSETS.map((a) => ({ label: a.label, src: a.path }))}
+            storageFolder="achievements"
+          />
           <Input
             label="Achievement Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Select
-              label="Assign Player"
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Input
+              label="Player / Squad Name"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              options={INITIAL_ADMIN_STUDENTS.map((s) => ({
-                value: s.fullName,
-                label: s.fullName,
-              }))}
             />
             <Input
               label="Category"
@@ -201,16 +240,9 @@ export function AdminAchievementsPage() {
               required
             />
             <Input
-              label="Date / Period Placeholder"
+              label="Date / Season"
               value={datePlaceholder}
               onChange={(e) => setDatePlaceholder(e.target.value)}
-              required
-            />
-            <Select
-              label="Achievement Image Asset"
-              value={imagePath}
-              onChange={(e) => setImagePath(e.target.value)}
-              options={ADMIN_IMAGE_ASSETS.map((a) => ({ value: a.path, label: a.label }))}
             />
           </div>
           <Textarea
@@ -238,6 +270,20 @@ export function AdminAchievementsPage() {
           </div>
         </form>
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          setAchievements((prev) => prev.filter((i) => i.id !== deleteTarget.id));
+          showToast('Achievement Removed', `${deleteTarget.title} deleted.`, 'warning');
+        }}
+        title="Remove Achievement"
+        message={`Delete "${deleteTarget?.title ?? ''}"?`}
+        confirmLabel="Delete"
+        tone="danger"
+      />
     </div>
   );
 }

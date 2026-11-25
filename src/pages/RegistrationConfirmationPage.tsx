@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, ClipboardCheck, Home, Info } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ArrowRight, CheckCircle2, ClipboardCheck, Home } from 'lucide-react';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { AccountPageShell } from '@/src/components/account/AccountPageShell';
 import { Button } from '@/src/components/ui/Button';
@@ -8,32 +8,35 @@ import { Card } from '@/src/components/ui/Card';
 const NEXT_STEPS = [
   {
     step: '01',
-    title: 'Initial Review & Guardian Check',
+    title: 'Application Review',
     description:
-      'Once backend admissions are connected, academy staff review student age category, preferred program, and guardian contact details.',
+      'Academy staff review player age group, preferred training track, and guardian contact information.',
   },
   {
     step: '02',
-    title: 'Assessment or Batch Assignment',
+    title: 'Trial Evaluation & Placement',
     description:
-      'Applicants may be invited for an on-ground evaluation session or matched directly to an appropriate training lane and coach.',
+      'Applicants are scheduled for an initial evaluation session so coaches can recommend the most suitable batch.',
   },
   {
     step: '03',
-    title: 'Track Progress Online',
+    title: 'Track Status Anytime',
     description:
-      'Use your future academy reference ID and registered contact number on the Application Status page to view updates.',
+      'Save your application reference ID to check review updates on the Application Status page.',
   },
 ] as const;
 
 export function RegistrationConfirmationPage() {
   useDocumentTitle('Registration Confirmation');
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get('ref');
+  const studentName = searchParams.get('name');
 
   return (
     <AccountPageShell
       kicker="Admissions Confirmation"
-      title="Registration Confirmation"
-      description="Preview of the confirmation state displayed after submitting a student admission application."
+      title="Application Submitted"
+      description="Your registration application has been recorded for review by SK Tape Ball Academy."
       maxWidth="lg"
     >
       <Card padding="lg" className="space-y-6">
@@ -44,33 +47,33 @@ export function RegistrationConfirmationPage() {
 
           <div className="space-y-2 max-w-xl">
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#C8202B]">
-              Demonstration Screen
+              Registration Logged
             </p>
             <h2 className="text-2xl font-extrabold tracking-tight text-[#071A36]">
-              Registration Received — Frontend Demonstration
+              {studentName
+                ? `Thank You, ${studentName}`
+                : 'Thank You for Applying to SK Tape Ball Academy'}
             </h2>
             <p className="text-sm leading-relaxed text-[#64748B]">
-              Thank you for reviewing the SK Tape Ball Academy registration confirmation flow. No
-              database record has been created yet; real application references will be generated
-              automatically once backend persistence is connected.
+              Your admission details have been received. Please save your reference ID below to track application review status.
             </p>
           </div>
         </div>
 
-        <div className="rounded-[12px] border border-[#D9A52E]/60 bg-[#F5F7FA] p-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
-              Application Reference Placeholder
-            </p>
-            <p className="font-mono text-lg font-bold tracking-wide text-[#071A36]">
-              [APP-REF-PLACEHOLDER]
-            </p>
+        {refCode && (
+          <div className="rounded-[12px] border border-[#D9A52E]/60 bg-[#F5F7FA] p-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <p className="text-xs font-bold uppercase tracking-wider text-[#64748B]">
+                Application Reference ID
+              </p>
+              <p className="font-mono text-lg font-bold tracking-wide text-[#071A36]">{refCode}</p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 self-start sm:self-center rounded-[10px] border border-[#071A36]/15 bg-white px-3 py-1.5 text-xs font-semibold text-[#071A36]">
+              <ClipboardCheck className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
+              <span>Pending Review</span>
+            </span>
           </div>
-          <span className="inline-flex items-center gap-1.5 self-start sm:self-center rounded-[10px] border border-[#071A36]/15 bg-white px-3 py-1.5 text-xs font-semibold text-[#071A36]">
-            <ClipboardCheck className="h-3.5 w-3.5 text-[#D9A52E]" aria-hidden="true" />
-            <span>Sample Placeholder ID</span>
-          </span>
-        </div>
+        )}
 
         <div className="space-y-3">
           <h3 className="text-base font-bold text-[#071A36]">What Happens Next</h3>
@@ -90,17 +93,6 @@ export function RegistrationConfirmationPage() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-[#F5F7FA] p-4 text-xs leading-relaxed text-[#071A36]">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-          <p>
-            This confirmation page is a non-persisted frontend template. Please use the{' '}
-            <Link to="/contact" className="font-semibold underline hover:text-[#C8202B]">
-              Contact Page
-            </Link>{' '}
-            for direct academy inquiries.
-          </p>
-        </div>
-
         <div className="flex flex-wrap items-center gap-3 pt-1">
           <Button to="/" variant="outline" size="lg" className="gap-2">
             <Home className="h-4 w-4" aria-hidden="true" />
@@ -114,7 +106,7 @@ export function RegistrationConfirmationPage() {
             to="/register"
             className="ml-auto text-sm font-semibold text-[#071A36] underline-offset-4 hover:text-[#C8202B] hover:underline"
           >
-            Back to Registration Form
+            Submit Another Application
           </Link>
         </div>
       </Card>

@@ -1,13 +1,9 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Eye, Search, UserPlus } from 'lucide-react';
-import {
-  INITIAL_ADMIN_APPLICATIONS,
-  INITIAL_ADMIN_BATCHES,
-} from '@/src/data/adminMockData';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import type { AdminApplication, AdmissionDecisionStatus } from '@/src/types/admin';
+import type { AdminApplication, AdminStudent, AdmissionDecisionStatus } from '@/src/types/admin';
 import {
-  AdminDemoNotice,
   AdminEmptyState,
   AdminModal,
   AdminPageHeader,
@@ -42,10 +38,8 @@ const ADMISSION_BADGE: Record<
 export function AdminAdmissionsPage() {
   useDocumentTitle('Admission Management');
   const { showToast } = useAdminToast();
+  const { state, setApplications, setStudents } = useAcademyState();
 
-  const [applications, setApplications] = useState<AdminApplication[]>(
-    INITIAL_ADMIN_APPLICATIONS,
-  );
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | AdmissionDecisionStatus>('All');
 
@@ -54,11 +48,11 @@ export function AdminAdmissionsPage() {
   const [reviewerNotes, setReviewerNotes] = useState('');
 
   const [convertApp, setConvertApp] = useState<AdminApplication | null>(null);
-  const [targetBatchId, setTargetBatchId] = useState(INITIAL_ADMIN_BATCHES[0].id);
+  const [targetBatchId, setTargetBatchId] = useState(state.batches[0]?.id ?? '');
 
   const filteredApps = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return applications.filter((app) => {
+    return state.applications.filter((app) => {
       const matchesQ =
         !q ||
         app.applicantName.toLowerCase().includes(q) ||
@@ -67,7 +61,7 @@ export function AdminAdmissionsPage() {
       const matchesStatus = statusFilter === 'All' || app.status === statusFilter;
       return matchesQ && matchesStatus;
     });
-  }, [applications, searchQuery, statusFilter]);
+  }, [state.applications, searchQuery, statusFilter]);
 
   function openReview(app: AdminApplication) {
     setReviewingApp(app);
@@ -87,35 +81,56 @@ export function AdminAdmissionsPage() {
       ),
     );
     showToast(
-      'Application Decision Updated (Preview)',
-      `${reviewingApp.applicantName} set to "${decisionStatus}" in demonstration session.`,
+      'Application Updated',
+      `${reviewingApp.applicantName} set to "${decisionStatus}".`,
     );
     setReviewingApp(null);
   }
 
   function handleConvertToStudent() {
     if (!convertApp) return;
-    const batch = INITIAL_ADMIN_BATCHES.find((b) => b.id === targetBatchId);
+    const batch = state.batches.find((b) => b.id === targetBatchId);
+    const nextCode = `SK-${String(state.students.length + 1).padStart(4, '0')}`;
+
+    const newStudent: AdminStudent = {
+      id: `stu-${Date.now()}`,
+      studentCode: nextCode,
+      fullName: convertApp.applicantName,
+      ageGroup: convertApp.isMinor ? `Age ${convertApp.age} (Minor)` : `Age ${convertApp.age}`,
+      contactPlaceholder: convertApp.contactPlaceholder,
+      guardianName: convertApp.guardianName,
+      program: convertApp.requestedProgram,
+      batchId: batch?.id ?? '',
+      batchName: batch?.name ?? 'Unassigned',
+      status: 'Active',
+      joinedLabel: new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+      attendanceRate: 100,
+      notes: convertApp.reviewerNotes || `Converted from application ${convertApp.referencePlaceholder}.`,
+    };
+
+    setStudents((prev) => [newStudent, ...prev]);
     setApplications((prev) =>
       prev.map((a) =>
         a.id === convertApp.id ? { ...a, convertedToStudent: true } : a,
       ),
     );
     showToast(
-      'Applicant Converted to Student (Preview)',
-      `${convertApp.applicantName} queued for ${batch?.name ?? 'Selected Batch'} (demonstration action).`,
+      'Applicant Enrolled as Student',
+      `${convertApp.applicantName} added to the Student Roster (${nextCode}).`,
     );
     setConvertApp(null);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Admission Applications"
-        description="Review incoming student registrations, record admission decisions, and convert approved applicants."
+        description="Review incoming student registrations, record admission decisions, and enroll approved applicants into the roster."
       />
-
-      <AdminDemoNotice />
 
       <Card padding="md" className="space-y-4">
         <div className="space-y-3">
@@ -129,7 +144,7 @@ export function AdminAdmissionsPage() {
               placeholder="Search by applicant name, reference, or program..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
             />
           </div>
 
@@ -154,8 +169,16 @@ export function AdminAdmissionsPage() {
         <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0]">
           {filteredApps.length === 0 ? (
             <AdminEmptyState
-              title="No applications match"
-              description="Try clearing the status filter or search query."
+              title={
+                state.applications.length === 0
+                  ? 'No admission applications received yet'
+                  : 'No applications match your filter'
+              }
+              description={
+                state.applications.length === 0
+                  ? 'Registrations submitted on the public /register page will appear here for review.'
+                  : 'Try clearing the status filter or search query.'
+              }
             />
           ) : (
             <div className="overflow-x-auto">
@@ -184,10 +207,8 @@ export function AdminAdmissionsPage() {
                       <td className="px-4 py-3 text-[#071A36]">{app.requestedProgram}</td>
                       <td className="px-4 py-3">
                         <AdminStatusBadge
-                          label={app.convertedToStudent ? 'Converted to Student' : app.status}
-                          variant={
-                            app.convertedToStudent ? 'navy' : ADMISSION_BADGE[app.status]
-                          }
+                          label={app.convertedToStudent ? 'Enrolled as Student' : app.status}
+                          variant={app.convertedToStudent ? 'navy' : ADMISSION_BADGE[app.status]}
                         />
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -206,7 +227,10 @@ export function AdminAdmissionsPage() {
                               type="button"
                               variant="primary"
                               size="sm"
-                              onClick={() => setConvertApp(app)}
+                              onClick={() => {
+                                setTargetBatchId(state.batches[0]?.id ?? '');
+                                setConvertApp(app);
+                              }}
                             >
                               <UserPlus className="h-3.5 w-3.5" aria-hidden="true" />
                               <span>Convert</span>
@@ -223,7 +247,6 @@ export function AdminAdmissionsPage() {
         </div>
       </Card>
 
-      {/* Review & Decision Modal */}
       <AdminModal
         open={Boolean(reviewingApp)}
         onClose={() => setReviewingApp(null)}
@@ -244,12 +267,12 @@ export function AdminAdmissionsPage() {
                 <p className="font-bold text-[#071A36]">{reviewingApp.guardianName}</p>
               </div>
               <div>
-                <p className="text-[#64748B]">Requested Program</p>
-                <p className="font-bold text-[#071A36]">{reviewingApp.requestedProgram}</p>
+                <p className="text-[#64748B]">Contact Details</p>
+                <p className="font-bold text-[#071A36]">{reviewingApp.contactPlaceholder}</p>
               </div>
               <div>
-                <p className="text-[#64748B]">Previous Experience</p>
-                <p className="font-bold text-[#071A36]">{reviewingApp.experienceLevel}</p>
+                <p className="text-[#64748B]">Requested Program</p>
+                <p className="font-bold text-[#071A36]">{reviewingApp.requestedProgram}</p>
               </div>
             </div>
 
@@ -283,31 +306,33 @@ export function AdminAdmissionsPage() {
                 Cancel
               </Button>
               <Button type="submit" variant="primary" size="sm">
-                Save Decision (Preview)
+                Save Decision
               </Button>
             </div>
           </form>
         )}
       </AdminModal>
 
-      {/* Convert Approved Applicant Modal */}
       <AdminModal
         open={Boolean(convertApp)}
         onClose={() => setConvertApp(null)}
         title="Convert Approved Applicant to Student"
-        subtitle={convertApp ? `Converting ${convertApp.applicantName}` : undefined}
+        subtitle={convertApp ? `Enrolling ${convertApp.applicantName}` : undefined}
         maxWidth="md"
       >
         {convertApp && (
           <div className="space-y-4">
             <p className="text-xs leading-relaxed text-[#64748B]">
-              Select the initial demonstration batch for <strong className="text-[#071A36]">{convertApp.applicantName}</strong> ({convertApp.requestedProgram}).
+              Select the initial batch for <strong className="text-[#071A36]">{convertApp.applicantName}</strong> ({convertApp.requestedProgram}).
             </p>
             <Select
               label="Assign Initial Batch"
               value={targetBatchId}
               onChange={(e) => setTargetBatchId(e.target.value)}
-              options={INITIAL_ADMIN_BATCHES.map((b) => ({ value: b.id, label: b.name }))}
+              options={[
+                { value: '', label: 'Unassigned (Assign Later)' },
+                ...state.batches.map((b) => ({ value: b.id, label: b.name })),
+              ]}
             />
             <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
               <Button
@@ -318,13 +343,8 @@ export function AdminAdmissionsPage() {
               >
                 Cancel
               </Button>
-              <Button
-                type="button"
-                variant="primary"
-                size="sm"
-                onClick={handleConvertToStudent}
-              >
-                Confirm Student Conversion
+              <Button type="button" variant="primary" size="sm" onClick={handleConvertToStudent}>
+                Confirm Student Enrollment
               </Button>
             </div>
           </div>

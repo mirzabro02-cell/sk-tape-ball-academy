@@ -1,13 +1,13 @@
 export const ACADEMY_BRAND = {
   name: 'SK Tape Ball Academy',
   shortName: 'SK Academy',
-  tagline: 'BUILD YOUR GAME. MASTER YOUR SKILLS.',
-  contactPlaceholders: {
-    whatsappLabel: 'WhatsApp Inquiry (Placeholder)',
-    whatsappStatus: 'Official WhatsApp contact number pending academy confirmation.',
-    phonePlaceholder: '[Official Academy Phone Number — Pending]',
-    emailPlaceholder: '[Official Academy Email — Pending]',
-    addressPlaceholder: '[Official Academy Ground & Address — Pending]',
-    hoursPlaceholder: '[Training Hours & Days — Pending]',
+  tagline: 'WHERE DREAMS MEET OPPORTUNITIES.',
+  founderName: 'Sami Khan',
+  launchedNote: 'Launched 18 August 2024 in Faisalabad',
+  operatingLocation: 'Sabzazar, Lahore, Pakistan',
+  contactDefaults: {
+    whatsappLabel: 'WhatsApp Inquiry',
+    addressLabel: 'Sabzazar, Lahore, Pakistan',
+    locationDetailNote: 'Exact academy ground address is shared upon inquiry and trial confirmation.',
   },
 } as const;

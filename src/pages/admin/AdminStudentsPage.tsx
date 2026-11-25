@@ -1,10 +1,10 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Eye, Layers, Pencil, Plus, Search } from 'lucide-react';
-import { INITIAL_ADMIN_BATCHES, INITIAL_ADMIN_STUDENTS } from '@/src/data/adminMockData';
+import { Eye, Layers, Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminStudent, StudentStatus } from '@/src/types/admin';
 import {
-  AdminDemoNotice,
+  AdminConfirmDialog,
   AdminEmptyState,
   AdminModal,
   AdminPageHeader,
@@ -25,35 +25,20 @@ const STATUS_BADGE_MAP: Record<StudentStatus, 'success' | 'warning' | 'danger' |
   Inactive: 'danger',
 };
 
-const PROGRAM_OPTIONS = [
-  'Batting',
-  'Fast Bowling',
-  'Spin Bowling',
-  'Fielding',
-  'Wicket Keeping',
-  'Fitness & Agility',
-  'Beginner Foundation',
-  'Advanced Competitive',
-  'Personal Coaching',
-];
-
-const EMPTY_FORM: Omit<AdminStudent, 'id' | 'studentCode' | 'joinedLabel' | 'attendanceRate'> = {
-  fullName: '',
-  ageGroup: 'U-17 Youth',
-  contactPlaceholder: '',
-  guardianName: '',
-  program: 'Batting',
-  batchId: INITIAL_ADMIN_BATCHES[0].id,
-  batchName: INITIAL_ADMIN_BATCHES[0].name,
-  status: 'Active',
-  notes: '',
-};
-
 export function AdminStudentsPage() {
   useDocumentTitle('Student Management');
   const { showToast } = useAdminToast();
+  const { state, setStudents } = useAcademyState();
 
-  const [students, setStudents] = useState<AdminStudent[]>(INITIAL_ADMIN_STUDENTS);
+  const programOptions = useMemo(() => {
+    const titles = state.programs.map((p) => p.title);
+    return titles.length > 0
+      ? titles
+      : ['Athletic Fitness & Conditioning', 'Tape Ball Batting', 'Tape Ball Bowling', 'Fielding & Catching'];
+  }, [state.programs]);
+
+  const batchOptions = state.batches;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | StudentStatus>('All');
   const [programFilter, setProgramFilter] = useState<string>('All');
@@ -61,19 +46,30 @@ export function AdminStudentsPage() {
 
   const [formOpen, setFormOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<AdminStudent | null>(null);
-  const [formState, setFormState] = useState(EMPTY_FORM);
+  const [formState, setFormState] = useState({
+    fullName: '',
+    ageGroup: 'Youth Division',
+    contactPlaceholder: '',
+    guardianName: '',
+    program: programOptions[0] ?? 'Tape Ball Batting',
+    batchId: batchOptions[0]?.id ?? '',
+    batchName: batchOptions[0]?.name ?? 'Unassigned',
+    status: 'Active' as StudentStatus,
+    notes: '',
+  });
   const [formError, setFormError] = useState<string | null>(null);
 
   const [profileStudent, setProfileStudent] = useState<AdminStudent | null>(null);
   const [assignStudent, setAssignStudent] = useState<AdminStudent | null>(null);
   const [assignProgram, setAssignProgram] = useState('');
   const [assignBatchId, setAssignBatchId] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<AdminStudent | null>(null);
 
-  const pageSize = 5;
+  const pageSize = 8;
 
   const filteredStudents = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    return students.filter((s) => {
+    return state.students.filter((s) => {
       const matchesQuery =
         !q ||
         s.fullName.toLowerCase().includes(q) ||
@@ -83,7 +79,7 @@ export function AdminStudentsPage() {
       const matchesProgram = programFilter === 'All' || s.program === programFilter;
       return matchesQuery && matchesStatus && matchesProgram;
     });
-  }, [students, searchQuery, statusFilter, programFilter]);
+  }, [state.students, searchQuery, statusFilter, programFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -94,7 +90,17 @@ export function AdminStudentsPage() {
 
   function openAddModal() {
     setEditingStudent(null);
-    setFormState(EMPTY_FORM);
+    setFormState({
+      fullName: '',
+      ageGroup: 'Youth Division',
+      contactPlaceholder: '',
+      guardianName: '',
+      program: programOptions[0] ?? 'Tape Ball Batting',
+      batchId: batchOptions[0]?.id ?? '',
+      batchName: batchOptions[0]?.name ?? 'Unassigned',
+      status: 'Active',
+      notes: '',
+    });
     setFormError(null);
     setFormOpen(true);
   }
@@ -119,38 +125,52 @@ export function AdminStudentsPage() {
   function handleSaveStudent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!formState.fullName.trim() || !formState.guardianName.trim()) {
-      setFormError('Student name and guardian/contact name are required.');
+      setFormError('Student name and guardian or primary contact name are required.');
       return;
     }
 
-    const matchedBatch = INITIAL_ADMIN_BATCHES.find((b) => b.id === formState.batchId);
-    const batchName = matchedBatch?.name ?? formState.batchName;
+    const matchedBatch = batchOptions.find((b) => b.id === formState.batchId);
+    const batchName = matchedBatch?.name ?? (formState.batchId ? formState.batchName : 'Unassigned');
 
     if (editingStudent) {
       setStudents((prev) =>
         prev.map((item) =>
-          item.id === editingStudent.id ? { ...item, ...formState, batchName } : item,
+          item.id === editingStudent.id
+            ? {
+                ...item,
+                ...formState,
+                fullName: formState.fullName.trim(),
+                guardianName: formState.guardianName.trim(),
+                contactPlaceholder: formState.contactPlaceholder.trim(),
+                batchName,
+              }
+            : item,
         ),
       );
-      showToast(
-        'Student Updated (Frontend Preview)',
-        `${formState.fullName} updated in session state only.`,
-      );
+      showToast('Student Updated', `${formState.fullName.trim()} saved.`);
     } else {
+      const nextIndex = state.students.length + 1;
       const newEntry: AdminStudent = {
         id: `stu-${Date.now()}`,
-        studentCode: `DEMO-STU-${String(students.length + 1).padStart(3, '0')}`,
-        ...formState,
+        studentCode: `SK-${String(nextIndex).padStart(4, '0')}`,
+        fullName: formState.fullName.trim(),
+        ageGroup: formState.ageGroup,
+        contactPlaceholder: formState.contactPlaceholder.trim(),
+        guardianName: formState.guardianName.trim(),
+        program: formState.program,
+        batchId: formState.batchId,
         batchName,
-        contactPlaceholder: formState.contactPlaceholder.trim() || '[Contact Placeholder]',
-        joinedLabel: 'Session Addition (Demo)',
+        status: formState.status,
+        joinedLabel: new Date().toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        }),
         attendanceRate: 100,
+        notes: formState.notes.trim(),
       };
       setStudents((prev) => [newEntry, ...prev]);
-      showToast(
-        'Student Added (Frontend Preview)',
-        `${newEntry.fullName} added to local demonstration roster.`,
-      );
+      showToast('Student Added', `${newEntry.fullName} added to academy roster.`);
     }
     setFormOpen(false);
   }
@@ -158,13 +178,13 @@ export function AdminStudentsPage() {
   function openAssignModal(student: AdminStudent) {
     setAssignStudent(student);
     setAssignProgram(student.program);
-    setAssignBatchId(student.batchId);
+    setAssignBatchId(student.batchId || batchOptions[0]?.id || '');
   }
 
   function handleSaveAssignment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!assignStudent) return;
-    const matchedBatch = INITIAL_ADMIN_BATCHES.find((b) => b.id === assignBatchId);
+    const matchedBatch = batchOptions.find((b) => b.id === assignBatchId);
     setStudents((prev) =>
       prev.map((item) =>
         item.id === assignStudent.id
@@ -172,23 +192,20 @@ export function AdminStudentsPage() {
               ...item,
               program: assignProgram,
               batchId: assignBatchId,
-              batchName: matchedBatch?.name ?? item.batchName,
+              batchName: matchedBatch?.name ?? 'Unassigned',
             }
           : item,
       ),
     );
-    showToast(
-      'Program & Batch Assigned (Demo)',
-      `${assignStudent.fullName} assigned to ${assignProgram}.`,
-    );
+    showToast('Placement Updated', `${assignStudent.fullName} assigned to ${assignProgram}.`);
     setAssignStudent(null);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Student Management"
-        description="Manage demonstration student profiles, enrollment status, and program/batch placements."
+        description="Manage enrolled players, program tracks, batch assignments, and contact records."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openAddModal}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -197,10 +214,7 @@ export function AdminStudentsPage() {
         }
       />
 
-      <AdminDemoNotice />
-
       <Card padding="md" className="space-y-4">
-        {/* Filter Toolbar */}
         <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
           <div className="md:col-span-6 relative">
             <label htmlFor="student-search" className="sr-only">
@@ -219,7 +233,7 @@ export function AdminStudentsPage() {
                 setSearchQuery(e.target.value);
                 setPage(1);
               }}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36] placeholder:text-[#64748B] focus:border-[#071A36] focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/50"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36] placeholder:text-[#64748B] focus:border-[#071A36] focus:outline-none focus:ring-2 focus:ring-[#D9A52E]/50"
             />
           </div>
 
@@ -231,7 +245,7 @@ export function AdminStudentsPage() {
                 setStatusFilter(e.target.value as 'All' | StudentStatus);
                 setPage(1);
               }}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
             >
               <option value="All">All Statuses</option>
               <option value="Active">Active</option>
@@ -249,10 +263,10 @@ export function AdminStudentsPage() {
                 setProgramFilter(e.target.value);
                 setPage(1);
               }}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
             >
               <option value="All">All Programs</option>
-              {PROGRAM_OPTIONS.map((p) => (
+              {programOptions.map((p) => (
                 <option key={p} value={p}>
                   {p}
                 </option>
@@ -261,25 +275,35 @@ export function AdminStudentsPage() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-hidden rounded-[12px] border border-[#E2E8F0]">
           {paginatedStudents.length === 0 ? (
             <AdminEmptyState
-              title="No matching student records"
-              description="Adjust your search query or filters, or add a demonstration student record."
+              title={state.students.length === 0 ? 'No students enrolled yet' : 'No matching student records'}
+              description={
+                state.students.length === 0
+                  ? 'Add a student record directly or approve and convert incoming registration applications.'
+                  : 'Adjust your search query or filters to view matching athletes.'
+              }
               action={
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setStatusFilter('All');
-                    setProgramFilter('All');
-                  }}
-                >
-                  Reset Filters
-                </Button>
+                state.students.length === 0 ? (
+                  <Button type="button" variant="primary" size="sm" onClick={openAddModal}>
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                    <span>Add First Student</span>
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setStatusFilter('All');
+                      setProgramFilter('All');
+                    }}
+                  >
+                    Reset Filters
+                  </Button>
+                )
               }
             />
           ) : (
@@ -288,7 +312,7 @@ export function AdminStudentsPage() {
                 <thead className="bg-[#F5F7FA] text-[#64748B]">
                   <tr className="border-b border-[#E2E8F0]">
                     <th className="px-4 py-3 font-semibold">Student</th>
-                    <th className="px-4 py-3 font-semibold">Age Group</th>
+                    <th className="px-4 py-3 font-semibold">Division</th>
                     <th className="px-4 py-3 font-semibold">Program &amp; Batch</th>
                     <th className="px-4 py-3 font-semibold">Attendance</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
@@ -302,9 +326,7 @@ export function AdminStudentsPage() {
                         <p className="font-bold text-[#071A36]">{stu.fullName}</p>
                         <p className="font-mono text-[11px] text-[#64748B]">{stu.studentCode}</p>
                       </td>
-                      <td className="px-4 py-3 text-[#071A36] whitespace-nowrap">
-                        {stu.ageGroup}
-                      </td>
+                      <td className="px-4 py-3 text-[#071A36] whitespace-nowrap">{stu.ageGroup}</td>
                       <td className="px-4 py-3">
                         <p className="font-semibold text-[#071A36]">{stu.program}</p>
                         <p className="text-[11px] text-[#64748B]">{stu.batchName}</p>
@@ -313,17 +335,13 @@ export function AdminStudentsPage() {
                         {stu.attendanceRate}%
                       </td>
                       <td className="px-4 py-3">
-                        <AdminStatusBadge
-                          label={stu.status}
-                          variant={STATUS_BADGE_MAP[stu.status]}
-                        />
+                        <AdminStatusBadge label={stu.status} variant={STATUS_BADGE_MAP[stu.status]} />
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="inline-flex items-center justify-end gap-1.5">
                           <button
                             type="button"
                             onClick={() => setProfileStudent(stu)}
-                            title="View profile"
                             aria-label={`View ${stu.fullName}`}
                             className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
                           >
@@ -333,7 +351,6 @@ export function AdminStudentsPage() {
                           <button
                             type="button"
                             onClick={() => openAssignModal(stu)}
-                            title="Assign program/batch"
                             aria-label={`Assign batch for ${stu.fullName}`}
                             className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
                           >
@@ -343,12 +360,19 @@ export function AdminStudentsPage() {
                           <button
                             type="button"
                             onClick={() => openEditModal(stu)}
-                            title="Edit student"
                             aria-label={`Edit ${stu.fullName}`}
                             className="inline-flex h-8 items-center gap-1 rounded-[8px] border border-[#E2E8F0] px-2.5 text-[11px] font-semibold text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
                           >
                             <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
                             <span>Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setDeleteTarget(stu)}
+                            aria-label={`Remove ${stu.fullName}`}
+                            className="inline-flex h-8 items-center justify-center rounded-[8px] border border-[#C8202B]/25 px-2 text-[11px] font-semibold text-[#C8202B] hover:bg-[#C8202B]/5 cursor-pointer"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </button>
                         </div>
                       </td>
@@ -368,12 +392,10 @@ export function AdminStudentsPage() {
         </div>
       </Card>
 
-      {/* Add / Edit Modal */}
       <AdminModal
         open={formOpen}
         onClose={() => setFormOpen(false)}
-        title={editingStudent ? 'Edit Student (Demonstration)' : 'Add Student (Demonstration)'}
-        subtitle="Changes apply to current preview session state only."
+        title={editingStudent ? 'Edit Student Record' : 'Add Student'}
       >
         <form onSubmit={handleSaveStudent} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -381,40 +403,35 @@ export function AdminStudentsPage() {
               label="Student Full Name"
               value={formState.fullName}
               onChange={(e) => setFormState((prev) => ({ ...prev, fullName: e.target.value }))}
-              placeholder="e.g. Sample Student Name"
+              placeholder="Player full name"
               required
             />
-            <Select
-              label="Age Group"
+            <Input
+              label="Division / Category"
               value={formState.ageGroup}
               onChange={(e) => setFormState((prev) => ({ ...prev, ageGroup: e.target.value }))}
-              options={[
-                { value: 'U-15 Junior', label: 'U-15 Junior' },
-                { value: 'U-17 Youth', label: 'U-17 Youth' },
-                { value: 'U-19 Competitive', label: 'U-19 Competitive' },
-                { value: 'Senior Open', label: 'Senior Open' },
-              ]}
+              placeholder="e.g. Junior / Youth / Open"
             />
             <Input
               label="Guardian / Primary Contact Name"
               value={formState.guardianName}
               onChange={(e) => setFormState((prev) => ({ ...prev, guardianName: e.target.value }))}
-              placeholder="e.g. Sample Guardian"
+              placeholder="Guardian or emergency contact"
               required
             />
             <Input
-              label="Contact Phone Placeholder"
+              label="Contact Number"
               value={formState.contactPlaceholder}
               onChange={(e) =>
                 setFormState((prev) => ({ ...prev, contactPlaceholder: e.target.value }))
               }
-              placeholder="[Phone Placeholder]"
+              placeholder="Phone or WhatsApp number"
             />
             <Select
               label="Training Program"
               value={formState.program}
               onChange={(e) => setFormState((prev) => ({ ...prev, program: e.target.value }))}
-              options={PROGRAM_OPTIONS.map((p) => ({ value: p, label: p }))}
+              options={programOptions.map((p) => ({ value: p, label: p }))}
             />
             <Select
               label="Student Status"
@@ -435,7 +452,10 @@ export function AdminStudentsPage() {
             label="Assigned Batch"
             value={formState.batchId}
             onChange={(e) => setFormState((prev) => ({ ...prev, batchId: e.target.value }))}
-            options={INITIAL_ADMIN_BATCHES.map((b) => ({ value: b.id, label: b.name }))}
+            options={[
+              { value: '', label: 'Unassigned (Assign Later)' },
+              ...batchOptions.map((b) => ({ value: b.id, label: b.name })),
+            ]}
           />
 
           <Textarea
@@ -458,23 +478,28 @@ export function AdminStudentsPage() {
         </form>
       </AdminModal>
 
-      {/* Profile Modal */}
       <AdminModal
         open={Boolean(profileStudent)}
         onClose={() => setProfileStudent(null)}
         title={profileStudent?.fullName ?? 'Student Profile'}
-        subtitle={`Demonstration Code: ${profileStudent?.studentCode ?? ''}`}
+        subtitle={profileStudent ? `ID: ${profileStudent.studentCode} · Joined ${profileStudent.joinedLabel}` : undefined}
       >
         {profileStudent && (
           <div className="space-y-4 text-sm">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4">
               <div>
-                <p className="text-xs text-[#64748B]">Age Category</p>
+                <p className="text-xs text-[#64748B]">Division</p>
                 <p className="font-semibold text-[#071A36]">{profileStudent.ageGroup}</p>
               </div>
               <div>
                 <p className="text-xs text-[#64748B]">Guardian / Emergency Contact</p>
                 <p className="font-semibold text-[#071A36]">{profileStudent.guardianName}</p>
+              </div>
+              <div>
+                <p className="text-xs text-[#64748B]">Contact Number</p>
+                <p className="font-semibold text-[#071A36]">
+                  {profileStudent.contactPlaceholder || 'Not recorded'}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-[#64748B]">Assigned Program</p>
@@ -483,12 +508,6 @@ export function AdminStudentsPage() {
               <div>
                 <p className="text-xs text-[#64748B]">Batch Placement</p>
                 <p className="font-semibold text-[#071A36]">{profileStudent.batchName}</p>
-              </div>
-              <div>
-                <p className="text-xs text-[#64748B]">Attendance Rate (Demo)</p>
-                <p className="font-mono font-bold text-[#071A36] tabular-nums">
-                  {profileStudent.attendanceRate}%
-                </p>
               </div>
               <div>
                 <p className="text-xs text-[#64748B]">Status</p>
@@ -503,14 +522,13 @@ export function AdminStudentsPage() {
                 Development Notes
               </p>
               <p className="mt-1 text-sm text-[#071A36]">
-                {profileStudent.notes || 'No demonstration notes recorded.'}
+                {profileStudent.notes || 'No notes recorded.'}
               </p>
             </div>
           </div>
         )}
       </AdminModal>
 
-      {/* Program & Batch Assignment Modal */}
       <AdminModal
         open={Boolean(assignStudent)}
         onClose={() => setAssignStudent(null)}
@@ -523,13 +541,16 @@ export function AdminStudentsPage() {
             label="Target Training Program"
             value={assignProgram}
             onChange={(e) => setAssignProgram(e.target.value)}
-            options={PROGRAM_OPTIONS.map((p) => ({ value: p, label: p }))}
+            options={programOptions.map((p) => ({ value: p, label: p }))}
           />
           <Select
             label="Target Batch"
             value={assignBatchId}
             onChange={(e) => setAssignBatchId(e.target.value)}
-            options={INITIAL_ADMIN_BATCHES.map((b) => ({ value: b.id, label: b.name }))}
+            options={[
+              { value: '', label: 'Unassigned' },
+              ...batchOptions.map((b) => ({ value: b.id, label: b.name })),
+            ]}
           />
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setAssignStudent(null)}>
@@ -541,6 +562,20 @@ export function AdminStudentsPage() {
           </div>
         </form>
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (!deleteTarget) return;
+          setStudents((prev) => prev.filter((s) => s.id !== deleteTarget.id));
+          showToast('Student Removed', `${deleteTarget.fullName} removed from roster.`, 'warning');
+        }}
+        title="Remove Student Record"
+        message={`Remove ${deleteTarget?.fullName ?? 'this student'} from the academy roster?`}
+        confirmLabel="Remove Student"
+        tone="danger"
+      />
     </div>
   );
 }

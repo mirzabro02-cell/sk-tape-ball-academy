@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Info, Mail } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Mail } from 'lucide-react';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { isValidEmailAddress } from '@/src/utils/validation';
 import { AccountPageShell } from '@/src/components/account/AccountPageShell';
@@ -36,25 +36,17 @@ export function ForgotPasswordPage() {
     window.setTimeout(() => {
       setIsSubmitting(false);
       setSubmittedEmail(cleaned);
-    }, 350);
+    }, 300);
   }
 
   return (
     <AccountPageShell
       kicker="Account Recovery"
       title="Forgot Password"
-      description="Enter the email address associated with your academy account to preview the password recovery workflow."
+      description="Enter the email address linked to your player account to request recovery assistance."
       maxWidth="md"
     >
       <Card padding="lg" className="space-y-6">
-        <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-[#F5F7FA] p-4 text-xs leading-relaxed text-[#071A36]">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-          <p>
-            <strong>No Emails Sent:</strong> This is a frontend recovery flow. Actual reset links
-            and verification emails require backend integration.
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <Input
             label="Account Email Address"
@@ -90,22 +82,11 @@ export function ForgotPasswordPage() {
             >
               <div className="flex items-center gap-2 font-bold">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-                <span>Reset Request Validated (Frontend Demonstration)</span>
+                <span>Recovery Request Noted</span>
               </div>
               <p className="leading-relaxed text-[#64748B]">
-                Email format verified for{' '}
-                <strong className="text-[#071A36]">{submittedEmail}</strong>. No actual email was
-                dispatched because password recovery requires backend integration with the academy
-                authentication service.
+                If <strong className="text-[#071A36]">{submittedEmail}</strong> is associated with an active enrolled account, please contact SK Tape Ball Academy administration to reset access credentials directly.
               </p>
-              <div className="pt-1">
-                <Link
-                  to="/reset-password"
-                  className="text-xs font-semibold text-[#071A36] underline underline-offset-4 hover:text-[#C8202B]"
-                >
-                  Preview Reset Password Screen
-                </Link>
-              </div>
             </div>
           )}
 
@@ -118,7 +99,7 @@ export function ForgotPasswordPage() {
             className="gap-2"
           >
             <Mail className="h-4 w-4" aria-hidden="true" />
-            <span>{isSubmitting ? 'Validating Request...' : 'Submit Reset Request'}</span>
+            <span>{isSubmitting ? 'Submitting Request...' : 'Request Account Recovery'}</span>
           </Button>
         </form>
 
@@ -130,10 +111,10 @@ export function ForgotPasswordPage() {
             Back to Login
           </Link>
           <Link
-            to="/reset-password"
+            to="/contact"
             className="text-[#64748B] font-medium hover:text-[#071A36]"
           >
-            Go to Reset Password UI
+            Contact Support Desk
           </Link>
         </div>
       </Card>

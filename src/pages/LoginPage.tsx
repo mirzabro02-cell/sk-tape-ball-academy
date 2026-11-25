@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Info, Lock } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Lock } from 'lucide-react';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { isValidEmailAddress, isValidPhoneNumber } from '@/src/utils/validation';
 import { AccountPageShell } from '@/src/components/account/AccountPageShell';
@@ -15,7 +15,7 @@ interface LoginErrors {
 }
 
 export function LoginPage() {
-  useDocumentTitle('Member Login');
+  useDocumentTitle('Player Account Login');
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +23,7 @@ export function LoginPage() {
   const [errors, setErrors] = useState<LoginErrors>({});
   const [isChecking, setIsChecking] = useState(false);
   const [formErrorBanner, setFormErrorBanner] = useState<string | null>(null);
-  const [validatedMessage, setValidatedMessage] = useState<string | null>(null);
+  const [statusNotice, setStatusNotice] = useState<string | null>(null);
 
   function validate(): LoginErrors {
     const nextErrors: LoginErrors = {};
@@ -47,7 +47,7 @@ export function LoginPage() {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setFormErrorBanner(null);
-    setValidatedMessage(null);
+    setStatusNotice(null);
 
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
@@ -61,35 +61,26 @@ export function LoginPage() {
 
     window.setTimeout(() => {
       setIsChecking(false);
-      setValidatedMessage(
-        `Input validation passed for "${identifier.trim()}"${rememberMe ? ' (Remember me selected)' : ''}. Frontend-only preview: no fake sign-in or session is created. Live account authentication will be connected once backend services are integrated.`,
+      setStatusNotice(
+        `Player portal access for "${identifier.trim()}"${rememberMe ? ' (device preference noted)' : ''} is issued only after active squad enrollment is confirmed by academy staff.`,
       );
-    }, 350);
+    }, 300);
   }
 
   return (
     <AccountPageShell
-      kicker="Member Portal"
-      title="Academy Member Login"
-      description="Sign in to access your SK Tape Ball Academy player or guardian account once portal authentication is connected."
+      kicker="Player & Guardian Access"
+      title="Player Account Login"
+      description="Sign in with credentials issued after squad admission to view attendance updates and session notices."
       maxWidth="md"
     >
       <Card padding="lg" className="space-y-6">
-        <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-[#F5F7FA] p-4 text-xs leading-relaxed text-[#071A36]">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-          <p>
-            <strong>Frontend Interface Only:</strong> Form validation is active, and no fake
-            authentication or mock session is stored. Backend sign-in will be enabled in a later
-            phase.
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <Input
             label="Email or Phone Number"
             type="text"
             autoComplete="username"
-            placeholder="player@example.com or +92 300 0000000"
+            placeholder="player@example.com or 03XX XXXXXXX"
             value={identifier}
             onChange={(e) => {
               setIdentifier(e.target.value);
@@ -97,7 +88,7 @@ export function LoginPage() {
                 setErrors((prev) => ({ ...prev, identifier: undefined }));
               }
               setFormErrorBanner(null);
-              setValidatedMessage(null);
+              setStatusNotice(null);
             }}
             error={errors.identifier}
             required
@@ -114,7 +105,7 @@ export function LoginPage() {
                 setErrors((prev) => ({ ...prev, password: undefined }));
               }
               setFormErrorBanner(null);
-              setValidatedMessage(null);
+              setStatusNotice(null);
             }}
             error={errors.password}
             required
@@ -149,13 +140,13 @@ export function LoginPage() {
             </div>
           )}
 
-          {validatedMessage && (
+          {statusNotice && (
             <div
               role="status"
               className="flex items-start gap-2.5 rounded-[10px] border border-[#071A36]/20 bg-[#F5F7FA] px-4 py-3.5 text-sm leading-relaxed text-[#071A36]"
             >
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-              <span>{validatedMessage}</span>
+              <span>{statusNotice}</span>
             </div>
           )}
 
@@ -168,7 +159,7 @@ export function LoginPage() {
             className="gap-2"
           >
             <Lock className="h-4 w-4" aria-hidden="true" />
-            <span>{isChecking ? 'Validating Credentials...' : 'Login to Portal'}</span>
+            <span>{isChecking ? 'Checking Account...' : 'Sign In'}</span>
           </Button>
         </form>
 

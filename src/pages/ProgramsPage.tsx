@@ -36,7 +36,7 @@ export function ProgramsPage() {
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Training Programs' }]}
         kicker="Curriculum & Coaching Tracks"
         title="Training Programs Built for Every Stage of Tape Ball Cricket"
-        description="Explore specialized discipline clinics, beginner and advanced batch tracks, and individualized 1-on-1 coaching. Exact schedules and official fees are pending academy confirmation."
+        description="Explore athletic conditioning (~200 exercises), diagnostic tape ball batting (20–25 methods per shot), speed and accuracy bowling, complete fielding, wicket keeping, and 1-on-1 coaching."
         actions={
           <>
             <Button to="/book-trial" variant="primary" size="lg">
@@ -53,6 +53,7 @@ export function ProgramsPage() {
       <section aria-labelledby="programs-listing-heading" className="space-y-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
+            id="programs-listing-heading"
             kicker="9 Structured Programs"
             title="Choose Your Training Track"
             description="Select any program card below to inspect skills covered, training objectives, suitable players, and coaching approach."
@@ -93,9 +94,10 @@ export function ProgramsPage() {
       {/* Training Benefits */}
       <section aria-labelledby="training-benefits-heading" className="space-y-8">
         <SectionHeader
+          id="training-benefits-heading"
           kicker="Why Structured Programs Work"
           title="Key Training Benefits"
-          description="Every track reinforces disciplined habits while keeping schedule and fee specifics clearly pending official confirmation."
+          description="Every track combines athletic preparation with structured technical repetition and competitive match readiness."
         />
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">

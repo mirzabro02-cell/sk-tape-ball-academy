@@ -19,9 +19,7 @@ export function FacilitiesPage() {
   useScrollLock(Boolean(selectedPhoto));
 
   useEffect(() => {
-    if (!selectedPhoto) {
-      return;
-    }
+    if (!selectedPhoto) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelectedPhoto(null);
@@ -53,8 +51,9 @@ export function FacilitiesPage() {
       {/* Facilities Overview & Training Area */}
       <section aria-labelledby="facilities-overview-heading" className="space-y-8">
         <SectionHeader
+          id="facilities-overview-heading"
           kicker="Ground Overview"
-          title="Training Area & Practice Facilities"
+          title="Training Area & Practice Zones"
           description={FACILITIES_PAGE_CONTENT.overview}
         />
 
@@ -75,6 +74,7 @@ export function FacilitiesPage() {
       {/* Equipment & Training Resources */}
       <section aria-labelledby="equipment-heading" className="space-y-8">
         <SectionHeader
+          id="equipment-heading"
           kicker="Training Resources"
           title="Equipment & Drill Infrastructure"
           description="Structured gear and target apparatus supporting skill-focused cricket practice."
@@ -125,9 +125,10 @@ export function FacilitiesPage() {
       {/* Facility Gallery Preview */}
       <section aria-labelledby="facilities-gallery-heading" className="space-y-8">
         <SectionHeader
+          id="facilities-gallery-heading"
           kicker="Facility Preview"
           title="Ground & Net Visuals"
-          description="Illustrative cricket facility imagery alongside reserved slots for verified academy ground photographs."
+          description="Practice lanes and floodlit evening pitch training environment."
           action={
             <Button to="/gallery" variant="outline">
               View Full Gallery
@@ -135,7 +136,7 @@ export function FacilitiesPage() {
           }
         />
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {FACILITIES_PAGE_CONTENT.galleryItems.map((item) => (
             <button
               key={item.id}
@@ -143,7 +144,7 @@ export function FacilitiesPage() {
               onClick={() => setSelectedPhoto(item)}
               className="group relative overflow-hidden rounded-[16px] border border-[#E2E8F0] bg-white text-left transition-all duration-150 hover:border-[#D9A52E] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden">
+              <div className="relative aspect-[16/10] w-full overflow-hidden">
                 <MediaImage
                   src={item.imageSrc}
                   alt={item.imageAlt}
@@ -159,10 +160,7 @@ export function FacilitiesPage() {
                 </span>
               </div>
               <div className="p-4 space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-[#C8202B]">
-                  {item.isPlaceholder ? 'Reserved Photo Slot' : 'Illustrative View'}
-                </p>
-                <h3 className="text-sm font-bold text-[#071A36]">{item.title}</h3>
+                <h3 className="text-base font-bold text-[#071A36]">{item.title}</h3>
                 <p className="text-xs text-[#64748B]">{item.caption}</p>
               </div>
             </button>
@@ -185,7 +183,7 @@ export function FacilitiesPage() {
             <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B]">
-                  {selectedPhoto.isPlaceholder ? 'Reserved Facility Slot' : 'Facility Preview'}
+                  Facility Preview
                 </p>
                 <h3 className="text-lg font-bold text-[#071A36]">{selectedPhoto.title}</h3>
               </div>

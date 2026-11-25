@@ -1,11 +1,10 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { CalendarClock, CheckCircle2, XCircle } from 'lucide-react';
-import { INITIAL_ADMIN_TRIALS } from '@/src/data/adminMockData';
+import { CalendarClock, CheckCircle2, Info, XCircle } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminTrialBooking, TrialBookingStatus } from '@/src/types/admin';
 import {
   AdminConfirmDialog,
-  AdminDemoNotice,
   AdminEmptyState,
   AdminModal,
   AdminPageHeader,
@@ -27,10 +26,9 @@ const TRIAL_BADGE: Record<TrialBookingStatus, 'warning' | 'success' | 'navy' | '
 export function AdminTrialBookingsPage() {
   useDocumentTitle('Trial Booking Management');
   const { showToast } = useAdminToast();
+  const { state, setTrials } = useAcademyState();
 
-  const [trials, setTrials] = useState<AdminTrialBooking[]>(INITIAL_ADMIN_TRIALS);
   const [statusFilter, setStatusFilter] = useState<'All' | TrialBookingStatus>('All');
-
   const [rescheduleTarget, setRescheduleTarget] = useState<AdminTrialBooking | null>(null);
   const [newDate, setNewDate] = useState('');
   const [newTimeSlot, setNewTimeSlot] = useState('');
@@ -40,9 +38,9 @@ export function AdminTrialBookingsPage() {
   const [rejectTarget, setRejectTarget] = useState<AdminTrialBooking | null>(null);
 
   const filtered = useMemo(() => {
-    if (statusFilter === 'All') return trials;
-    return trials.filter((t) => t.status === statusFilter);
-  }, [trials, statusFilter]);
+    if (statusFilter === 'All') return state.trials;
+    return state.trials.filter((t) => t.status === statusFilter);
+  }, [state.trials, statusFilter]);
 
   function openReschedule(trial: AdminTrialBooking) {
     setRescheduleTarget(trial);
@@ -61,29 +59,35 @@ export function AdminTrialBookingsPage() {
           ? {
               ...t,
               preferredDate: newDate,
-              preferredTimeSlot: newTimeSlot,
-              staffNote,
+              preferredTimeSlot: newTimeSlot.trim() || t.preferredTimeSlot,
+              staffNote: staffNote.trim(),
               status: 'Rescheduled',
             }
           : t,
       ),
     );
     showToast(
-      'Trial Rescheduled (Preview)',
-      `${rescheduleTarget.playerName} moved to ${newDate} (${newTimeSlot}).`,
+      'Trial Rescheduled',
+      `${rescheduleTarget.playerName} rescheduled to ${newDate}.`,
       'info',
     );
     setRescheduleTarget(null);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Trial Booking Management"
-        description="Review incoming free trial session requests. Incoming requests remain unconfirmed until manually approved by staff."
+        description="Review incoming free trial session requests. Requests stay unconfirmed until approved by academy staff."
       />
 
-      <AdminDemoNotice text="Important policy rule: A submitted trial request is never treated as a confirmed booking automatically—staff must explicitly Confirm, Reschedule, or Reject each request." />
+      <div className="flex items-start gap-3 rounded-[12px] border border-[#E2E8F0] bg-white px-4 py-3 text-xs leading-relaxed text-[#071A36]">
+        <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+        <p>
+          Policy check: Trial requests submitted via the public form remain unconfirmed until staff
+          explicitly Confirm, Reschedule, or Reject each session slot.
+        </p>
+      </div>
 
       <div className="flex flex-wrap gap-2">
         {(
@@ -113,8 +117,16 @@ export function AdminTrialBookingsPage() {
       <Card padding="sm" className="overflow-hidden">
         {filtered.length === 0 ? (
           <AdminEmptyState
-            title="No trial bookings in this status"
-            description="Select All to view all demonstration trial session requests."
+            title={
+              state.trials.length === 0
+                ? 'No trial booking requests yet'
+                : 'No trial requests match this status'
+            }
+            description={
+              state.trials.length === 0
+                ? 'Trial session inquiries submitted on /book-trial will appear here for staff confirmation.'
+                : 'Select All above to view all trial requests.'
+            }
           />
         ) : (
           <div className="overflow-x-auto">
@@ -139,6 +151,9 @@ export function AdminTrialBookingsPage() {
                       <p className="text-[11px] text-[#64748B]">
                         {trial.ageGroup} · {trial.requestedProgram}
                       </p>
+                      {trial.contactPlaceholder && (
+                        <p className="text-[11px] text-[#64748B]">{trial.contactPlaceholder}</p>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <p className="font-mono font-semibold text-[#071A36] tabular-nums">
@@ -147,10 +162,7 @@ export function AdminTrialBookingsPage() {
                       <p className="text-[11px] text-[#64748B]">{trial.preferredTimeSlot}</p>
                     </td>
                     <td className="px-4 py-3">
-                      <AdminStatusBadge
-                        label={trial.status}
-                        variant={TRIAL_BADGE[trial.status]}
-                      />
+                      <AdminStatusBadge label={trial.status} variant={TRIAL_BADGE[trial.status]} />
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="inline-flex flex-wrap justify-end gap-1.5">
@@ -210,11 +222,11 @@ export function AdminTrialBookingsPage() {
             label="Proposed Time Slot"
             value={newTimeSlot}
             onChange={(e) => setNewTimeSlot(e.target.value)}
-            placeholder="e.g. Evening Slot (Placeholder)"
+            placeholder="e.g. Evening Session (6:00 PM)"
             required
           />
           <Textarea
-            label="Staff Reschedule Note"
+            label="Staff Note"
             value={staffNote}
             onChange={(e) => setStaffNote(e.target.value)}
           />
@@ -240,17 +252,12 @@ export function AdminTrialBookingsPage() {
         onConfirm={() => {
           if (!confirmTarget) return;
           setTrials((prev) =>
-            prev.map((t) =>
-              t.id === confirmTarget.id ? { ...t, status: 'Confirmed' } : t,
-            ),
+            prev.map((t) => (t.id === confirmTarget.id ? { ...t, status: 'Confirmed' } : t)),
           );
-          showToast(
-            'Trial Request Confirmed (Preview)',
-            `${confirmTarget.playerName} marked Confirmed in demonstration session.`,
-          );
+          showToast('Trial Confirmed', `${confirmTarget.playerName} marked Confirmed.`);
         }}
         title="Confirm Trial Booking Request"
-        message={`Mark trial request for ${confirmTarget?.playerName ?? ''} on ${confirmTarget?.preferredDate ?? ''} as Confirmed?`}
+        message={`Confirm trial request for ${confirmTarget?.playerName ?? ''} on ${confirmTarget?.preferredDate ?? ''}?`}
         confirmLabel="Confirm Booking"
         tone="primary"
       />
@@ -261,18 +268,12 @@ export function AdminTrialBookingsPage() {
         onConfirm={() => {
           if (!rejectTarget) return;
           setTrials((prev) =>
-            prev.map((t) =>
-              t.id === rejectTarget.id ? { ...t, status: 'Rejected' } : t,
-            ),
+            prev.map((t) => (t.id === rejectTarget.id ? { ...t, status: 'Rejected' } : t)),
           );
-          showToast(
-            'Trial Request Rejected (Preview)',
-            `${rejectTarget.playerName} marked Rejected in demonstration session.`,
-            'warning',
-          );
+          showToast('Trial Rejected', `${rejectTarget.playerName} marked Rejected.`, 'warning');
         }}
         title="Reject Trial Request"
-        message={`Reject trial request ${rejectTarget?.requestCode ?? ''}? You can propose a different date via Reschedule instead.`}
+        message={`Reject trial request ${rejectTarget?.requestCode ?? ''}? You can propose another date via Reschedule instead.`}
         confirmLabel="Reject Request"
         tone="danger"
       />

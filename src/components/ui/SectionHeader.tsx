@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { cn } from '@/src/utils/cn';
 
 export interface SectionHeaderProps {
+  id?: string;
   kicker?: string;
   title: string;
   description?: string;
@@ -12,6 +13,7 @@ export interface SectionHeaderProps {
 }
 
 export function SectionHeader({
+  id,
   kicker,
   title,
   description,
@@ -42,6 +44,7 @@ export function SectionHeader({
           </p>
         )}
         <h2
+          id={id}
           className={cn(
             'text-2xl sm:text-3xl font-bold tracking-tight',
             isDark ? 'text-white' : 'text-[#071A36]',

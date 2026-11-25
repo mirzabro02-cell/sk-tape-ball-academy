@@ -1,6 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
+import { DEFAULT_IMAGE_TRANSFORM, type ImageTransformConfig } from '@/src/types/media';
 import { cn } from '@/src/utils/cn';
+
+export function buildMediaTransformStyle(
+  transform?: Partial<ImageTransformConfig> | null,
+): CSSProperties {
+  const fit = transform?.fit === 'contain' ? 'contain' : 'cover';
+  const posX = typeof transform?.posX === 'number' ? transform.posX : DEFAULT_IMAGE_TRANSFORM.posX;
+  const posY = typeof transform?.posY === 'number' ? transform.posY : DEFAULT_IMAGE_TRANSFORM.posY;
+  const scale =
+    typeof transform?.scale === 'number' ? transform.scale : DEFAULT_IMAGE_TRANSFORM.scale;
+
+  return {
+    objectFit: fit,
+    objectPosition: `${posX}% ${posY}%`,
+    transform: `scale(${scale})`,
+    transformOrigin: `${posX}% ${posY}%`,
+  };
+}
 
 export interface MediaImageProps {
   src?: string | null;
@@ -8,15 +26,17 @@ export interface MediaImageProps {
   fallbackLabel?: string;
   className?: string;
   imgClassName?: string;
+  transform?: Partial<ImageTransformConfig> | null;
   priority?: boolean;
 }
 
 export function MediaImage({
   src,
   alt,
-  fallbackLabel = 'Cricket Visual Placeholder',
+  fallbackLabel = 'Academy Visual',
   className,
   imgClassName,
+  transform,
   priority = false,
 }: MediaImageProps) {
   const [hasError, setHasError] = useState(false);
@@ -54,7 +74,8 @@ export function MediaImage({
         decoding="async"
         referrerPolicy="no-referrer"
         onError={() => setHasError(true)}
-        className={cn('h-full w-full object-cover', imgClassName)}
+        style={buildMediaTransformStyle(transform)}
+        className={cn('h-full w-full transition-transform duration-150 ease-out', imgClassName)}
       />
     </div>
   );

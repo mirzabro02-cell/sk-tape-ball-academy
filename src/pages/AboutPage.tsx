@@ -1,6 +1,6 @@
-import { CheckCircle2, Compass, ShieldCheck, Target } from 'lucide-react';
+import { CheckCircle2, Compass, MapPin, ShieldCheck, Target, UserCheck } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { ABOUT_PAGE_CONTENT } from '@/src/data/academyInfo';
-import { ACADEMY_BRAND } from '@/src/data/brand';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -11,6 +11,8 @@ import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
 export function AboutPage() {
   useDocumentTitle('About Us');
+  const { state } = useAcademyState();
+  const { siteSettings } = state;
 
   return (
     <div className="space-y-14 sm:space-y-16">
@@ -50,22 +52,36 @@ export function AboutPage() {
               </p>
             ))}
 
-            <Card tone="muted" padding="md" className="mt-4">
+            <Card tone="muted" padding="md" className="mt-4 space-y-2.5">
               <p className="text-xs font-semibold uppercase tracking-wider text-[#071A36]">
-                Official Academy Details (Placeholder Notice)
+                Official Academy Profile
               </p>
-              <p className="mt-1.5 text-sm text-[#64748B]">
-                Founding timeline, leadership names, and verified ground location ({ACADEMY_BRAND.contactPlaceholders.addressPlaceholder}) will be updated once supplied by academy management.
-              </p>
+              <div className="grid grid-cols-1 gap-2 text-sm text-[#64748B] sm:grid-cols-2">
+                <p className="flex items-center gap-2">
+                  <UserCheck className="h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+                  <span>
+                    <strong className="text-[#071A36]">Founder:</strong> {siteSettings.founderName}
+                  </span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 shrink-0 text-[#C8202B]" aria-hidden="true" />
+                  <span>
+                    <strong className="text-[#071A36]">Operating Base:</strong>{' '}
+                    {siteSettings.locationText}
+                  </span>
+                </p>
+              </div>
+              <p className="text-xs text-[#64748B]">{siteSettings.launchedNote}</p>
             </Card>
           </div>
 
           <div className="lg:col-span-6">
             <div className="h-full min-h-[280px] overflow-hidden rounded-[16px] border border-[#E2E8F0] bg-[#071A36]">
               <MediaImage
-                src="/src/assets/images/academy_training_lanes_1795439225599.jpg"
+                src={siteSettings.aboutMedia.src}
                 alt="SK Tape Ball Academy practice lanes and agility training setup"
-                fallbackLabel="Academy Overview Visual"
+                transform={siteSettings.aboutMedia.transform}
+                fallbackLabel="SK Tape Ball Academy Training Ground"
                 className="h-full w-full"
               />
             </div>
@@ -76,6 +92,7 @@ export function AboutPage() {
       {/* Mission & Vision */}
       <section aria-labelledby="mission-vision-heading" className="space-y-6">
         <SectionHeader
+          id="mission-vision-heading"
           kicker="Purpose & Direction"
           title="Mission and Vision"
           description="Guiding principles shaping coaching standards, session structure, and long-term player growth."
@@ -111,6 +128,7 @@ export function AboutPage() {
       {/* Training Philosophy */}
       <section aria-labelledby="philosophy-heading" className="space-y-8">
         <SectionHeader
+          id="philosophy-heading"
           kicker="Training Philosophy"
           title="How We Coach Every Session"
           description="A repeatable framework designed to turn raw athletic talent into composed match performance."
@@ -130,16 +148,19 @@ export function AboutPage() {
       {/* Academy Values */}
       <section aria-labelledby="values-heading" className="space-y-8">
         <SectionHeader
+          id="values-heading"
           kicker="Core Standards"
-          title="Academy Values"
-          description="Behavioral and athletic expectations upheld across every batch."
+          title="Nine Academy Values"
+          description="Behavioral and athletic principles upheld across every training group."
         />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ABOUT_PAGE_CONTENT.values.map((val) => (
             <Card key={val.title} padding="md" className="space-y-2">
-              <ShieldCheck className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
-              <h3 className="text-base font-bold text-[#071A36]">{val.title}</h3>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+                <h3 className="text-base font-bold text-[#071A36]">{val.title}</h3>
+              </div>
               <p className="text-xs leading-relaxed text-[#64748B]">{val.description}</p>
             </Card>
           ))}
@@ -149,6 +170,7 @@ export function AboutPage() {
       {/* Player Development Approach */}
       <section aria-labelledby="development-heading" className="space-y-8">
         <SectionHeader
+          id="development-heading"
           kicker="Progression Pathway"
           title="Player Development Approach"
           description="Four clear stages guiding every entrant from initial evaluation to match-ready execution."
@@ -175,8 +197,8 @@ export function AboutPage() {
         description="Schedule a trial assessment or explore our nine specialized training programs to find the right fit."
         primaryLabel="Book Free Trial"
         primaryTo="/book-trial"
-        secondaryLabel="Meet Our Coaches"
-        secondaryTo="/coaches"
+        secondaryLabel="Training Programs"
+        secondaryTo="/programs"
       />
     </div>
   );

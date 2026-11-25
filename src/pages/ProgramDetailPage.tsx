@@ -1,16 +1,19 @@
 import { ArrowLeft, CheckCircle2, Target, Users } from 'lucide-react';
 import { useParams } from 'react-router-dom';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { TRAINING_PROGRAMS_DATA } from '@/src/data/academyInfo';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { ProgramCard } from '@/src/components/academy/ProgramCard';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { CtaBanner } from '@/src/components/ui/CtaBanner';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 import { PageHero } from '@/src/components/ui/PageHero';
 import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
 export function ProgramDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { state } = useAcademyState();
   const program = TRAINING_PROGRAMS_DATA.find((item) => item.slug === slug);
 
   useDocumentTitle(program ? program.title : 'Program Not Found');
@@ -36,6 +39,12 @@ export function ProgramDetailPage() {
       </Card>
     );
   }
+
+  const managedProgram = state.programs.find(
+    (p) =>
+      p.code === program.code ||
+      p.title.trim().toLowerCase() === program.title.trim().toLowerCase(),
+  );
 
   const relatedPrograms = TRAINING_PROGRAMS_DATA.filter((item) =>
     program.relatedSlugs.includes(item.slug),
@@ -67,14 +76,27 @@ export function ProgramDetailPage() {
           </>
         }
         aside={
-          <div className="rounded-[16px] border border-white/15 bg-[#050D1B]/90 p-5 sm:p-6 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#D9A52E]">
-              Track Focus
-            </p>
-            <p className="text-sm font-semibold text-white">{program.focusLabel}</p>
-            <div className="border-t border-white/10 pt-3 text-xs leading-relaxed text-white/75">
-              <strong className="text-white">Schedule &amp; Fee Status:</strong>{' '}
-              {program.scheduleAndFeeNote}
+          <div className="overflow-hidden rounded-[16px] border border-white/15 bg-[#050D1B]/90">
+            {managedProgram?.imagePath && (
+              <div className="aspect-[16/9] w-full overflow-hidden border-b border-white/10">
+                <MediaImage
+                  src={managedProgram.imagePath}
+                  alt={program.title}
+                  transform={managedProgram.imageTransform}
+                  fallbackLabel={program.title}
+                  className="h-full w-full"
+                />
+              </div>
+            )}
+            <div className="p-5 sm:p-6 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#D9A52E]">
+                Track Focus
+              </p>
+              <p className="text-sm font-semibold text-white">{program.focusLabel}</p>
+              <div className="border-t border-white/10 pt-3 text-xs leading-relaxed text-white/75">
+                <strong className="text-white">Onboarding &amp; Batch Info:</strong>{' '}
+                {program.scheduleAndFeeNote}
+              </div>
             </div>
           </div>
         }
@@ -149,6 +171,7 @@ export function ProgramDetailPage() {
       {relatedPrograms.length > 0 && (
         <section aria-labelledby="related-programs-heading" className="space-y-6">
           <SectionHeader
+            id="related-programs-heading"
             kicker="Continue Exploring"
             title="Related Training Programs"
             description="Complementary disciplines and progression tracks within SK Tape Ball Academy."

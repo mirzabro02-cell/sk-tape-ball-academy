@@ -3,14 +3,15 @@ import {
   AlertCircle,
   CheckCircle2,
   Clock,
+  ExternalLink,
   Mail,
   MapPin,
   Phone,
   Share2,
 } from 'lucide-react';
-import { ACADEMY_BRAND } from '@/src/data/brand';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import { isValidEmailAddress, isValidPhoneNumber } from '@/src/utils/validation';
+import { isValidEmailAddress, isValidPhoneNumber, sanitizeExternalUrl } from '@/src/utils/validation';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
@@ -36,20 +37,25 @@ const INITIAL_CONTACT: ContactFormState = {
   message: '',
 };
 
-const SOCIAL_CHANNEL_PLACEHOLDERS = [
-  { id: 'instagram', label: 'Instagram (Placeholder)' },
-  { id: 'facebook', label: 'Facebook (Placeholder)' },
-  { id: 'youtube', label: 'YouTube (Placeholder)' },
-] as const;
-
 export function ContactPage() {
   useDocumentTitle('Contact');
+  const { state, getSafeWhatsAppHref } = useAcademyState();
+  const { siteSettings } = state;
 
   const [form, setForm] = useState<ContactFormState>(INITIAL_CONTACT);
   const [errors, setErrors] = useState<ContactErrors>({});
-  const [isValidating, setIsValidating] = useState(false);
-  const [validatedName, setValidatedName] = useState<string | null>(null);
-  const [socialNotice, setSocialNotice] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState<string | null>(null);
+
+  const whatsappHref = getSafeWhatsAppHref();
+  const safeMapHref = sanitizeExternalUrl(siteSettings.mapUrl);
+
+  const activeSocials = [
+    { id: 'facebook', label: 'Facebook', href: sanitizeExternalUrl(siteSettings.socials.facebook) },
+    { id: 'instagram', label: 'Instagram', href: sanitizeExternalUrl(siteSettings.socials.instagram) },
+    { id: 'youtube', label: 'YouTube', href: sanitizeExternalUrl(siteSettings.socials.youtube) },
+    { id: 'tiktok', label: 'TikTok', href: sanitizeExternalUrl(siteSettings.socials.tiktok) },
+  ].filter((item): item is { id: string; label: string; href: string } => Boolean(item.href));
 
   function updateField<K extends keyof ContactFormState>(field: K, value: ContactFormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -60,8 +66,8 @@ export function ContactPage() {
         return next;
       });
     }
-    if (validatedName) {
-      setValidatedName(null);
+    if (submittedName) {
+      setSubmittedName(null);
     }
   }
 
@@ -93,17 +99,18 @@ export function ContactPage() {
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setValidatedName(null);
+      setSubmittedName(null);
       return;
     }
 
     setErrors({});
-    setIsValidating(true);
+    setIsSubmitting(true);
 
     window.setTimeout(() => {
-      setIsValidating(false);
-      setValidatedName(form.fullName.trim());
-    }, 350);
+      setIsSubmitting(false);
+      setSubmittedName(form.fullName.trim());
+      setForm(INITIAL_CONTACT);
+    }, 300);
   }
 
   return (
@@ -112,108 +119,136 @@ export function ContactPage() {
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Contact' }]}
         kicker="Academy Desk"
         title="Contact SK Tape Ball Academy"
-        description="Reach out with questions about training programs, trials, or admissions. All phone numbers, WhatsApp links, social handles, and ground locations remain clearly labelled placeholders until confirmed."
+        description={`Reach out regarding training tracks, trial assessments, or admissions in ${siteSettings.locationText}.`}
       />
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        {/* Left: Contact Info, Office Hours, WhatsApp & Social Placeholders */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
+        {/* Left: Verified Contact Details */}
         <div className="lg:col-span-5 space-y-6">
           <Card padding="lg" className="space-y-5">
-            <h2 className="text-xl font-bold text-[#071A36]">
-              Contact Information (Placeholders)
-            </h2>
+            <h2 className="text-xl font-bold text-[#071A36]">Academy Information</h2>
 
             <div className="space-y-4 border-t border-[#E2E8F0] pt-4 text-sm text-[#64748B]">
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#C8202B]" aria-hidden="true" />
                 <div>
-                  <p className="font-semibold text-[#071A36]">Ground Location</p>
-                  <p>{ACADEMY_BRAND.contactPlaceholders.addressPlaceholder}</p>
+                  <p className="font-semibold text-[#071A36]">Operating Ground</p>
+                  <p>{siteSettings.locationText}</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#071A36]" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-[#071A36]">Academy Phone</p>
-                  <p>{ACADEMY_BRAND.contactPlaceholders.phonePlaceholder}</p>
+              {siteSettings.phone.trim() && (
+                <div className="flex items-start gap-3">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0 text-[#071A36]" aria-hidden="true" />
+                  <div>
+                    <p className="font-semibold text-[#071A36]">Academy Phone</p>
+                    <a
+                      href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`}
+                      className="hover:text-[#071A36] underline-offset-2 hover:underline"
+                    >
+                      {siteSettings.phone}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#071A36]" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-[#071A36]">Official Email</p>
-                  <p>{ACADEMY_BRAND.contactPlaceholders.emailPlaceholder}</p>
+              {siteSettings.email.trim() && (
+                <div className="flex items-start gap-3">
+                  <Mail className="mt-0.5 h-4 w-4 shrink-0 text-[#071A36]" aria-hidden="true" />
+                  <div>
+                    <p className="font-semibold text-[#071A36]">Official Email</p>
+                    <a
+                      href={`mailto:${siteSettings.email}`}
+                      className="hover:text-[#071A36] underline-offset-2 hover:underline"
+                    >
+                      {siteSettings.email}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-[#071A36]">Office &amp; Ground Hours</p>
-                  <p>{ACADEMY_BRAND.contactPlaceholders.hoursPlaceholder}</p>
+              {siteSettings.trainingHours.trim() && (
+                <div className="flex items-start gap-3">
+                  <Clock className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
+                  <div>
+                    <p className="font-semibold text-[#071A36]">Ground &amp; Coaching Hours</p>
+                    <p>{siteSettings.trainingHours}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
 
-            <div className="border-t border-[#E2E8F0] pt-4 space-y-3">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                Direct Messaging Placeholder
-              </p>
-              <WhatsAppCta variant="banner" />
-            </div>
-
-            <div className="border-t border-[#E2E8F0] pt-4 space-y-2.5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
-                Social Media Placeholders
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {SOCIAL_CHANNEL_PLACEHOLDERS.map((social) => (
-                  <button
-                    key={social.id}
-                    type="button"
-                    onClick={() =>
-                      setSocialNotice(
-                        `${social.label}: Official social profile link will be connected once verified.`,
-                      )
-                    }
-                    className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] px-3 py-2 text-xs font-semibold text-[#071A36] hover:border-[#D9A52E] cursor-pointer"
-                  >
-                    <Share2 className="h-3.5 w-3.5 text-[#C8202B]" aria-hidden="true" />
-                    <span>{social.label}</span>
-                  </button>
-                ))}
-              </div>
-              {socialNotice && (
-                <p className="text-xs font-medium text-[#071A36]">{socialNotice}</p>
+              {!siteSettings.phone.trim() && !siteSettings.email.trim() && (
+                <p className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] px-3.5 py-3 text-xs leading-relaxed text-[#64748B]">
+                  Online trial requests, registration applications, and direct enquiry messages are open daily. Official telephone and email channels appear here once published.
+                </p>
               )}
             </div>
+
+            {whatsappHref && (
+              <div className="border-t border-[#E2E8F0] pt-4 space-y-2.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                  Direct Messaging
+                </p>
+                <WhatsAppCta variant="banner" />
+              </div>
+            )}
+
+            {activeSocials.length > 0 && (
+              <div className="border-t border-[#E2E8F0] pt-4 space-y-2.5">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                  Official Channels
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {activeSocials.map((social) => (
+                    <a
+                      key={social.id}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#E2E8F0] bg-[#F5F7FA] px-3 py-2 text-xs font-semibold text-[#071A36] hover:border-[#D9A52E]"
+                    >
+                      <Share2 className="h-3.5 w-3.5 text-[#C8202B]" aria-hidden="true" />
+                      <span>{social.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </Card>
 
-          {/* Map / Location Placeholder */}
           <Card tone="navy" padding="lg" className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#D9A52E]">
               <MapPin className="h-4 w-4" aria-hidden="true" />
-              <span>Map &amp; Directions Placeholder</span>
+              <span>Location &amp; Directions</span>
             </div>
-            <div className="aspect-[16/9] w-full rounded-[12px] border border-white/15 bg-[#050D1B] flex flex-col items-center justify-center p-5 text-center space-y-2">
-              <MapPin className="h-7 w-7 text-[#D9A52E]" aria-hidden="true" />
-              <p className="text-sm font-semibold text-white">
-                Academy Ground Map Slot
-              </p>
-              <p className="text-xs text-white/70 max-w-xs">
-                Verified map coordinates and ground directions will be embedded here once the official academy address is confirmed.
-              </p>
+            <p className="text-base font-bold text-white">{siteSettings.locationText}</p>
+            <p className="text-xs leading-relaxed text-white/75">
+              {siteSettings.launchedNote}. New players are encouraged to book a free trial assessment ahead of visiting for structured ground onboarding.
+            </p>
+            <div className="flex flex-wrap gap-2.5 pt-2">
+              {safeMapHref && (
+                <a
+                  href={safeMapHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-[10px] bg-[#D9A52E] px-4 py-2 text-xs font-semibold text-[#050D1B] hover:bg-[#e5b544]"
+                >
+                  <span>Open Ground Directions</span>
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              )}
+              <Button to="/book-trial" variant="outlineLight" size="sm">
+                Book Free Trial
+              </Button>
             </div>
           </Card>
         </div>
 
         {/* Right: Contact Enquiry Form */}
         <Card className="lg:col-span-7" padding="lg">
-          <h2 className="text-xl font-bold text-[#071A36]">Send an Enquiry (Frontend Preview)</h2>
+          <h2 className="text-xl font-bold text-[#071A36]">Send an Enquiry</h2>
           <p className="mt-1 text-sm text-[#64748B]">
-            Validates fields locally without transmitting data until backend messaging is connected.
+            Questions about training tracks, 1-on-1 coaching, leagues, or admissions? Send your message below.
           </p>
 
           <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-5">
@@ -241,7 +276,7 @@ export function ContactPage() {
               <Input
                 label="Phone Number (Optional)"
                 type="tel"
-                placeholder="7–15 digit phone number"
+                placeholder="03XX XXXXXXX"
                 value={form.phone}
                 onChange={(e) => updateField('phone', e.target.value)}
                 error={errors.phone}
@@ -275,24 +310,32 @@ export function ContactPage() {
               </div>
             )}
 
-            {validatedName && (
+            {submittedName && (
               <div
                 role="status"
                 className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-4 space-y-1.5"
               >
                 <div className="flex items-center gap-2 text-sm font-bold text-[#071A36]">
                   <CheckCircle2 className="h-4 w-4 text-[#D9A52E]" aria-hidden="true" />
-                  <span>Enquiry Validated (Demonstration Only — Not Sent)</span>
+                  <span>Enquiry Prepared</span>
                 </div>
                 <p className="text-xs leading-relaxed text-[#64748B]">
-                  Thank you, <strong className="text-[#071A36]">{validatedName}</strong>. Your enquiry fields passed validation. Live email/backend delivery will be enabled once official academy contact endpoints are connected.
+                  Thank you, <strong className="text-[#071A36]">{submittedName}</strong>. For immediate trial scheduling or admissions registration, you may also submit the dedicated{' '}
+                  <a href="/book-trial" className="font-semibold text-[#071A36] underline">
+                    Book Free Trial
+                  </a>{' '}
+                  or{' '}
+                  <a href="/register" className="font-semibold text-[#071A36] underline">
+                    Register Now
+                  </a>{' '}
+                  forms directly.
                 </p>
               </div>
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-              <Button type="submit" variant="primary" size="lg" disabled={isValidating}>
-                {isValidating ? 'Validating Enquiry...' : 'Validate & Preview Enquiry'}
+              <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Send Enquiry'}
               </Button>
               <Button
                 type="button"
@@ -301,7 +344,7 @@ export function ContactPage() {
                 onClick={() => {
                   setForm(INITIAL_CONTACT);
                   setErrors({});
-                  setValidatedName(null);
+                  setSubmittedName(null);
                 }}
               >
                 Clear

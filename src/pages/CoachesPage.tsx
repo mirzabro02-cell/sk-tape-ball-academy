@@ -1,4 +1,5 @@
-import { COACHES_DATA } from '@/src/data/academyInfo';
+import { UserRoundCheck } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { CoachCard } from '@/src/components/academy/CoachCard';
 import { Button } from '@/src/components/ui/Button';
@@ -9,6 +10,9 @@ import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
 export function CoachesPage() {
   useDocumentTitle('Coaches');
+  const { state } = useAcademyState();
+
+  const publishedCoaches = state.coaches.filter((coach) => coach.published !== false);
 
   return (
     <div className="space-y-14 sm:space-y-16">
@@ -16,7 +20,7 @@ export function CoachesPage() {
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Coaches' }]}
         kicker="Coaching Staff"
         title="Mentorship Focused on Technical Fundamentals"
-        description="Official coach names, certifications, and playing backgrounds are marked as placeholders until verified staff details are supplied by SK Tape Ball Academy."
+        description="Structured tape ball coaching guided by diagnostic assessment, progressive shot methods, pace and accuracy work, and disciplined match preparation."
         actions={
           <>
             <Button to="/book-trial" variant="primary" size="lg">
@@ -31,30 +35,50 @@ export function CoachesPage() {
 
       <section aria-labelledby="coaches-grid-heading" className="space-y-8">
         <SectionHeader
-          kicker="Staff Directory (Placeholders)"
-          title="Academy Coaching Roles"
-          description="Select any coach card to view the reusable profile template, coaching specialties, and related training tracks."
+          id="coaches-grid-heading"
+          kicker="Academy Staff"
+          title="Coaching Directory"
+          description="Only verified, official coaching profiles published by SK Tape Ball Academy are displayed here."
         />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {COACHES_DATA.map((coach) => (
-            <CoachCard key={coach.slug} coach={coach} />
-          ))}
-        </div>
+        {publishedCoaches.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {publishedCoaches.map((coach) => (
+              <CoachCard key={coach.id} coach={coach} />
+            ))}
+          </div>
+        ) : (
+          <Card tone="muted" padding="lg" className="space-y-5">
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-[#071A36] text-[#D9A52E]">
+                  <UserRoundCheck className="h-6 w-6" aria-hidden="true" />
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="text-lg font-bold text-[#071A36]">
+                    Official Coaching Roster Coming Soon
+                  </h3>
+                  <p className="max-w-2xl text-sm leading-relaxed text-[#64748B]">
+                    Verified coaching biographies, specializations, and portraits will appear here once finalized by SK Tape Ball Academy. Prospective players can still book an assessment session or contact the academy directly.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button to="/book-trial" variant="primary" size="md">
+                  Book Free Trial
+                </Button>
+                <Button to="/contact" variant="outline" size="md">
+                  Contact Us
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
       </section>
-
-      <Card tone="muted" padding="lg" className="space-y-2">
-        <h2 className="text-base font-bold text-[#071A36]">
-          Coaching Verification Notice
-        </h2>
-        <p className="text-sm leading-relaxed text-[#64748B]">
-          No coach identities, credentials, or years of experience have been fabricated. Official coach biographies, portraits, and certifications will populate these profile cards once supplied.
-        </p>
-      </Card>
 
       <CtaBanner
         title="Train Under a Structured Coaching System"
-        description="Reserve a free trial evaluation to experience our net sessions and drill methodology."
+        description="Reserve a free trial evaluation in Sabzazar, Lahore to experience our batting, bowling, fielding, and conditioning methodology."
         primaryLabel="Book Free Trial"
         primaryTo="/book-trial"
         secondaryLabel="Contact Academy"

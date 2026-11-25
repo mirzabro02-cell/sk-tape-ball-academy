@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { TRAINING_PROGRAMS_DATA } from '@/src/data/academyInfo';
 import {
   EXPERIENCE_OPTIONS,
   PREFERRED_TRIAL_TIME_OPTIONS,
@@ -49,11 +51,15 @@ const INITIAL_TRIAL_STATE: TrialFormState = {
 
 export function BookTrialPage() {
   useDocumentTitle('Book Free Trial');
+  const { setTrials } = useAcademyState();
 
   const [form, setForm] = useState<TrialFormState>(INITIAL_TRIAL_STATE);
   const [errors, setErrors] = useState<TrialFormErrors>({});
-  const [isValidating, setIsValidating] = useState(false);
-  const [validatedStudent, setValidatedStudent] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedConfirmation, setSubmittedConfirmation] = useState<{
+    studentName: string;
+    requestCode: string;
+  } | null>(null);
 
   function updateField<K extends keyof TrialFormState>(field: K, value: TrialFormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -64,8 +70,8 @@ export function BookTrialPage() {
         return next;
       });
     }
-    if (validatedStudent) {
-      setValidatedStudent(null);
+    if (submittedConfirmation) {
+      setSubmittedConfirmation(null);
     }
   }
 
@@ -135,17 +141,40 @@ export function BookTrialPage() {
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      setValidatedStudent(null);
+      setSubmittedConfirmation(null);
       return;
     }
 
     setErrors({});
-    setIsValidating(true);
+    setIsSubmitting(true);
+
+    const requestCode = `SK-TRL-${Math.floor(100000 + Math.random() * 900000)}`;
+    const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.preferredProgram);
+    const studentName = form.studentName.trim();
+
+    setTrials((prev) => [
+      {
+        id: `trl-${Date.now()}`,
+        requestCode,
+        playerName: studentName,
+        ageGroup: form.dobOrAge.trim(),
+        contactPlaceholder: form.contactPhone.trim(),
+        requestedProgram: matchedProgram?.title ?? form.preferredProgram,
+        preferredDate: form.preferredDate,
+        preferredTimeSlot: form.preferredTime,
+        status: 'Requested (Unconfirmed)',
+        staffNote: form.additionalMessage.trim()
+          ? `Guardian: ${form.guardianName.trim()} · ${form.additionalMessage.trim()}`
+          : `Guardian: ${form.guardianName.trim()} · Level: ${form.previousExperience}`,
+      },
+      ...prev,
+    ]);
 
     window.setTimeout(() => {
-      setIsValidating(false);
-      setValidatedStudent(form.studentName.trim());
-    }, 350);
+      setIsSubmitting(false);
+      setSubmittedConfirmation({ studentName, requestCode });
+      setForm(INITIAL_TRIAL_STATE);
+    }, 250);
   }
 
   return (
@@ -158,16 +187,16 @@ export function BookTrialPage() {
         ]}
         kicker="Trial Evaluation Request"
         title="Book a Free Trial Session"
-        description="Request an initial batting, bowling, or keeping evaluation with our coaching team. Trial slots are reviewed manually and are not automatically confirmed."
+        description="Request an initial batting, bowling, fielding, or keeping assessment with our coaching team in Sabzazar, Lahore."
       />
 
-      {/* Mandatory Confirmation Policy Notice */}
+      {/* Confirmation Policy Notice */}
       <Card tone="navy" padding="md" className="flex items-start gap-3">
         <Info className="mt-0.5 h-5 w-5 shrink-0 text-[#D9A52E]" aria-hidden="true" />
         <div className="space-y-1 text-sm">
           <p className="font-bold text-white">Trial Confirmation Policy</p>
           <p className="text-white/85">
-            Your trial request will be reviewed by the academy team. Your booking is confirmed only after staff confirmation.
+            Your trial request will be reviewed by the academy team. Your session slot is confirmed only after staff follow-up.
           </p>
         </div>
       </Card>
@@ -206,7 +235,7 @@ export function BookTrialPage() {
             <Input
               label="Contact Phone / WhatsApp"
               type="tel"
-              placeholder="7–15 digit phone number"
+              placeholder="03XX XXXXXXX"
               value={form.contactPhone}
               onChange={(e) => updateField('contactPhone', e.target.value)}
               error={errors.contactPhone}
@@ -242,7 +271,7 @@ export function BookTrialPage() {
             />
 
             <Select
-              label="Preferred Time (Placeholder Windows)"
+              label="Preferred Time Window"
               options={PREFERRED_TRIAL_TIME_OPTIONS}
               value={form.preferredTime}
               onChange={(e) => updateField('preferredTime', e.target.value)}
@@ -281,24 +310,30 @@ export function BookTrialPage() {
             </div>
           )}
 
-          {validatedStudent && (
+          {submittedConfirmation && (
             <div
               role="status"
               className="rounded-[12px] border border-[#071A36]/20 bg-[#F5F7FA] p-5 space-y-2"
             >
-              <div className="flex items-center gap-2 text-sm font-bold text-[#071A36]">
-                <CheckCircle2 className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
-                <span>Trial Request Validated (Frontend Preview — Not Stored)</span>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-sm font-bold text-[#071A36]">
+                  <CheckCircle2 className="h-5 w-5 text-[#D9A52E]" aria-hidden="true" />
+                  <span>Trial Request Logged</span>
+                </div>
+                <span className="rounded-[8px] border border-[#071A36]/15 bg-white px-3 py-1 font-mono text-xs font-bold text-[#071A36]">
+                  {submittedConfirmation.requestCode}
+                </span>
               </div>
               <p className="text-sm leading-relaxed text-[#64748B]">
-                Trial details for <strong className="text-[#071A36]">{validatedStudent}</strong> passed validation. Your trial request will be reviewed by the academy team. Your booking is confirmed only after staff confirmation. (Backend submission is not connected yet in Part 5.)
+                Thank you. Trial request for{' '}
+                <strong className="text-[#071A36]">{submittedConfirmation.studentName}</strong> has been received and marked as <strong className="text-[#071A36]">Requested (Unconfirmed)</strong>. Academy staff will review availability and follow up directly to confirm your ground slot.
               </p>
             </div>
           )}
 
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="submit" variant="primary" size="lg" disabled={isValidating}>
-              {isValidating ? 'Checking Trial Request...' : 'Request Free Trial'}
+            <Button type="submit" variant="primary" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? 'Submitting Request...' : 'Request Free Trial'}
             </Button>
             <Button
               type="button"
@@ -307,7 +342,7 @@ export function BookTrialPage() {
               onClick={() => {
                 setForm(INITIAL_TRIAL_STATE);
                 setErrors({});
-                setValidatedStudent(null);
+                setSubmittedConfirmation(null);
               }}
             >
               Reset Form

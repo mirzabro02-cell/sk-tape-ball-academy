@@ -5,71 +5,71 @@ export const ADMISSIONS_PAGE_CONTENT = {
   kicker: 'Admissions & Onboarding',
   title: 'Join SK Tape Ball Academy',
   description:
-    'A clear, structured admissions pathway from initial free trial assessment to program placement. Age brackets, batch availability, and official fee details remain placeholders until confirmed.',
+    'From initial trial evaluation to structured batch placement in Sabzazar, Lahore — follow a straightforward four-step pathway designed for dedicated players.',
   steps: [
     {
       step: '01',
       title: 'Book a Free Trial or Register Interest',
       description:
-        'Start by submitting a trial request or student admission inquiry with basic player and guardian contact details.',
+        'Submit a trial request or admission application online with basic player and guardian contact details.',
     },
     {
       step: '02',
-      title: 'Initial Assessment Session',
+      title: 'Diagnostic Assessment Session',
       description:
-        'Coaches observe batting stance, bowling rhythm, catching reflexes, and movement baseline during an evaluation session.',
+        'Coaches observe your batting strengths and weaknesses, bowling control, catching reflexes, and conditioning baseline.',
     },
     {
       step: '03',
       title: 'Program & Batch Recommendation',
       description:
-        'Based on age group and skill readiness, the coaching team recommends the most suitable training track and batch.',
+        'Based on your assessment and goals, coaches recommend the right skill track or foundation/performance batch.',
     },
     {
       step: '04',
-      title: 'Enrollment & Ground Onboarding',
+      title: 'Onboarding & Ground Start',
       description:
-        'Guardians or adult applicants confirm consent policies, kit guidelines, and starting session dates with the academy desk.',
+        'Players or guardians confirm safety and privacy guidelines, training kit standards, and starting session times.',
     },
   ],
-  eligibilityPlaceholders: [
+  eligibilityStandards: [
     {
-      title: 'Age Group Brackets (Placeholder)',
+      title: 'Open to Dedicated Learners',
       detail:
-        'Junior, youth, and senior tape ball age brackets will be confirmed by academy administration prior to batch launch.',
+        'Suitable for newcomers learning core mechanics as well as tournament-level tape ball players sharpening match execution.',
     },
     {
-      title: 'Skill Level Readiness',
+      title: 'Skill Diagnostic Placement',
       detail:
-        'Open to beginners building core fundamentals as well as experienced club and tournament players.',
+        'Every applicant is placed according to skill readiness and physical conditioning rather than guesswork.',
     },
     {
       title: 'Guardian Consent for Under-18 Applicants',
       detail:
-        'Applicants under 18 years of age require verified parent or legal guardian contact details and explicit consent.',
+        'Applicants under 18 years of age must include verified parent or legal guardian details and explicit guardian consent.',
     },
   ],
   requiredInformation: [
-    'Student full name, date of birth, and city/area of residence',
-    'Parent or guardian full name, relationship, phone, and WhatsApp contact (mandatory for applicants under 18)',
-    'Preferred training program and summary of previous cricket experience',
-    'Signed privacy policy acknowledgement and optional separate photography consent',
+    'Player full name, date of birth, and city or residential area',
+    'Parent or guardian name, relationship, and reachable phone/WhatsApp details (required for under-18 players)',
+    'Preferred training program and brief summary of prior playing background',
+    'Privacy acknowledgement and optional separate photography consent',
   ],
   admissionFaqs: [
     {
       question: 'Does submitting the online registration form immediately confirm a seat?',
       answer:
-        'Sample Placeholder: No. Online forms capture applicant details for academy review; final batch placement and confirmation are completed directly by academy staff.',
+        'No. Online registrations initiate your admission review and trial evaluation. Final batch confirmation is provided directly by academy staff.',
     },
     {
       question: 'Do beginners need prior tournament experience to apply?',
       answer:
-        'Sample Placeholder: No. Our Beginner Foundation Program is structured specifically for newcomers learning grip, stance, bowling rhythm, and safe catching.',
+        'No. Our Beginner Foundation Program is built specifically for newcomers developing batting stance, bowling rhythm, and catching confidence from scratch.',
     },
     {
-      question: 'Is a free trial available before enrolling in a full batch?',
+      question: 'Can I book a free trial before enrolling?',
       answer:
-        'Sample Placeholder: Yes, prospective players can request a free trial assessment through the Book Free Trial page, subject to staff confirmation.',
+        'Yes. Prospective players are encouraged to request an evaluation session via Book Free Trial before finalizing their track.',
     },
   ],
 } as const;
@@ -83,10 +83,9 @@ export const PROGRAM_SELECT_OPTIONS: SelectOption[] = [
 ];
 
 export const GENDER_OPTIONAL_OPTIONS: SelectOption[] = [
-  { label: 'Prefer not to specify / Optional', value: '' },
+  { label: 'Prefer not to specify (Optional)', value: '' },
   { label: 'Male', value: 'male' },
   { label: 'Female', value: 'female' },
-  { label: 'Other', value: 'other' },
 ];
 
 export const RELATIONSHIP_OPTIONS: SelectOption[] = [
@@ -107,112 +106,53 @@ export const EXPERIENCE_OPTIONS: SelectOption[] = [
 ];
 
 export const PREFERRED_BATCH_OPTIONS: SelectOption[] = [
-  { label: 'Select preferred batch (Placeholder)', value: '' },
-  { label: 'Morning Batch Slot — Timing Pending', value: 'morning-placeholder' },
-  { label: 'Afternoon / Youth Slot — Timing Pending', value: 'afternoon-placeholder' },
-  { label: 'Evening / Floodlight Slot — Timing Pending', value: 'evening-placeholder' },
-  { label: 'Weekend Only Slot — Timing Pending', value: 'weekend-placeholder' },
+  { label: 'Select preferred training window', value: '' },
+  { label: 'Morning Session', value: 'morning' },
+  { label: 'Afternoon / Youth Session', value: 'afternoon' },
+  { label: 'Evening / Floodlight Session', value: 'evening' },
+  { label: 'Weekend Schedule', value: 'weekend' },
 ];
 
 export const PREFERRED_TRIAL_TIME_OPTIONS: SelectOption[] = [
-  { label: 'Select preferred time window (Placeholder)', value: '' },
-  { label: 'Morning Assessment Window (Timing Pending)', value: 'morning-window' },
-  { label: 'Afternoon Assessment Window (Timing Pending)', value: 'afternoon-window' },
-  { label: 'Evening Floodlight Window (Timing Pending)', value: 'evening-window' },
-  { label: 'Weekend Trial Window (Timing Pending)', value: 'weekend-window' },
+  { label: 'Select preferred trial window', value: '' },
+  { label: 'Morning Assessment Window', value: 'morning-window' },
+  { label: 'Afternoon Assessment Window', value: 'afternoon-window' },
+  { label: 'Evening Floodlight Window', value: 'evening-window' },
+  { label: 'Weekend Trial Window', value: 'weekend-window' },
 ];
 
-export interface MembershipPlanPlaceholder {
-  id: string;
-  title: string;
-  tierLabel: string;
-  pricePlaceholder: string;
-  billingPlaceholder: string;
-  summary: string;
-  includedBenefits: string[];
-  highlighted?: boolean;
-}
-
 export const FEES_PAGE_CONTENT = {
-  kicker: 'Fees & Membership (Placeholder Structure)',
-  title: 'Training Plans & Membership Overview',
+  kicker: 'Membership & Fee Information',
+  title: 'Training Packages & Onboarding Consultation',
   description:
-    'Transparent membership structure prepared for SK Tape Ball Academy. Official prices, registration charges, and payment schedules are clearly marked as placeholders—no sample fees are invented.',
-  plans: [
+    'Fee plans are aligned with your recommended training track, session frequency, and personal coaching goals in Sabzazar, Lahore.',
+  consultationPoints: [
     {
-      id: 'foundation-plan',
-      title: 'Foundation Batch Plan',
-      tierLabel: 'Beginner & Youth Track · Placeholder',
-      pricePlaceholder: 'Pricing Pending Official Release',
-      billingPlaceholder: 'Monthly / Term Options (TBD)',
-      summary:
-        'Designed for newcomers building core batting, bowling, and fielding fundamentals.',
-      includedBenefits: [
-        'Structured weekly group net sessions (frequency TBD)',
-        'Fundamental batting & bowling mechanics drills',
-        'Agility warm-ups and fielding coordination',
-        'Periodic coach progress observations',
-      ],
-    },
-    {
-      id: 'performance-plan',
-      title: 'Performance & Skill Track Plan',
-      tierLabel: 'Most Comprehensive · Placeholder',
-      pricePlaceholder: 'Pricing Pending Official Release',
-      billingPlaceholder: 'Monthly / Quarterly Options (TBD)',
-      summary:
-        'Structured for players advancing across batting power-hitting, pace/spin clinics, and match scenarios.',
-      includedBenefits: [
-        'Access to specialized discipline modules',
-        'Target-zone bowling and death-over batting scenarios',
-        'Conditioning & sprint agility integration',
-        'Match-simulation practice sessions',
-      ],
-      highlighted: true,
-    },
-    {
-      id: 'personal-coaching-plan',
-      title: '1-on-1 Personal Coaching Package',
-      tierLabel: 'Individual Sessions · Placeholder',
-      pricePlaceholder: 'Package Rate Pending Release',
-      billingPlaceholder: 'Per-Session / Block Options (TBD)',
-      summary:
-        'Focused one-on-one coaching sessions tailored to specific technical adjustments or trial prep.',
-      includedBenefits: [
-        'Dedicated individual coach attention',
-        'Diagnostic stance, swing, or action breakdown',
-        'Custom drill blocks targeting specific priorities',
-        'Flexible scheduling upon staff confirmation',
-      ],
-    },
-  ] as MembershipPlanPlaceholder[],
-  paymentPlaceholders: [
-    {
-      title: 'Payment Methods (Placeholder)',
+      title: 'Trial Evaluation First',
       detail:
-        'Accepted payment channels (bank transfer, academy desk, or digital options) will be published once confirmed.',
+        'Book a free evaluation session first so coaches can assess your batting, bowling, fielding, and fitness readiness before recommending a program.',
     },
     {
-      title: 'Registration & Kit Policy (Placeholder)',
+      title: 'Transparent Program Placement',
       detail:
-        'Details regarding one-time admission fees or training kit requirements remain pending official confirmation.',
+        'Fee details for group tracks, advanced competitive squads, and 1-on-1 personal coaching are shared clearly by academy administration upon review.',
     },
     {
-      title: 'Refund & Transfer Policy',
+      title: 'Refund & Schedule Terms',
       detail:
-        'Draft refund guidelines are outlined on the Refund Policy page and remain subject to official academy review.',
+        'Clear guidelines covering attendance, weather adjustments, and transfer policies are detailed in our published Refund and Admission policies.',
     },
   ],
   faqs: [
     {
-      question: 'Why are exact prices not listed yet?',
+      question: 'How do I receive exact fee details for a program?',
       answer:
-        'Placeholder Answer: Official fee amounts are only published after formal confirmation by SK Tape Ball Academy so no inaccurate pricing is shown.',
+        'Submit a Free Trial Request or Registration Inquiry, or contact the academy office directly so staff can share the fee plan matching your selected track.',
     },
     {
-      question: 'Can I attend a trial before selecting a membership plan?',
+      question: 'Can I attend a trial before committing to a monthly package?',
       answer:
-        'Placeholder Answer: Yes, prospective players are encouraged to request a free trial session first so coaches can advise on the right track.',
+        'Yes. Prospective players are welcome to attend an initial trial assessment before completing full batch enrollment.',
     },
   ],
 } as const;
@@ -244,69 +184,62 @@ export const FAQS_DATA: FaqEntry[] = [
     category: 'Admission FAQs',
     question: 'How do I apply for admission to SK Tape Ball Academy?',
     answer:
-      'Placeholder Answer: Complete the registration inquiry form on the Register page or book a free trial first. Academy staff will review your submission and follow up regarding batch placement.',
+      'Complete the online registration form on the Register page or book a free trial session first. Our staff will review your details and follow up with assessment and batch placement options.',
   },
   {
     id: 'adm-2',
     category: 'Admission FAQs',
     question: 'Do players under 18 require parent or guardian consent?',
     answer:
-      'Placeholder Answer: Yes. Any applicant under 18 years old must provide parent or legal guardian details along with explicit guardian consent.',
+      'Yes. Any applicant under 18 years old must provide verified parent or legal guardian details along with explicit guardian consent.',
   },
   {
     id: 'adm-3',
     category: 'Admission FAQs',
-    question: 'What documents or information are needed at registration?',
+    question: 'Where is SK Tape Ball Academy currently located?',
     answer:
-      'Placeholder Answer: Basic student identification details (full name, date of birth, city/area), guardian contact information, and acknowledgement of academy privacy and safety policies.',
+      'Following our launch on 18 August 2024 in Faisalabad, SK Tape Ball Academy operates in Sabzazar, Lahore, Pakistan.',
   },
   {
     id: 'trn-1',
     category: 'Training FAQs',
-    question: 'Which cricket disciplines are covered in academy training?',
+    question: 'What training areas are covered at the academy?',
     answer:
-      'Placeholder Answer: Programs cover Batting, Fast Bowling, Spin Bowling, Fielding, Wicket Keeping, and Fitness & Agility across Beginner, Advanced, and Personal Coaching tracks.',
+      'Training covers Athletic Fitness (~200 exercises), Tape Ball Batting (strengths/weaknesses assessment plus 20–25 drill methods per shot), Tape Ball Bowling (speed, accuracy, line & length), Fielding (short, fast, long/high catches, ground fielding), Wicket Keeping, Spin Bowling, and 1-on-1 Personal Coaching.',
   },
   {
     id: 'trn-2',
     category: 'Training FAQs',
-    question: 'What are the official weekly training timings?',
+    question: 'Does the academy organize competitive matches or tournaments?',
     answer:
-      'Placeholder Answer: Exact morning, afternoon, and evening floodlight timings are pending final confirmation and will be published on the Schedule page.',
+      'Yes. SK Tape Ball Academy organizes tape-ball leagues and single-wicket events so athletes gain real match-pressure experience.',
   },
   {
     id: 'trn-3',
     category: 'Training FAQs',
     question: 'What gear should players bring to practice sessions?',
     answer:
-      'Placeholder Answer: Standard athletic sportswear, cricket/turf shoes, personal bat if owned, and water bottle. Specific kit guidelines will be shared upon onboarding.',
+      'Bring breathable athletic sportswear, supportive turf/running shoes, a water bottle, and your personal tape ball bat if you have one.',
   },
   {
     id: 'mem-1',
     category: 'Membership FAQs',
-    question: 'Where can I view official monthly or quarterly fee amounts?',
+    question: 'How are program fees shared?',
     answer:
-      'Placeholder Answer: Official fee figures are currently pending confirmation and will be listed on the Fees & Membership page once released.',
-  },
-  {
-    id: 'mem-2',
-    category: 'Membership FAQs',
-    question: 'Are family discounts or seasonal packages available?',
-    answer:
-      'Placeholder Answer: Any multi-month packages or sibling concessions will be announced officially once fee structures are finalized.',
+      'Program packages and coaching fee details are shared directly by academy administration during onboarding and trial review, or when published in our official Fees overview.',
   },
   {
     id: 'trl-1',
     category: 'Trial Session FAQs',
     question: 'Is my free trial confirmed immediately when I submit the form?',
     answer:
-      'Placeholder Answer: No. Submitting the trial form creates a trial request only. Your booking is confirmed only after academy staff review and confirm your slot.',
+      'No. Submitting the form logs a trial request. Your assessment slot is confirmed once academy staff review availability and follow up with you.',
   },
   {
     id: 'trl-2',
     category: 'Trial Session FAQs',
     question: 'What happens during the free trial assessment?',
     answer:
-      'Placeholder Answer: Coaches observe your batting stance, bowling control, catching reflexes, and movement agility to recommend the right beginner, specialist, or advanced track.',
+      'Coaches assess your batting stance, shot tendencies, bowling speed and line control, catching reflexes, and fitness readiness to recommend the best starting program.',
   },
 ];

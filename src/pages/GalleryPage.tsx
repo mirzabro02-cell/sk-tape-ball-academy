@@ -1,16 +1,12 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Expand, Film, Play, X } from 'lucide-react';
-import {
-  GALLERY_CATEGORIES,
-  GALLERY_MEDIA_ITEMS,
-  GALLERY_VIDEOS_DATA,
-  type GalleryCategory,
-  type GalleryMediaItem,
-  type VideoPlaceholderItem,
-} from '@/src/data/activitiesContent';
+import { ChevronLeft, ChevronRight, Expand, Play, X } from 'lucide-react';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { GALLERY_CATEGORIES, type GalleryCategory } from '@/src/data/activitiesContent';
+import type { AdminMediaItem } from '@/src/types/admin';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { useScrollLock } from '@/src/hooks/useScrollLock';
 import { cn } from '@/src/utils/cn';
+import { sanitizeExternalUrl } from '@/src/utils/validation';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { CtaBanner } from '@/src/components/ui/CtaBanner';
@@ -20,19 +16,27 @@ import { SectionHeader } from '@/src/components/ui/SectionHeader';
 
 export function GalleryPage() {
   useDocumentTitle('Media Gallery');
+  const { state } = useAcademyState();
   const [selectedCategory, setSelectedCategory] = useState<'All' | GalleryCategory>('All');
-  const [lightboxItem, setLightboxItem] = useState<GalleryMediaItem | null>(null);
-  const [activeVideo, setActiveVideo] = useState<VideoPlaceholderItem | null>(null);
+  const [lightboxItem, setLightboxItem] = useState<AdminMediaItem | null>(null);
+  const [activeVideo, setActiveVideo] = useState<AdminMediaItem | null>(null);
 
-  const filteredMedia =
+  const publishedImages = state.gallery.filter(
+    (item) => item.published && item.mediaType === 'image',
+  );
+  const publishedVideos = state.gallery.filter(
+    (item) => item.published && item.mediaType === 'video',
+  );
+
+  const filteredImages =
     selectedCategory === 'All'
-      ? GALLERY_MEDIA_ITEMS
-      : GALLERY_MEDIA_ITEMS.filter((item) => item.category === selectedCategory);
+      ? publishedImages
+      : publishedImages.filter((item) => item.category === selectedCategory);
 
   const filteredVideos =
     selectedCategory === 'All'
-      ? GALLERY_VIDEOS_DATA
-      : GALLERY_VIDEOS_DATA.filter((vid) => vid.category === selectedCategory);
+      ? publishedVideos
+      : publishedVideos.filter((item) => item.category === selectedCategory);
 
   useScrollLock(Boolean(lightboxItem) || Boolean(activeVideo));
 
@@ -41,37 +45,37 @@ export function GalleryPage() {
       if (event.key === 'Escape') {
         setLightboxItem(null);
         setActiveVideo(null);
-      } else if (lightboxItem && filteredMedia.length > 1) {
-        const currentIndex = filteredMedia.findIndex((m) => m.id === lightboxItem.id);
+      } else if (lightboxItem && filteredImages.length > 1) {
+        const currentIndex = filteredImages.findIndex((m) => m.id === lightboxItem.id);
         if (currentIndex === -1) return;
         if (event.key === 'ArrowRight') {
-          setLightboxItem(filteredMedia[(currentIndex + 1) % filteredMedia.length]);
+          setLightboxItem(filteredImages[(currentIndex + 1) % filteredImages.length]);
         } else if (event.key === 'ArrowLeft') {
           setLightboxItem(
-            filteredMedia[(currentIndex - 1 + filteredMedia.length) % filteredMedia.length],
+            filteredImages[(currentIndex - 1 + filteredImages.length) % filteredImages.length],
           );
         }
       }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxItem, activeVideo, filteredMedia]);
+  }, [lightboxItem, activeVideo, filteredImages]);
 
   function stepLightbox(direction: 1 | -1) {
-    if (!lightboxItem || filteredMedia.length === 0) return;
-    const currentIndex = filteredMedia.findIndex((m) => m.id === lightboxItem.id);
+    if (!lightboxItem || filteredImages.length === 0) return;
+    const currentIndex = filteredImages.findIndex((m) => m.id === lightboxItem.id);
     if (currentIndex === -1) return;
-    const nextIndex = (currentIndex + direction + filteredMedia.length) % filteredMedia.length;
-    setLightboxItem(filteredMedia[nextIndex]);
+    const nextIndex = (currentIndex + direction + filteredImages.length) % filteredImages.length;
+    setLightboxItem(filteredImages[nextIndex]);
   }
 
   return (
     <div className="space-y-14 sm:space-y-16">
       <PageHero
         breadcrumbs={[{ label: 'Home', to: '/' }, { label: 'Gallery' }]}
-        kicker="Media & Academy Activities"
+        kicker="Media & Training Ground"
         title="Photo & Video Gallery"
-        description="Illustrative cricket training visuals alongside clearly labelled slots reserved for verified SK Tape Ball Academy match photography, events, and video highlights."
+        description="Training drills, bowling sessions, catching stations, and pitch environments from SK Tape Ball Academy."
         actions={
           <>
             <Button to="/book-trial" variant="primary" size="lg">
@@ -88,9 +92,10 @@ export function GalleryPage() {
       <section aria-labelledby="image-gallery-heading" className="space-y-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
+            id="image-gallery-heading"
             kicker="Photo Archive"
-            title="Training, Matches, Events & Facilities"
-            description="Filter media by category or open any card in the interactive lightbox viewer."
+            title="Training, Drills & Facilities"
+            description="Filter media by category or open any photograph in the interactive lightbox viewer."
           />
 
           <div
@@ -118,23 +123,25 @@ export function GalleryPage() {
           </div>
         </div>
 
-        {filteredMedia.length === 0 ? (
-          <Card padding="lg" className="text-center space-y-3">
+        {filteredImages.length === 0 ? (
+          <Card tone="muted" padding="lg" className="text-center space-y-3">
             <p className="text-base font-bold text-[#071A36]">
-              No Photos Available in This Category
+              No Published Photos in {selectedCategory}
             </p>
             <p className="text-sm text-[#64748B]">
-              Official academy photography for this category has not been uploaded yet.
+              Try selecting another category to browse available academy visuals.
             </p>
-            <div className="pt-1">
-              <Button variant="outline" size="sm" onClick={() => setSelectedCategory('All')}>
-                View All Media
-              </Button>
-            </div>
+            {selectedCategory !== 'All' && (
+              <div className="pt-1">
+                <Button variant="outline" size="sm" onClick={() => setSelectedCategory('All')}>
+                  View All Media
+                </Button>
+              </div>
+            )}
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {filteredMedia.map((item) => (
+            {filteredImages.map((item) => (
               <button
                 key={item.id}
                 type="button"
@@ -143,11 +150,11 @@ export function GalleryPage() {
               >
                 <div className="relative aspect-[4/3] w-full overflow-hidden">
                   <MediaImage
-                    src={item.imageSrc}
-                    alt={item.imageAlt}
+                    src={item.assetPath}
+                    alt={item.title}
+                    transform={item.imageTransform}
                     fallbackLabel={item.title}
                     className="h-full w-full"
-                    imgClassName="transition-transform duration-300 group-hover:scale-[1.03]"
                   />
                   <span
                     aria-hidden="true"
@@ -158,10 +165,12 @@ export function GalleryPage() {
                 </div>
                 <div className="p-4 space-y-1">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-[#C8202B]">
-                    {item.isPlaceholderSlot ? `${item.category} · Reserved Slot` : item.category}
+                    {item.category}
                   </p>
                   <h3 className="text-sm font-bold text-[#071A36]">{item.title}</h3>
-                  <p className="text-xs leading-relaxed text-[#64748B]">{item.caption}</p>
+                  {item.caption && (
+                    <p className="text-xs leading-relaxed text-[#64748B]">{item.caption}</p>
+                  )}
                 </div>
               </button>
             ))}
@@ -169,24 +178,15 @@ export function GalleryPage() {
         )}
       </section>
 
-      {/* Video Gallery Section */}
-      <section aria-labelledby="video-gallery-heading" className="space-y-8">
-        <SectionHeader
-          kicker="Video Highlights (Placeholders)"
-          title="Video Gallery & Drill Clips"
-          description="Preview slots prepared for verified training reels, bowling mechanics clips, and match highlights."
-        />
+      {/* Video Highlights (Only shown when published video items exist) */}
+      {filteredVideos.length > 0 && (
+        <section aria-labelledby="video-gallery-heading" className="space-y-8">
+          <SectionHeader
+            id="video-gallery-heading"
+            kicker="Video Highlights"
+            title="Published Drill & Match Clips"
+          />
 
-        {filteredVideos.length === 0 ? (
-          <Card tone="muted" padding="lg" className="text-center space-y-2">
-            <p className="text-sm font-semibold text-[#071A36]">
-              No video reels queued for the selected category ({selectedCategory}).
-            </p>
-            <p className="text-xs text-[#64748B]">
-              Switch to &ldquo;All&rdquo; or &ldquo;Training&rdquo; / &ldquo;Matches&rdquo; to preview video placeholder slots.
-            </p>
-          </Card>
-        ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {filteredVideos.map((video) => (
               <Card key={video.id} interactive padding="sm" className="overflow-hidden flex flex-col">
@@ -195,14 +195,7 @@ export function GalleryPage() {
                   onClick={() => setActiveVideo(video)}
                   className="group relative aspect-[16/10] w-full overflow-hidden rounded-[12px] bg-[#050D1B] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A52E]"
                 >
-                  <MediaImage
-                    src={video.posterSrc}
-                    alt={video.titlePlaceholder}
-                    fallbackLabel={video.titlePlaceholder}
-                    className="h-full w-full"
-                    imgClassName="opacity-75 transition-transform duration-300 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#050D1B]/35">
+                  <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#071A36] to-[#050D1B]">
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#D9A52E] text-[#050D1B] shadow-lg transition-transform duration-150 group-hover:scale-105">
                       <Play className="h-5 w-5 fill-current ml-0.5" aria-hidden="true" />
                     </span>
@@ -210,20 +203,17 @@ export function GalleryPage() {
                 </button>
 
                 <div className="p-4 space-y-2">
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-[#C8202B]">
-                    <span>{video.category}</span>
-                    <span className="text-[#64748B]">{video.durationPlaceholder}</span>
-                  </div>
-                  <h3 className="text-base font-bold text-[#071A36]">{video.titlePlaceholder}</h3>
-                  <p className="text-xs leading-relaxed text-[#64748B]">
-                    {video.descriptionPlaceholder}
-                  </p>
+                  <p className="text-[11px] font-semibold text-[#C8202B]">{video.category}</p>
+                  <h3 className="text-base font-bold text-[#071A36]">{video.title}</h3>
+                  {video.caption && (
+                    <p className="text-xs leading-relaxed text-[#64748B]">{video.caption}</p>
+                  )}
                 </div>
               </Card>
             ))}
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
       {/* Image Lightbox Modal */}
       {lightboxItem && (
@@ -241,9 +231,7 @@ export function GalleryPage() {
             <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B]">
-                  {lightboxItem.isPlaceholderSlot
-                    ? `${lightboxItem.category} · Reserved Slot`
-                    : lightboxItem.category}
+                  {lightboxItem.category}
                 </p>
                 <h3 className="text-lg font-bold text-[#071A36]">{lightboxItem.title}</h3>
               </div>
@@ -259,8 +247,9 @@ export function GalleryPage() {
 
             <div className="relative aspect-[16/10] w-full bg-[#071A36]">
               <MediaImage
-                src={lightboxItem.imageSrc}
-                alt={lightboxItem.imageAlt}
+                src={lightboxItem.assetPath}
+                alt={lightboxItem.title}
+                transform={lightboxItem.imageTransform}
                 fallbackLabel={lightboxItem.title}
                 className="h-full w-full"
               />
@@ -268,7 +257,7 @@ export function GalleryPage() {
 
             <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-[#64748B]">{lightboxItem.caption}</p>
-              {filteredMedia.length > 1 && (
+              {filteredImages.length > 1 && (
                 <div className="flex items-center gap-2 shrink-0">
                   <Button variant="outline" size="sm" onClick={() => stepLightbox(-1)}>
                     <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -285,12 +274,12 @@ export function GalleryPage() {
         </div>
       )}
 
-      {/* Video Preview Modal */}
+      {/* Video Modal */}
       {activeVideo && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={activeVideo.titlePlaceholder}
+          aria-label={activeVideo.title}
           className="fixed inset-0 z-50 flex items-center justify-center bg-[#050D1B]/85 p-4 backdrop-blur-xs"
           onClick={() => setActiveVideo(null)}
         >
@@ -301,36 +290,34 @@ export function GalleryPage() {
             <div className="flex items-center justify-between border-b border-[#E2E8F0] px-5 py-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#C8202B]">
-                  {activeVideo.category} · Video Preview Placeholder
+                  {activeVideo.category}
                 </p>
-                <h3 className="text-lg font-bold text-[#071A36]">
-                  {activeVideo.titlePlaceholder}
-                </h3>
+                <h3 className="text-lg font-bold text-[#071A36]">{activeVideo.title}</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setActiveVideo(null)}
-                aria-label="Close video preview"
+                aria-label="Close video modal"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[#E2E8F0] text-[#071A36] hover:bg-[#F5F7FA] cursor-pointer"
               >
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="relative aspect-[16/9] w-full bg-[#050D1B] flex flex-col items-center justify-center gap-3 p-6 text-center text-white">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[#D9A52E]/50 bg-[#071A36] text-[#D9A52E]">
-                <Film className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <p className="text-sm font-semibold text-white">
-                Video Player Interface Ready (Placeholder)
-              </p>
-              <p className="max-w-md text-xs leading-relaxed text-white/75">
-                Official video streams or uploaded academy clips will play here once connected. No fake video stream is simulated.
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between px-5 py-4">
-              <p className="text-sm text-[#64748B]">{activeVideo.descriptionPlaceholder}</p>
+            <div className="p-6 space-y-4">
+              {activeVideo.caption && (
+                <p className="text-sm text-[#64748B]">{activeVideo.caption}</p>
+              )}
+              {sanitizeExternalUrl(activeVideo.assetPath) && (
+                <a
+                  href={sanitizeExternalUrl(activeVideo.assetPath) ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-[10px] bg-[#071A36] px-4 py-2.5 text-xs font-semibold text-white hover:bg-[#0b254b]"
+                >
+                  Open Video Link
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -338,7 +325,7 @@ export function GalleryPage() {
 
       <CtaBanner
         title="See Our Training Sessions in Person"
-        description="Book a free trial assessment or view our training facilities."
+        description="Book a free trial assessment or view our training environment in Sabzazar, Lahore."
         primaryLabel="Book Free Trial"
         primaryTo="/book-trial"
         secondaryLabel="View Facilities"

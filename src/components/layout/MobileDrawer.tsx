@@ -2,12 +2,8 @@ import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { X } from 'lucide-react';
-import {
-  ADMIN_NAV_ITEMS,
-  PRIMARY_NAV_ITEMS,
-  SECONDARY_NAV_ITEMS,
-} from '@/src/data/navigation';
-import { ACADEMY_BRAND } from '@/src/data/brand';
+import { PRIMARY_NAV_ITEMS, SECONDARY_NAV_ITEMS } from '@/src/data/navigation';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { Button } from '@/src/components/ui/Button';
 import { OfficialLogo } from '@/src/components/ui/OfficialLogo';
 import { WhatsAppCta } from '@/src/components/ui/WhatsAppCta';
@@ -22,6 +18,7 @@ export interface MobileDrawerProps {
 
 export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const prefersReduced = useReducedMotion();
+  const { state } = useAcademyState();
   useScrollLock(open);
 
   useEffect(() => {
@@ -40,7 +37,12 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 xl:hidden" role="dialog" aria-modal="true" aria-label="Mobile Navigation">
+        <div
+          className="fixed inset-0 z-50 xl:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile Navigation"
+        >
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -128,7 +130,7 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 <Button to="/register" variant="primary" fullWidth onClick={onClose}>
                   Register Now
                 </Button>
-                <WhatsAppCta variant="banner" />
+                <WhatsAppCta variant="banner" hideIfUnconfigured />
               </div>
 
               <div className="border-t border-[#E2E8F0] pt-5 flex flex-wrap items-center justify-between gap-3 text-xs text-[#64748B]">
@@ -142,19 +144,12 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 >
                   Track Application
                 </NavLink>
-                <NavLink
-                  to={ADMIN_NAV_ITEMS[0].path}
-                  onClick={onClose}
-                  className="font-medium hover:text-[#071A36]"
-                >
-                  Admin Panel
-                </NavLink>
               </div>
             </div>
 
             <div className="border-t border-[#E2E8F0] bg-[#F5F7FA] px-5 py-3.5 text-center">
               <p className="text-[11px] font-semibold tracking-wider text-[#071A36]">
-                {ACADEMY_BRAND.tagline}
+                {state.siteSettings.tagline}
               </p>
             </div>
           </motion.aside>

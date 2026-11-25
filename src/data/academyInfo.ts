@@ -1,94 +1,113 @@
+import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
+import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
+
 export const ABOUT_PAGE_CONTENT = {
   kicker: 'About SK Tape Ball Academy',
   title: 'Structured Tape Ball Cricket Coaching With Purpose',
   heroDescription:
-    'Built around the academy principle — BUILD YOUR GAME. MASTER YOUR SKILLS. — our platform connects aspiring and competitive tape ball cricketers with disciplined technical coaching.',
+    'Guided by our motto — WHERE DREAMS MEET OPPORTUNITIES. — SK Tape Ball Academy in Sabzazar, Lahore provides disciplined training across athletic fitness, tape ball batting, bowling, and fielding.',
   overview: [
-    'SK Tape Ball Academy is designed to bring structure, consistency, and match-ready discipline to tape ball cricket. While tape ball cricket is widely played across streets and tournaments, players rarely receive systematic instruction on balance, bat swing, pace variations, and situational awareness.',
-    'Verified founding dates, ground address details, and leadership profiles will be added here once finalized by the academy administration.',
+    'Founded by Sami Khan and launched on 18 August 2024 in Faisalabad before establishing operations in Sabzazar, Lahore, SK Tape Ball Academy brings organized coaching methodology to competitive tape ball cricket.',
+    'Rather than unstructured net hits, every player trains across four dedicated coaching pillars: athletic conditioning (~200 structured exercises), individual batting strengths and weaknesses assessment with 20–25 drill methods per shot, pace and line-and-length bowling mastery, and comprehensive catching and ground fielding routines.',
   ],
   mission: {
     title: 'Our Mission',
     description:
-      'To provide organized, high-standard tape ball cricket coaching that develops sound technique, athletic fitness, and competitive composure for players at every stage.',
+      'To deliver structured, disciplined tape ball cricket coaching that elevates athletic fitness, sharpens repeatable shot and bowling mechanics, and prepares players for competitive league and single-wicket match play.',
   },
   vision: {
     title: 'Our Vision',
     description:
-      'To establish a trusted development pathway where passionate tape ball cricketers train in a disciplined environment and elevate their match performance.',
+      'To build a trusted training pathway in Lahore where passionate tape ball cricketers turn raw talent into match-winning skill, leadership, and sportsmanship.',
   },
   philosophy: [
     {
       code: '01',
-      title: 'Technique Before Tempo',
+      title: 'Athletic Fitness & Conditioning',
       description:
-        'Players master grip, stance, footwork, and release alignment before accelerating into high-intensity match simulations.',
+        'Around 200 structured exercises focused on stamina, explosive power, sprint speed, mobility, flexibility, and elasticity.',
     },
     {
       code: '02',
-      title: 'Situation-Based Practice',
+      title: 'Diagnostic Batting Methods',
       description:
-        'Net drills replicate real tape ball match phases: powerplay aggression, middle-over strike rotation, and death-over execution.',
+        'Each batter’s strengths and weaknesses are assessed first, followed by 20–25 structured practice methods per cricket shot.',
     },
     {
       code: '03',
-      title: 'Measurable Habits',
+      title: 'Speed, Accuracy & Line Discipline',
       description:
-        'Consistent attendance, purposeful warm-ups, and focused repetition replace aimless net sessions.',
+        'Bowling modules focus systematically on generating speed, hitting target lengths, and executing deceptive pace variations.',
     },
     {
       code: '04',
-      title: 'Athlete Conditioning',
+      title: 'Complete Fielding & Game Readiness',
       description:
-        'Speed, agility, throwing mechanics, and core stability are built directly into weekly training blocks.',
+        'Structured short catches, fast reaction catches, long/high boundary catches, and clean ground pickups transfer directly to matches.',
     },
   ],
   values: [
     {
-      title: 'Discipline',
-      description: 'Punctuality, attentive listening, and structured preparation every session.',
-    },
-    {
-      title: 'Skill Mastery',
-      description: 'Relentless focus on repeatable fundamentals under match pressure.',
-    },
-    {
-      title: 'Fitness',
-      description: 'Sustained stamina, sharp foot speed, and injury-preventive conditioning.',
-    },
-    {
-      title: 'Teamwork',
-      description: 'Clear communication, backing teammates, and collective match awareness.',
+      title: 'Passion',
+      description: 'Bringing energy, commitment, and genuine love for tape ball cricket to every session.',
     },
     {
       title: 'Sportsmanship',
-      description: 'Respect for coaches, opponents, match officials, and the spirit of cricket.',
+      description: 'Respecting teammates, opponents, officials, and the spirit of fair competition.',
+    },
+    {
+      title: 'Leadership',
+      description: 'Taking initiative, communicating clearly on the pitch, and setting strong examples.',
+    },
+    {
+      title: 'Integrity',
+      description: 'Honesty in effort, accountability in feedback, and principled conduct on and off the field.',
+    },
+    {
+      title: 'Teamwork',
+      description: 'Backing partners, sharing responsibilities, and executing collective match plans.',
+    },
+    {
+      title: 'Discipline',
+      description: 'Punctuality, attentive preparation, and consistent execution of coaching routines.',
+    },
+    {
+      title: 'Excellence',
+      description: 'Striving for clean mechanics, high standards, and continuous technical refinement.',
+    },
+    {
+      title: 'Resilience',
+      description: 'Staying composed under scoreboard pressure and bouncing back stronger from setbacks.',
+    },
+    {
+      title: 'Continuous Improvement',
+      description: 'Reviewing strengths and weaknesses regularly to achieve measurable growth every week.',
     },
   ],
   developmentApproach: [
     {
       step: 'Stage 01',
-      title: 'Baseline Assessment',
+      title: 'Player Diagnostic Assessment',
       description:
-        'Initial trial evaluation covering stance, bowling action alignment, catching reflexes, and movement baseline.',
+        'Trial evaluation identifying natural strengths, technical weaknesses, movement baseline, and athletic fitness level.',
     },
     {
       step: 'Stage 02',
-      title: 'Technical Foundation',
+      title: 'Structured Skill Methods',
       description:
-        'Targeted drill blocks to strengthen core batting, bowling, or keeping mechanics.',
+        'Targeted drill blocks including 20–25 structured practice progressions per shot, pace/line bowling work, and catching circuits.',
     },
     {
       step: 'Stage 03',
-      title: 'Tactical Execution',
+      title: 'Athletic Conditioning Integration',
       description:
-        'Target-based net challenges simulating chase pressure, defending totals, and field placements.',
+        'Tailored selection from ~200 fitness exercises developing speed, stamina, power, mobility, flexibility, and elasticity.',
     },
     {
       step: 'Stage 04',
-      title: 'Match Readiness',
+      title: 'League & Single-Wicket Play',
       description:
-        'Practice games, feedback reviews, and continuous progression across skill tracks.',
+        'Testing practiced skills inside academy-organized tape ball leagues and single-wicket competitive formats.',
     },
   ],
 } as const;
@@ -113,520 +132,428 @@ export interface TrainingProgramDetail {
 
 export const TRAINING_PROGRAMS_DATA: TrainingProgramDetail[] = [
   {
-    slug: 'batting',
+    slug: 'fitness-agility',
     code: '01',
-    title: 'Batting',
+    title: 'Athletic Fitness & Conditioning',
     category: 'Skill Track',
-    focusLabel: 'Timing · Power Hitting · Strike Rotation',
+    focusLabel: 'Stamina · Power · Speed · Mobility · Flexibility · Elasticity',
     shortDescription:
-      'Stance balance, bat-swing path, clearing the front leg for lofted shots, and rotating strike against pace and spin.',
+      'Around 200 structured athletic exercises building repeat-sprint stamina, explosive power, mobility, flexibility, and joint elasticity.',
     introduction:
-      'The Batting program focuses on building a balanced base and clean bat path suited for the bounce and pace of tape ball cricket. Players learn how to blend orthodox shot-making with controlled boundary hitting.',
+      'Physical readiness underpins every fast bowling spell, diving boundary save, and late-innings surge. Our conditioning module draws from ~200 structured exercises tailored specifically to tape ball cricket movement demands.',
     skillsCovered: [
-      'Balanced stance, trigger movement, and head stillness',
-      'Straight-bat drives, pulls, cuts, and lofted leg-side hits',
-      'Reading slower balls, cutters, and high-pace yorkers',
-      'Gap placement and quick single/double strike rotation',
+      'Aerobic and anaerobic stamina for high-tempo tournament days',
+      'Explosive lower-body and rotational core power for hitting and bowling',
+      'Sprint acceleration, agility footwork, and change-of-direction speed',
+      'Shoulder, hip, hamstring mobility, flexibility, and joint elasticity',
     ],
     trainingObjectives: [
-      'Develop a repeatable bat swing without losing balance',
-      'Improve boundary options across both V-zones and square areas',
-      'Build composure when chasing high required run rates',
+      'Build resilient joints and reduce common overuse strains',
+      'Sustain explosive pace and sharp reflexes late into matches',
+      'Improve running speed between wickets and outfield coverage',
     ],
     suitablePlayers: [
-      'Batsmen seeking cleaner contact and stronger power hitting',
-      'All-rounders aiming to contribute reliably in middle and death overs',
-      'New academy entrants refining their core batting posture',
+      'Every academy athlete building an athletic cricket foundation',
+      'Fast bowlers increasing run-up intensity and workload durability',
+      'Power hitters developing stronger balance and rotational force',
     ],
     trainingApproach: [
-      'Underarm and sidearm feed drills isolating specific shot zones',
-      'Target-cone placement challenges inside net lanes',
-      'High-tempo death-over scenario hitting against varied pace',
+      'Progressive warm-ups targeting elasticity and joint range of motion',
+      'Sprint intervals, agility ladders, and multi-directional reaction drills',
+      'Structured strength and conditioning circuits calibrated to player level',
     ],
-    relatedSlugs: ['fast-bowling', 'fitness-agility', 'advanced'],
+    relatedSlugs: ['batting', 'fast-bowling', 'fielding'],
     scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
+      'Integrated across weekly sessions in Sabzazar, Lahore. Reach out via Trial Booking or Registration for batch onboarding details.',
+  },
+  {
+    slug: 'batting',
+    code: '02',
+    title: 'Tape Ball Batting',
+    category: 'Skill Track',
+    focusLabel: 'Strength Assessment · Shot Methods · Match Hitting',
+    shortDescription:
+      'Begins with individual strengths and weaknesses assessment, followed by 20–25 structured practice methods per cricket shot.',
+    introduction:
+      'Tape ball batting demands clean contact, sharp balance, and versatile scoring areas. We assess every batsman’s natural strengths and technical weaknesses first, then train each shot systematically through 20–25 progressive drill methods.',
+    skillsCovered: [
+      'Diagnostic review of grip, stance, trigger movement, and bat path',
+      '20–25 structured practice methods per shot for repeatable execution',
+      'Orthodox drives, pulls, cuts, and clean boundary power hitting',
+      'Reading slower deliveries, cutters, and high-pace tape ball yorkers',
+    ],
+    trainingObjectives: [
+      'Address individual technical weaknesses systematically',
+      'Develop balanced shot selection across powerplay, middle, and death overs',
+      'Build repeatable muscle memory under live bowling pressure',
+    ],
+    suitablePlayers: [
+      'Batsmen refining shot range, timing, and boundary power',
+      'All-rounders looking for reliable scoring consistency',
+      'New academy players building sound foundational posture',
+    ],
+    trainingApproach: [
+      'Baseline batting diagnostic to map strengths and correction priorities',
+      'Step-by-step shot progression drills using structured feed variations',
+      'Target-zone net sessions and single-wicket pressure scenarios',
+    ],
+    relatedSlugs: ['fast-bowling', 'fitness-agility', 'personal-coaching'],
+    scheduleAndFeeNote:
+      'Assessment begins during your trial session in Sabzazar, Lahore. Apply online to schedule your evaluation.',
   },
   {
     slug: 'fast-bowling',
-    code: '02',
-    title: 'Fast Bowling',
-    category: 'Skill Track',
-    focusLabel: 'Run-Up · Pace · Death Overs',
-    shortDescription:
-      'Rhythmic approach mechanics, seam release with the taped ball, hard yorker accuracy, and disguised variations.',
-    introduction:
-      'Tape ball fast bowling rewards rhythm, wrist snap, and pinpoint length control. This program breaks down the run-up, gather, and release to help bowlers generate pace safely and execute under pressure.',
-    skillsCovered: [
-      'Measured run-up rhythm and balanced gather at the crease',
-      'Clean wrist position for pace, swing, and cutters with a taped ball',
-      'Blockhole yorker precision and back-of-a-length control',
-      'Disguising slower deliveries without telegraphing arm speed',
-    ],
-    trainingObjectives: [
-      'Increase bowling consistency into target zones',
-      'Build a reliable death-over execution toolkit',
-      'Promote safe biomechanics to reduce lower-back and shoulder strain',
-    ],
-    suitablePlayers: [
-      'Pace bowlers looking to sharpen yorker and cutter accuracy',
-      'Young bowlers building a repeatable, injury-safe action',
-      'Match bowlers preparing for high-scoring tournament formats',
-    ],
-    trainingApproach: [
-      'Crease alignment and front-arm pull mechanics drills',
-      'Spot-bowling grids with target cones at yorker and good lengths',
-      'Simulated over-by-over pressure spells with field settings',
-    ],
-    relatedSlugs: ['batting', 'fitness-agility', 'advanced'],
-    scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
-  },
-  {
-    slug: 'spin-bowling',
     code: '03',
-    title: 'Spin Bowling',
+    title: 'Tape Ball Bowling',
     category: 'Skill Track',
-    focusLabel: 'Flight · Grip · Tactical Control',
+    focusLabel: 'Speed · Accuracy · Line & Length · Variations',
     shortDescription:
-      'Developing revolutions, drift, length discipline, and clever pace adjustments tailored for tape ball trajectories.',
+      'Structured pace and precision coaching focused on bowling speed, target accuracy, line and length discipline, and variations.',
     introduction:
-      'Spin bowlers play a decisive tactical role in tape ball cricket by disrupting hitter rhythm. This track emphasizes grip control, subtle flight variation, and smart lines against aggressive batsmen.',
+      'Winning tape ball matches depends on disciplined lines, pace control, and deceptive change-ups. This program refines run-up rhythm, wrist release, and target accuracy so bowlers execute plans confidently under pressure.',
     skillsCovered: [
-      'Consistent finger/wrist spin grip with taped tennis balls',
-      'Varying pace through the air while keeping release steady',
-      'Bowl-to-field discipline and attacking stump-to-stump lines',
-      'Subtle arm-ball, slider, and wide-yorker variations',
+      'Run-up alignment and balanced gather to unlock natural bowling speed',
+      'Pinpoint accuracy at yorker, hard-length, and wide-channel targets',
+      'Disciplined line and length consistency against aggressive hitters',
+      'Deceptive slower balls, cutters, and bounce variations with a taped ball',
     ],
     trainingObjectives: [
-      'Control length and line consistently against attacking batsmen',
-      'Read batsman footwork early and adjust delivery pace',
-      'Develop confidence bowling in powerplay and middle overs',
+      'Improve control over speed, accuracy, line, and length',
+      'Build a reliable tactical toolkit for opening and death overs',
+      'Maintain biomechanically clean mechanics to protect shoulder and back health',
     ],
     suitablePlayers: [
-      'Finger spinners and wrist spinners seeking tighter control',
-      'All-rounders adding dependable slow-bowling overs to their game',
-      'Developing cricketers learning tactical field-to-line setups',
+      'Fast and medium-pace tape ball bowlers aiming for higher accuracy',
+      'Young bowlers developing clean, repeatable release mechanics',
+      'Match bowlers preparing for competitive leagues and single-wicket events',
     ],
     trainingApproach: [
-      'Pivot and follow-through balance drills for spin energy',
-      'Target-zone bowling against set left- and right-handed setups',
-      'Match-situation drills restricting boundary scoring options',
+      'Alignment and wrist-snap drills for clean seam presentation',
+      'Target-cone grid bowling measuring length consistency',
+      'Simulated over-by-over tactical spells with set field rings',
     ],
-    relatedSlugs: ['wicket-keeping', 'fielding', 'beginner'],
+    relatedSlugs: ['batting', 'spin-bowling', 'fitness-agility'],
     scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
+      'Available across weekday and evening practice tracks in Sabzazar, Lahore.',
   },
   {
     slug: 'fielding',
     code: '04',
-    title: 'Fielding',
+    title: 'Fielding & Catching',
     category: 'Skill Track',
-    focusLabel: 'Reflexes · Throwing · Boundary Saves',
+    focusLabel: 'Short Catches · Fast Catches · Long Catches · Ground Fielding',
     shortDescription:
-      'Explosive first-step reactions, high-catch tracking under lights, clean pickups, and flat accurate throws.',
+      'Dedicated practice covering short close-in catches, fast reaction catches, high boundary catches, and clean ground pickups.',
     introduction:
-      'In fast-paced tape ball formats, saved boundaries and clean run-outs frequently decide matches. The Fielding track trains agility, catching posture, and throwing mechanics across ring and boundary positions.',
+      'Sharp fielding turns tight tape ball fixtures. Our fielding track isolates all four critical match scenarios—short catches, fast reaction catches, long/high catches, and ground fielding—paired with accurate throwing.',
     skillsCovered: [
-      'Ready-position split-step and explosive first-step reaction',
-      'Low ground-fielding pickups and one-handed stops',
-      'High-ball judgment and safe cup catching techniques',
-      'Crow-hop balance and flat, accurate throws at the stumps',
+      'Short catches: low eye-line balance and soft hands inside the inner ring',
+      'Fast catches: explosive reflex tracking against hard-struck shots',
+      'Long & high catches: judging trajectory under floodlights and open sky',
+      'Ground fielding: clean one-handed and two-handed pickups with flat throws',
     ],
     trainingObjectives: [
-      'Improve catching consistency across close-in and outfield positions',
-      'Reduce fumbles and release time during run-out opportunities',
-      'Build safe shoulder strength for sustained throwing accuracy',
+      'Increase catching reliability across all infield and boundary positions',
+      'Speed up pickup-to-release time for sharper run-out execution',
+      'Build confident movement and safe throwing biomechanics',
     ],
     suitablePlayers: [
-      'All academy players across batting and bowling disciplines',
-      'Players preparing for competitive squad selection standards',
-      'Athletes looking to improve speed and ground coverage',
+      'All academy players across batting and bowling roles',
+      'Athletes preparing for competitive squad standards',
+      'Players developing quicker reflexes and outfield agility',
     ],
     trainingApproach: [
-      'Rapid reaction catching circuits and reflex ball drills',
-      'Outfield tracking and relay-throw coordination routines',
-      'Conditioning-linked fielding drills under fatigue',
+      'Dedicated stations for short, fast, and high-trajectory catching',
+      'Pressure ground-fielding relays with target stumps',
+      'Conditioning-integrated fielding circuits at match speed',
     ],
     relatedSlugs: ['wicket-keeping', 'fitness-agility', 'beginner'],
     scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
+      'Included as a core athletic requirement across academy training cohorts.',
+  },
+  {
+    slug: 'spin-bowling',
+    code: '05',
+    title: 'Spin Bowling',
+    category: 'Skill Track',
+    focusLabel: 'Grip · Flight · Line & Length Control',
+    shortDescription:
+      'Tactical finger and wrist spin instruction focused on turn, flight variation, and disciplined stump-to-stump control.',
+    introduction:
+      'Spin bowlers disrupt big-hitting momentum in tape ball leagues through subtle pace changes and smart field placement. Players learn consistent release points and calm tactical bowling.',
+    skillsCovered: [
+      'Finger and wrist spin grip mechanics suited to taped balls',
+      'Varying flight and pace while maintaining consistent release rhythm',
+      'Attacking stump-to-stump lines and tactical wide-channel plans',
+      'Arm-ball, slider, and defensive length variations',
+    ],
+    trainingObjectives: [
+      'Control length consistently against aggressive batting lineups',
+      'Read batsman footwork early and adjust delivery angles',
+      'Build tactical confidence through middle-over pressure spells',
+    ],
+    suitablePlayers: [
+      'Finger spinners and wrist spinners seeking tighter accuracy',
+      'All-rounders adding reliable slow-bowling overs to their skill set',
+      'Developing players learning field-setting strategy',
+    ],
+    trainingApproach: [
+      'Pivot and follow-through balance drills for spin energy',
+      'Target-zone bowling against set left- and right-handed setups',
+      'Match-situation drills restricting boundary scoring areas',
+    ],
+    relatedSlugs: ['fast-bowling', 'wicket-keeping', 'fielding'],
+    scheduleAndFeeNote:
+      'Available across core skill training batches in Sabzazar, Lahore.',
   },
   {
     slug: 'wicket-keeping',
-    code: '05',
+    code: '06',
     title: 'Wicket Keeping',
     category: 'Skill Track',
     focusLabel: 'Footwork · Glovework · Stumpings',
     shortDescription:
-      'Low crouch posture, soft hands against brisk tape ball bounce, lateral movement, and quick-fire stumpings.',
+      'Low crouch posture, soft hands against brisk tape ball bounce, lateral footwork, and rapid stumping reflexes.',
     introduction:
-      'Tape ball bounce can be sharp and unpredictable. Our Wicket Keeping module develops balanced crouch posture, late eye tracking, clean lateral footwork, and rapid glove-to-stump transfers.',
+      'Sharp wicket keeping requires balance, late ball tracking, and quick glove transfers. This track prepares keepers to stand up to spinners and react cleanly against brisk pace bounce.',
     skillsCovered: [
-      'Comfortable crouch alignment and rise timing with the ball',
-      'Soft hands when collecting brisk pace and uneven bounce',
-      'Standing-up glovework for spinners and medium pacers',
-      'Clean takes down the leg side and quick stumping transfers',
+      'Balanced crouch posture and controlled rise timing',
+      'Soft hands when gathering sharp tape ball deflection and bounce',
+      'Standing-up glovework for spinners and medium-pace deliveries',
+      'Quick lateral footwork and clean stumping/run-out transfers',
     ],
     trainingObjectives: [
-      'Minimize byes and missed edge opportunities',
-      'Strengthen footwork speed across both off and leg sides',
-      'Develop vocal leadership and angle awareness behind the stumps',
+      'Reduce missed takes and conceded byes behind the stumps',
+      'Improve foot speed across both off and leg sides',
+      'Develop vocal leadership and field-angle awareness',
     ],
     suitablePlayers: [
-      'Dedicated wicket keepers refining glovework and footwork',
-      'Multi-skilled batsmen adding wicket-keeping capability',
-      'Junior players learning foundational keeping posture',
+      'Specialist wicket keepers refining reaction and footwork',
+      'Top-order batsmen developing dual-role keeping value',
+      'Junior players learning clean glovework habits',
     ],
     trainingApproach: [
-      'Close-range reaction and deflection glove drills',
-      'Lateral cone-step routines paired with ball collection',
+      'Short-distance reaction and deflection glove drills',
+      'Lateral agility step routines paired with ball collection',
       'Live net keeping behind academy pace and spin bowlers',
     ],
     relatedSlugs: ['fielding', 'spin-bowling', 'batting'],
     scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
-  },
-  {
-    slug: 'fitness-agility',
-    code: '06',
-    title: 'Fitness & Agility',
-    category: 'Skill Track',
-    focusLabel: 'Speed · Stamina · Injury Prevention',
-    shortDescription:
-      'Cricket-specific sprint mechanics, ladder footwork, core stability, and shoulder conditioning for sustained output.',
-    introduction:
-      'Consistent cricket performance depends on athletic conditioning. This program builds sprint acceleration between the wickets, lateral change-of-direction speed, core stability, and joint resilience.',
-    skillsCovered: [
-      'Acceleration mechanics and turning speed between wickets',
-      'Agility ladder footwork and multi-directional balance',
-      'Core stability for batting power and bowling posture',
-      'Rotator-cuff, hamstring, and ankle mobility routines',
-    ],
-    trainingObjectives: [
-      'Improve repeat-sprint stamina across full match durations',
-      'Enhance footwork agility for batting, keeping, and fielding',
-      'Support long-term player durability with structured warm-ups',
-    ],
-    suitablePlayers: [
-      'All cricket players wanting sharper movement and stamina',
-      'Fast bowlers building bowling-load resilience',
-      'Youth athletes developing coordination and body control',
-    ],
-    trainingApproach: [
-      'Speed-ladder, cone-shuttle, and reaction-sprint blocks',
-      'Bodyweight strength and core stability circuits',
-      'Guided dynamic warm-ups and post-session mobility cooldowns',
-    ],
-    relatedSlugs: ['fast-bowling', 'fielding', 'beginner'],
-    scheduleAndFeeNote:
-      'Batch timings and official fee structure are pending academy confirmation.',
+      'Combined with fielding reflex stations and live net keeping.',
   },
   {
     slug: 'beginner',
     code: '07',
     title: 'Beginner Foundation Program',
     category: 'Level Track',
-    focusLabel: 'Core Mechanics · Grip · Game Understanding',
+    focusLabel: 'Core Mechanics · Fitness Habits · Game Understanding',
     shortDescription:
-      'Structured entry track teaching fundamental batting stance, bowling rhythm, safe catching, and match rules.',
+      'Entry pathway establishing balanced batting posture, rhythmic bowling release, safe catching, and match awareness.',
     introduction:
-      'The Beginner Foundation Program introduces new players to tape ball cricket in a supportive, structured setting. Emphasis is placed on clean habits, coordination, and enjoyment of the game.',
+      'Ideal for newcomers transitioning from casual play into organized coaching, the Beginner Foundation Program introduces core movement habits, proper grip and stance mechanics, and structured practice discipline.',
     skillsCovered: [
-      'Correct bat grip, balanced stance, and basic straight-bat shots',
-      'Simple, rhythmic bowling approach and safe release',
-      'Two-handed catching, basic ground pickups, and throwing posture',
-      'Understanding match rules, calling runs, and team communication',
+      'Balanced batting grip, stance, and clean straight-bat movement',
+      'Rhythmic bowling approach and target-line alignment',
+      'Safe short, fast, and ground fielding fundamentals',
+      'Understanding match roles, calling runs, and team discipline',
     ],
     trainingObjectives: [
-      'Establish safe, repeatable mechanics from day one',
-      'Build coordination, confidence, and spatial awareness',
-      'Prepare players smoothly for intermediate skill tracks',
+      'Establish safe, repeatable athletic and technical fundamentals',
+      'Build confidence, coordination, and spatial awareness',
+      'Prepare players to transition into specialized skill tracks',
     ],
     suitablePlayers: [
-      'New entrants with minimal formal coaching background',
-      'Young players transitioning from casual street play to structured nets',
-      'Athletes building foundational hand-eye coordination',
+      'Newcomers with little or no prior structured coaching experience',
+      'Young players moving from street play to organized academy sessions',
+      'Athletes building core hand-eye coordination and fitness habits',
     ],
     trainingApproach: [
-      'Step-by-step coach demonstrations with small-group feedback',
-      'Station-based drills rotating batting, bowling, and catching',
-      'Encouraging, disciplined group sessions focused on fundamentals',
+      'Guided coach demonstrations in manageable training groups',
+      'Station rotations across batting, bowling, catching, and agility',
+      'Supportive diagnostic feedback tailored to individual pace',
     ],
-    relatedSlugs: ['batting', 'fielding', 'fitness-agility'],
+    relatedSlugs: ['fitness-agility', 'batting', 'fielding'],
     scheduleAndFeeNote:
-      'Age group breakdown, batch timings, and fee details are pending academy confirmation.',
+      'Book a free trial assessment so coaches can recommend your ideal starting group.',
   },
   {
     slug: 'advanced',
     code: '08',
     title: 'Advanced Performance Program',
     category: 'Level Track',
-    focusLabel: 'Match Scenarios · Death Execution · Tactical Depth',
+    focusLabel: 'Match Scenarios · League Prep · Single-Wicket Intensity',
     shortDescription:
-      'High-tempo competitive preparation centered on pressure scenarios, bowling plans, and tactical match execution.',
+      'High-intensity preparation for tournament play featuring pressure scenarios, death-over execution, and tactical depth.',
     introduction:
-      'Designed for experienced tape ball players competing in club and tournament cricket, the Advanced Performance Program sharpens decision-making, power-hitting matchups, and death-over bowling execution.',
+      'Built for experienced tape ball cricketers competing in leagues and knockout tournaments, this program stress-tests technique and decision-making in realistic match situations.',
     skillsCovered: [
-      'Powerplay boundary options and gap manipulation against set fields',
-      'High-pressure death-over bowling plans and field adjustments',
-      'Reading pitch conditions and adapting shot/length selection quickly',
-      'Leadership communication, game awareness, and workload management',
+      'High-tempo boundary options against set tournament fields',
+      'Death-over bowling execution and variation sequencing',
+      'Rapid situational adaptation during chases and tight defenses',
+      'Mental resilience, leadership, and game-plan clarity',
     ],
     trainingObjectives: [
-      'Translate net skills reliably into high-stakes match situations',
-      'Eliminate predictable patterns in batting and bowling plans',
-      'Maintain peak physical sharpness and execution late in games',
+      'Convert net-session mechanics into tournament consistency',
+      'Sharpen single-wicket and league match tactical awareness',
+      'Maintain peak physical output under high competitive pressure',
     ],
     suitablePlayers: [
-      'Experienced tape ball cricketers competing in regular tournaments',
-      'Players progressing beyond core fundamentals into tactical refinement',
-      'Committed athletes prepared for high-intensity net sessions',
+      'Experienced club and tournament tape ball cricketers',
+      'Players graduating from foundational tracks into competitive play',
+      'Dedicated athletes targeting league and single-wicket performance',
     ],
     trainingApproach: [
-      'Target-driven match simulations with scoreboard constraints',
-      'Role-specific specialist drills for finishers and strike bowlers',
-      'Structured coach feedback and tactical review blocks',
+      'Scoreboard-pressure batting and bowling scenario drills',
+      'Detailed strengths/weaknesses diagnostics and shot refinement',
+      'Structured academy leagues and single-wicket competitive events',
     ],
     relatedSlugs: ['batting', 'fast-bowling', 'personal-coaching'],
     scheduleAndFeeNote:
-      'Assessment criteria, batch timings, and fee details are pending academy confirmation.',
+      'Placement follows an initial skill evaluation by the coaching staff.',
   },
   {
     slug: 'personal-coaching',
     code: '09',
     title: 'Personal Coaching (1-on-1)',
     category: 'Individual Coaching',
-    focusLabel: 'Tailored Drills · Focused Feedback · Custom Pace',
+    focusLabel: 'Individual Diagnostic · Custom Drill Methods · Direct Feedback',
     shortDescription:
-      'Individualized coaching sessions tailored to a player’s specific batting, bowling, or keeping goals.',
+      'Dedicated one-on-one coaching focused around a single athlete’s technical batting, bowling, fielding, or fitness goals.',
     introduction:
-      'Personal Coaching provides dedicated one-on-one time focused entirely on an individual player’s technical priorities—whether correcting a batting trigger, refining a bowling release, or preparing for upcoming trials.',
+      'Personal Coaching gives players focused individual attention—identifying specific batting or bowling weaknesses and applying targeted methods from our ~200 fitness exercises and 20–25 shot drill sequences.',
     skillsCovered: [
-      'Custom technical breakdown of stance, swing, or bowling action',
-      'High-volume repetition tailored to individual weaknesses',
-      'Focused preparation for specific match roles or upcoming trials',
-      'Personalized conditioning and home-drill recommendations',
+      'Deep individual assessment of batting mechanics or bowling action',
+      'Targeted correction of technical flaws using progressive drill methods',
+      'Custom conditioning blocks aligned with individual fitness priorities',
+      'Focused preparation for trials or competitive tournament seasons',
     ],
     trainingObjectives: [
-      'Accelerate technical corrections with uninterrupted coach attention',
-      'Build clarity around a player’s strongest scoring or wicket-taking plans',
-      'Support focused preparation aligned with individual goals',
+      'Accelerate technical corrections with uninterrupted coach guidance',
+      'Clarify a player’s strongest scoring zones or wicket-taking deliveries',
+      'Provide clear practice routines players can reinforce independently',
     ],
     suitablePlayers: [
-      'Players seeking targeted technical adjustments',
-      'Cricketers preparing for squad trials or competitive seasons',
-      'Beginners or advanced athletes preferring individualized pacing',
+      'Players looking for targeted 1-on-1 technical refinement',
+      'Cricketers preparing for squad trials or key leagues',
+      'Beginners or competitive players preferring personalized pacing',
     ],
     trainingApproach: [
-      'Initial diagnostic check to isolate 2–3 highest-impact adjustments',
-      'High-repetition sidearm, target-grid, or keeping drill blocks',
-      'Clear post-session takeaways for continued practice',
+      'Individual strengths and weaknesses baseline review',
+      'High-repetition diagnostic drill blocks with immediate feedback',
+      'Clear progression milestones across scheduled 1-on-1 sessions',
     ],
     relatedSlugs: ['batting', 'fast-bowling', 'advanced'],
     scheduleAndFeeNote:
-      'Session availability, duration, and personal coaching fee details are pending confirmation.',
+      'Contact the academy or submit an inquiry to arrange 1-on-1 session availability.',
   },
 ];
 
 export const PROGRAM_BENEFITS = [
   {
     code: '01',
-    title: 'Clear Progression Path',
+    title: 'Diagnostic Assessment First',
     description:
-      'Move naturally from foundational mechanics to specialized skill tracks and tactical match scenarios.',
+      'We evaluate each player’s strengths and weaknesses before assigning targeted drill progressions.',
   },
   {
     code: '02',
-    title: 'Purposeful Net Volume',
+    title: '20–25 Methods Per Shot',
     description:
-      'Focused drills with clear targets replace unstructured waiting and casual hitting.',
+      'Systematic repetition methods replace aimless hitting so batting mechanics hold up under match pressure.',
   },
   {
     code: '03',
-    title: 'Role Versatility',
+    title: '~200 Fitness Exercises',
     description:
-      'Train primary strengths while developing complementary fielding, running, and tactical awareness.',
+      'Comprehensive stamina, power, speed, mobility, flexibility, and elasticity conditioning built into training.',
   },
   {
     code: '04',
-    title: 'Trial Evaluation First',
+    title: 'Leagues & Single-Wicket Play',
     description:
-      'Prospective players can book a free trial assessment to find the most suitable track.',
+      'Players test their development in academy-organized tape ball leagues and single-wicket events.',
   },
 ] as const;
 
-export interface CoachProfileData {
-  slug: string;
-  imagePlaceholderLabel: string;
-  namePlaceholder: string;
-  rolePlaceholder: string;
-  experiencePlaceholder: string;
-  specialties: string[];
-  biographyPlaceholder: string;
-  relatedProgramSlugs: string[];
-}
-
-export const COACHES_DATA: CoachProfileData[] = [
-  {
-    slug: 'head-coach-placeholder',
-    imagePlaceholderLabel: 'Coach Portrait Placeholder #01',
-    namePlaceholder: 'Coach Name Placeholder',
-    rolePlaceholder: 'Head Coach · Role Placeholder',
-    experiencePlaceholder: 'Coaching Experience & Certifications — Pending Official Verification',
-    specialties: [
-      'Batting Technique & Shot Selection',
-      'Match Strategy & Squad Development',
-      'Player Assessment & Progression Planning',
-    ],
-    biographyPlaceholder:
-      'Placeholder Biography: Official background, coaching certifications, and competitive playing history for the Head Coach will be published here once confirmed by SK Tape Ball Academy.',
-    relatedProgramSlugs: ['batting', 'advanced', 'personal-coaching'],
-  },
-  {
-    slug: 'fast-bowling-coach-placeholder',
-    imagePlaceholderLabel: 'Coach Portrait Placeholder #02',
-    namePlaceholder: 'Coach Name Placeholder',
-    rolePlaceholder: 'Bowling Specialist · Role Placeholder',
-    experiencePlaceholder: 'Bowling Coaching Experience — Pending Official Verification',
-    specialties: [
-      'Fast Bowling Run-Up & Crease Alignment',
-      'Death-Over Yorkers & Pace Variations',
-      'Tape Ball Seam & Cutter Mechanics',
-    ],
-    biographyPlaceholder:
-      'Placeholder Biography: Official coaching profile, specialist bowling background, and verified credentials will be added here once supplied by the academy.',
-    relatedProgramSlugs: ['fast-bowling', 'spin-bowling', 'advanced'],
-  },
-  {
-    slug: 'fielding-fitness-coach-placeholder',
-    imagePlaceholderLabel: 'Coach Portrait Placeholder #03',
-    namePlaceholder: 'Coach Name Placeholder',
-    rolePlaceholder: 'Fielding & Fitness Lead · Role Placeholder',
-    experiencePlaceholder: 'Conditioning & Fielding Credentials — Pending Official Verification',
-    specialties: [
-      'Reflex Catching & Outfield Throwing',
-      'Wicket-Keeping Footwork & Glovework',
-      'Cricket Agility, Sprint & Mobility Training',
-    ],
-    biographyPlaceholder:
-      'Placeholder Biography: Verified qualifications in athletic conditioning, fielding drills, and wicket-keeping instruction will appear here once finalized.',
-    relatedProgramSlugs: ['fielding', 'wicket-keeping', 'fitness-agility'],
-  },
-  {
-    slug: 'foundation-coach-placeholder',
-    imagePlaceholderLabel: 'Coach Portrait Placeholder #04',
-    namePlaceholder: 'Coach Name Placeholder',
-    rolePlaceholder: 'Foundation Batch Coach · Role Placeholder',
-    experiencePlaceholder: 'Youth & Foundation Coaching Background — Pending Verification',
-    specialties: [
-      'Beginner Stance & Grip Fundamentals',
-      'Coordination & Ball-Tracking Drills',
-      'Discipline & Team Communication Habits',
-    ],
-    biographyPlaceholder:
-      'Placeholder Biography: Official profile details for foundation-level coaching staff will be published here when confirmed.',
-    relatedProgramSlugs: ['beginner', 'batting', 'fielding'],
-  },
-];
-
 export const FACILITIES_PAGE_CONTENT = {
   kicker: 'Academy Facilities',
-  title: 'Training Grounds & Practice Infrastructure',
+  title: 'Training Environment & Practice Infrastructure',
   heroDescription:
-    'Designed to support structured tape ball batting, bowling, fielding, and conditioning drills. Exact ground measurements and verified facility photographs remain placeholders until official assets are supplied.',
+    'Operating in Sabzazar, Lahore, our training environment supports structured fitness conditioning, diagnostic batting lanes, pace and spin target bowling, and complete catching stations.',
   overview:
-    'A disciplined training environment relies on reliable practice lanes, clear target zones, well-maintained training equipment, and strict safety protocols. Below is the structured overview of SK Tape Ball Academy facility slots.',
+    'Focused cricket development depends on well-organized training lanes, clear bowling targets, structured fielding areas, and disciplined safety standards across every session.',
   trainingAreas: [
     {
       code: '01',
-      title: 'Training Ground & Pitch Area (Placeholder)',
-      status: 'Ground Specifications Pending',
+      title: 'Dedicated Batting & Shot Practice Lanes',
+      status: 'Active Training Zone',
       description:
-        'Reserved for verified ground dimensions, surface type details, and boundary setup specifications.',
+        'Structured net bays built for diagnostic stance assessment and 20–25 progressive practice methods per shot.',
     },
     {
       code: '02',
-      title: 'Dedicated Practice Net Lanes (Placeholder)',
-      status: 'Lane Count Pending',
+      title: 'Speed, Accuracy & Line Bowling Zones',
+      status: 'Active Training Zone',
       description:
-        'Structured net bays supporting simultaneous batting, fast bowling, and spin bowling drill rotations.',
+        'Target-marked bowling channels focused on run-up rhythm, yorker blockholes, and disciplined line and length.',
     },
     {
       code: '03',
-      title: 'Evening Floodlight Setup (Placeholder)',
-      status: 'Lighting Specs Pending',
+      title: 'Catching & Ground Fielding Stations',
+      status: 'Active Training Zone',
       description:
-        'Placeholder slot for evening training visibility details and night-session readiness.',
+        'Dedicated space for short catches, fast reaction catches, long/high catches, and agile ground pickups.',
     },
     {
       code: '04',
-      title: 'Fielding & Agility Zone (Placeholder)',
-      status: 'Zone Details Pending',
+      title: 'Athletic Fitness & Conditioning Area',
+      status: 'Active Training Zone',
       description:
-        'Open turf/ground area reserved for agility ladders, sprint lanes, throwing drills, and wicket-keeping stations.',
+        'Equipped for ~200 structured conditioning drills covering stamina, sprint speed, power, mobility, and flexibility.',
     },
   ],
   equipmentResources: [
     {
-      title: 'Tape Balls & Match-Spec Practice Kits',
+      title: 'Match-Grade Tape Balls & Practice Targets',
       description:
-        'Standardized practice balls, target stumps, and drill markers prepared for consistent skill repetition.',
+        'Consistent match-ready tape balls, stumps, and length target markers for accurate bowling and batting drills.',
     },
     {
-      title: 'Target Cones & Precision Grids',
+      title: 'Agility Ladders, Cones & Sprint Markers',
       description:
-        'Length markers and boundary cones used in fast bowling yorker drills and batting gap-placement challenges.',
+        'Conditioning apparatus supporting footwork speed, acceleration intervals, and change-of-direction balance.',
     },
     {
-      title: 'Agility Ladders & Conditioning Gear',
+      title: 'Reaction & Catching Training Gear',
       description:
-        'Speed ladders, reaction balls, and warm-up resistance gear supporting cricket-specific mobility and speed.',
+        'Specialized catching aids and drill setups for close-in reflexes, fast reactions, and high boundary tracking.',
     },
     {
       title: 'Wicket-Keeping & Safety Equipment',
       description:
-        'Protective pads, gloves, and drill screens supporting safe high-tempo net and keeping sessions.',
+        'Protective pads, keeping gloves, and organized lane separation to keep high-tempo sessions safe.',
     },
   ],
   safetyStandards: [
-    'Mandatory dynamic warm-up and joint activation before bowling or high-speed sprinting.',
-    'Clear net-lane entry and exit rules to prevent cross-lane ball hazards.',
-    'Coach-supervised drill spacing during throwing, catching, and power-hitting stations.',
-    'Hydration breaks and workload monitoring aligned with player age and fitness level.',
+    'Mandatory dynamic warm-ups, mobility activation, and cooldown routines in every session.',
+    'Strict net-lane entry and exit discipline to keep batsmen, bowlers, and fielders protected.',
+    'Coach-supervised spacing across throwing, fast catching, and power-hitting drills.',
+    'Structured hydration breaks and workload management tailored to player age and fitness readiness.',
   ],
   galleryItems: [
     {
       id: 'fac-lanes',
-      title: 'Practice Net Lanes (Illustrative)',
-      caption: 'Illustrative outdoor training lanes and agility setup.',
-      imageSrc: '/src/assets/images/academy_training_lanes_1795439225599.jpg',
-      imageAlt: 'Cricket practice net lanes and agility ladder setup at golden hour',
-      isPlaceholder: false,
+      title: 'Practice Lanes & Agility Setup',
+      caption: 'Outdoor training lanes paired with agility ladders and boundary cones.',
+      imageSrc: lanesImg,
+      imageAlt: 'Cricket practice net lanes and agility ladder setup',
     },
     {
       id: 'fac-lights',
-      title: 'Floodlit Pitch Visual (Illustrative)',
-      caption: 'Illustrative evening practice environment under floodlights.',
-      imageSrc: '/src/assets/images/hero_cricket_academy_1795439223672.jpg',
+      title: 'Evening Floodlit Pitch Environment',
+      caption: 'Evening practice pitch prepared for batting, bowling, and match simulations.',
+      imageSrc: heroImg,
       imageAlt: 'Floodlit cricket practice pitch at twilight',
-      isPlaceholder: false,
-    },
-    {
-      id: 'fac-slot-1',
-      title: 'Official Ground Photo Slot #01',
-      caption: 'Reserved for verified photography of SK Tape Ball Academy pitch & nets.',
-      imageSrc: null,
-      imageAlt: 'Placeholder slot for official academy pitch photo',
-      isPlaceholder: true,
-    },
-    {
-      id: 'fac-slot-2',
-      title: 'Official Equipment & Lounge Slot #02',
-      caption: 'Reserved for verified equipment and player facility photography.',
-      imageSrc: null,
-      imageAlt: 'Placeholder slot for official equipment area photo',
-      isPlaceholder: true,
     },
   ],
 } as const;

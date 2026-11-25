@@ -1,18 +1,13 @@
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AdminRouteGuard } from '@/src/components/admin/AdminRouteGuard';
 import { AdminLayout } from '@/src/components/layout/AdminLayout';
 import { MainLayout } from '@/src/components/layout/MainLayout';
 import { RouteLoadingFallback } from '@/src/components/ui/RouteLoadingFallback';
 import { HomePage } from '@/src/pages/HomePage';
-import { PUBLIC_PLACEHOLDER_ROUTES } from './routeConfig';
 
 const AboutPage = lazy(() =>
   import('@/src/pages/AboutPage').then((m) => ({ default: m.AboutPage })),
-);
-const AcademyPlaceholderPage = lazy(() =>
-  import('@/src/pages/AcademyPlaceholderPage').then((m) => ({
-    default: m.AcademyPlaceholderPage,
-  })),
 );
 const AchievementsPage = lazy(() =>
   import('@/src/pages/AchievementsPage').then((m) => ({ default: m.AchievementsPage })),
@@ -93,6 +88,9 @@ const SchedulePage = lazy(() =>
   import('@/src/pages/SchedulePage').then((m) => ({ default: m.SchedulePage })),
 );
 
+const AdminLoginPage = lazy(() =>
+  import('@/src/pages/admin/AdminLoginPage').then((m) => ({ default: m.AdminLoginPage })),
+);
 const AdminAchievementsPage = lazy(() =>
   import('@/src/pages/admin/AdminAchievementsPage').then((m) => ({
     default: m.AdminAchievementsPage,
@@ -214,22 +212,6 @@ export function AppRoutes() {
             element={<LegalPage slug="photography-consent" />}
           />
 
-          {PUBLIC_PLACEHOLDER_ROUTES.map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={
-                <AcademyPlaceholderPage
-                  routePath={route.path}
-                  title={route.title}
-                  sectionLabel={route.sectionLabel}
-                  description={route.description}
-                  plannedModules={route.plannedModules}
-                />
-              }
-            />
-          ))}
-
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route
@@ -244,18 +226,26 @@ export function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 
-        {/* Complete Admin Panel Frontend (Part 7) */}
-        <Route path="/admin" element={<AdminLayout />}>
+        {/* Unadvertised Protected Admin Portal */}
+        <Route path="/sk-portal/login" element={<AdminLoginPage />} />
+        <Route
+          path="/sk-portal"
+          element={
+            <AdminRouteGuard>
+              <AdminLayout />
+            </AdminRouteGuard>
+          }
+        >
           <Route index element={<AdminDashboardPage />} />
           <Route path="students" element={<AdminStudentsPage />} />
           <Route path="coaches" element={<AdminCoachesPage />} />
           <Route path="programs" element={<AdminProgramsPage />} />
           <Route path="batches" element={<AdminBatchesPage />} />
           <Route path="schedules" element={<AdminSchedulesPage />} />
-          <Route path="schedule" element={<Navigate to="/admin/schedules" replace />} />
+          <Route path="schedule" element={<Navigate to="/sk-portal/schedules" replace />} />
           <Route path="admissions" element={<AdminAdmissionsPage />} />
           <Route path="trial-bookings" element={<AdminTrialBookingsPage />} />
-          <Route path="trials" element={<Navigate to="/admin/trial-bookings" replace />} />
+          <Route path="trials" element={<Navigate to="/sk-portal/trial-bookings" replace />} />
           <Route path="fees" element={<AdminFeesPage />} />
           <Route path="attendance" element={<AdminAttendancePage />} />
           <Route path="matches" element={<AdminMatchesPage />} />

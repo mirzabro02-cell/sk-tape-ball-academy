@@ -1,20 +1,23 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Eye, EyeOff, Film, Image as ImageIcon, Pencil, Trash2, Upload } from 'lucide-react';
-import { ADMIN_IMAGE_ASSETS, INITIAL_ADMIN_MEDIA } from '@/src/data/adminMockData';
+import { useAcademyState } from '@/src/context/AcademyStateContext';
+import { ADMIN_IMAGE_ASSETS } from '@/src/assets/branding';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminMediaItem } from '@/src/types/admin';
+import { createManagedMedia, type ManagedMediaValue } from '@/src/types/media';
 import {
   AdminConfirmDialog,
-  AdminDemoNotice,
   AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatusBadge,
 } from '@/src/components/admin/AdminPrimitives';
+import { ImageManager } from '@/src/components/admin/ImageManager';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
 import { Input } from '@/src/components/ui/Input';
+import { MediaImage } from '@/src/components/ui/MediaImage';
 import { Select } from '@/src/components/ui/Select';
 import { Textarea } from '@/src/components/ui/Textarea';
 
@@ -28,8 +31,9 @@ const CATEGORIES: AdminMediaItem['category'][] = [
 export function AdminGalleryPage() {
   useDocumentTitle('Gallery Management');
   const { showToast } = useAdminToast();
+  const { state, setGallery } = useAcademyState();
 
-  const [media, setMedia] = useState<AdminMediaItem[]>(INITIAL_ADMIN_MEDIA);
+  const media = state.gallery;
   const [mediaTypeTab, setMediaTypeTab] = useState<'all' | 'image' | 'video'>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
 
@@ -41,7 +45,9 @@ export function AdminGalleryPage() {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<AdminMediaItem['category']>('Training Drills');
   const [caption, setCaption] = useState('');
-  const [assetPath, setAssetPath] = useState(ADMIN_IMAGE_ASSETS[0].path);
+  const [mediaValue, setMediaValue] = useState<ManagedMediaValue>(
+    createManagedMedia(ADMIN_IMAGE_ASSETS[0]?.path),
+  );
   const [published, setPublished] = useState(true);
 
   const filtered = useMemo(() => {
@@ -58,7 +64,7 @@ export function AdminGalleryPage() {
     setTitle('');
     setCategory('Training Drills');
     setCaption('');
-    setAssetPath(ADMIN_IMAGE_ASSETS[0].path);
+    setMediaValue(createManagedMedia(null));
     setPublished(true);
     setFormOpen(true);
   }
@@ -69,55 +75,63 @@ export function AdminGalleryPage() {
     setTitle(item.title);
     setCategory(item.category);
     setCaption(item.caption);
-    setAssetPath(item.assetPath);
+    setMediaValue(createManagedMedia(item.assetPath, item.imageTransform));
     setPublished(item.published);
     setFormOpen(true);
   }
 
   function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || !mediaValue.src) return;
 
     if (editing) {
-      setMedia((prev) =>
+      setGallery((prev) =>
         prev.map((m) =>
           m.id === editing.id
-            ? { ...m, mediaType, title, category, caption, assetPath, published }
+            ? {
+                ...m,
+                mediaType,
+                title: title.trim(),
+                category,
+                caption: caption.trim(),
+                assetPath: mediaValue.src || m.assetPath,
+                imageTransform: mediaValue.transform,
+                published,
+              }
             : m,
         ),
       );
-      showToast('Media Info Updated (Preview)', `${title} updated in demonstration gallery.`);
+      showToast('Gallery Updated', `${title.trim()} saved.`);
     } else {
       const next: AdminMediaItem = {
         id: `med-${Date.now()}`,
         mediaType,
-        title,
+        title: title.trim(),
         category,
-        caption,
-        assetPath,
+        caption: caption.trim(),
+        assetPath: mediaValue.src,
+        imageTransform: mediaValue.transform,
         published,
-        uploadedLabel: 'Session Upload Placeholder',
+        uploadedLabel: 'Uploaded',
       };
-      setMedia((prev) => [next, ...prev]);
-      showToast('Media Item Added (Preview)', `${title} queued in frontend gallery preview.`);
+      setGallery((prev) => [next, ...prev]);
+      showToast('Media Added', `${next.title} added to gallery.`);
     }
     setFormOpen(false);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <AdminPageHeader
         title="Gallery & Media Management"
-        description="Manage photo and video assets, categories, captions, and publish controls."
+        description="Upload or link academy photos and cover thumbnails, adjust framing, and control publication."
         actions={
           <Button type="button" variant="primary" size="sm" onClick={openUpload}>
             <Upload className="h-4 w-4" aria-hidden="true" />
-            <span>Upload Media (UI)</span>
+            <span>Add Media</span>
           </Button>
         }
       />
-
-      <AdminDemoNotice text="Media uploads here simulate metadata and asset previews in local state. Cloud object storage will connect in a later backend phase." />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1 gap-1">
@@ -125,7 +139,7 @@ export function AdminGalleryPage() {
             [
               { id: 'all', label: 'All Media' },
               { id: 'image', label: 'Image Gallery' },
-              { id: 'video', label: 'Video Gallery' },
+              { id: 'video', label: 'Video Thumbnails' },
             ] as const
           ).map((tab) => (
             <button
@@ -162,7 +176,7 @@ export function AdminGalleryPage() {
         <Card padding="md">
           <AdminEmptyState
             title="No media items match"
-            description="Switch tabs or upload a demonstration media entry."
+            description="Switch filters or upload a new photo using Device Upload or URL."
           />
         </Card>
       ) : (
@@ -170,16 +184,12 @@ export function AdminGalleryPage() {
           {filtered.map((item) => (
             <Card key={item.id} padding="sm" className="flex flex-col justify-between gap-3">
               <div className="space-y-3">
-                <div className="relative aspect-video w-full overflow-hidden rounded-[10px] bg-[#071A36]">
-                  <img
-                    src={item.assetPath}
-                    alt={item.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
+                <MediaImage
+                  src={item.assetPath}
+                  alt={item.title}
+                  transform={item.imageTransform}
+                  className="aspect-video w-full rounded-[10px]"
+                />
 
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -196,12 +206,12 @@ export function AdminGalleryPage() {
                     <h2 className="text-sm font-bold text-[#071A36]">{item.title}</h2>
                   </div>
                   <AdminStatusBadge
-                    label={item.published ? 'Published' : 'Unpublished'}
+                    label={item.published ? 'Published' : 'Hidden'}
                     variant={item.published ? 'success' : 'neutral'}
                   />
                 </div>
 
-                <p className="text-xs text-[#64748B]">{item.caption}</p>
+                {item.caption && <p className="text-xs text-[#64748B]">{item.caption}</p>}
               </div>
 
               <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
@@ -220,15 +230,10 @@ export function AdminGalleryPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setMedia((prev) =>
+                      setGallery((prev) =>
                         prev.map((m) =>
                           m.id === item.id ? { ...m, published: !m.published } : m,
                         ),
-                      );
-                      showToast(
-                        item.published ? 'Media Hidden (Preview)' : 'Media Published (Preview)',
-                        `${item.title} visibility updated.`,
-                        'info',
                       );
                     }}
                   >
@@ -237,7 +242,7 @@ export function AdminGalleryPage() {
                     ) : (
                       <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                     )}
-                    <span>{item.published ? 'Unpublish' : 'Publish'}</span>
+                    <span>{item.published ? 'Hide' : 'Publish'}</span>
                   </Button>
                   <Button
                     type="button"
@@ -258,17 +263,27 @@ export function AdminGalleryPage() {
       <AdminModal
         open={formOpen}
         onClose={() => setFormOpen(false)}
-        title={editing ? 'Edit Media Information' : 'Upload Media (Frontend UI)'}
+        title={editing ? 'Edit Media Item' : 'Add Media Item'}
+        maxWidth="xl"
       >
         <form onSubmit={handleSave} className="space-y-4">
+          <ImageManager
+            label="Media Visual"
+            value={mediaValue}
+            onChange={setMediaValue}
+            aspectRatio="16/9"
+            presetAssets={ADMIN_IMAGE_ASSETS.map((a) => ({ label: a.label, src: a.path }))}
+            storageFolder="gallery"
+          />
+
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Select
               label="Media Type"
               value={mediaType}
               onChange={(e) => setMediaType(e.target.value as 'image' | 'video')}
               options={[
-                { value: 'image', label: 'Image Asset' },
-                { value: 'video', label: 'Video Clip Placeholder' },
+                { value: 'image', label: 'Photo' },
+                { value: 'video', label: 'Video Thumbnail' },
               ]}
             />
             <Select
@@ -279,19 +294,13 @@ export function AdminGalleryPage() {
             />
           </div>
           <Input
-            label="Media Title"
+            label="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
-          <Select
-            label="Select Preview Asset"
-            value={assetPath}
-            onChange={(e) => setAssetPath(e.target.value)}
-            options={ADMIN_IMAGE_ASSETS.map((a) => ({ value: a.path, label: a.label }))}
-          />
           <Textarea
-            label="Caption / Description"
+            label="Caption"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
           />
@@ -302,14 +311,14 @@ export function AdminGalleryPage() {
               onChange={(e) => setPublished(e.target.checked)}
               className="h-4 w-4 accent-[#071A36]"
             />
-            <span>Published on public Gallery page</span>
+            <span>Publish on public Gallery page</span>
           </label>
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm">
-              {editing ? 'Save Media Info' : 'Add to Gallery'}
+            <Button type="submit" variant="primary" size="sm" disabled={!mediaValue.src}>
+              {editing ? 'Save Changes' : 'Add to Gallery'}
             </Button>
           </div>
         </form>
@@ -320,16 +329,12 @@ export function AdminGalleryPage() {
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => {
           if (!deleteTarget) return;
-          setMedia((prev) => prev.filter((m) => m.id !== deleteTarget.id));
-          showToast(
-            'Media Deleted (Session Only)',
-            `${deleteTarget.title} removed from demonstration list.`,
-            'warning',
-          );
+          setGallery((prev) => prev.filter((m) => m.id !== deleteTarget.id));
+          showToast('Media Deleted', `${deleteTarget.title} removed.`, 'warning');
         }}
         title="Delete Media Item"
-        message={`Remove "${deleteTarget?.title ?? ''}" from the demonstration gallery list?`}
-        confirmLabel="Delete Media"
+        message={`Remove "${deleteTarget?.title ?? ''}" from the gallery?`}
+        confirmLabel="Delete"
         tone="danger"
       />
     </div>

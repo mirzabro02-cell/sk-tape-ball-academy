@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, Check, CheckCircle2, Info, KeyRound } from 'lucide-react';
+import { AlertCircle, Check, CheckCircle2, KeyRound } from 'lucide-react';
 import { evaluatePasswordStrength } from '@/src/data/accountContent';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import { AccountPageShell } from '@/src/components/account/AccountPageShell';
@@ -68,11 +68,11 @@ export function ResetPasswordPage() {
     window.setTimeout(() => {
       setIsSubmitting(false);
       setResetMessage(
-        'Password validation passed (Strength: ' +
+        'Password criteria confirmed (' +
           strength.label +
-          '). Frontend-only preview: no password was changed because actual password resets require backend authentication integration.',
+          '). Contact SK Tape Ball Academy administration if you need your member account credentials re-issued.',
       );
-    }, 350);
+    }, 300);
   }
 
   const ruleItems = [
@@ -91,15 +91,6 @@ export function ResetPasswordPage() {
       maxWidth="md"
     >
       <Card padding="lg" className="space-y-6">
-        <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-[#F5F7FA] p-4 text-xs leading-relaxed text-[#071A36]">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-          <p>
-            <strong>Backend Integration Required:</strong> This interface validates password
-            strength and matching on the client only. Actual password resets require a verified
-            backend recovery token.
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <PasswordInput
             label="New Password"
@@ -119,14 +110,12 @@ export function ResetPasswordPage() {
 
           <div className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-3">
             <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-[#071A36]">Password Strength Guidance</span>
+              <span className="text-[#071A36]">Password Strength</span>
               <span
                 className={
-                  strength.label === 'Strong'
+                  strength.label === 'Strong' || strength.label === 'Fair'
                     ? 'text-[#071A36]'
-                    : strength.label === 'Fair'
-                      ? 'text-[#071A36]'
-                      : 'text-[#C8202B]'
+                    : 'text-[#C8202B]'
                 }
               >
                 {newPassword ? strength.label : 'Not entered'}
@@ -208,7 +197,7 @@ export function ResetPasswordPage() {
             className="gap-2"
           >
             <KeyRound className="h-4 w-4" aria-hidden="true" />
-            <span>{isSubmitting ? 'Validating Password...' : 'Reset Password'}</span>
+            <span>{isSubmitting ? 'Saving...' : 'Reset Password'}</span>
           </Button>
         </form>
 

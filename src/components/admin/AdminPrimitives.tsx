@@ -13,16 +13,15 @@ import { Button } from '@/src/components/ui/Button';
 import { cn } from '@/src/utils/cn';
 
 export function AdminDemoNotice({
-  text = 'Demonstration Preview Only — Controls update local session state for review. No real student records, payments, or database writes occur yet.',
+  text,
 }: {
   text?: string;
 }) {
+  if (!text) return null;
   return (
-    <div className="flex items-start gap-3 rounded-[12px] border border-[#071A36]/15 bg-white px-4 py-3 text-xs leading-relaxed text-[#071A36]">
+    <div className="flex items-start gap-3 rounded-[12px] border border-[#E2E8F0] bg-white px-4 py-3 text-xs leading-relaxed text-[#071A36]">
       <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#D9A52E]" aria-hidden="true" />
-      <p>
-        <strong className="font-semibold">Frontend Admin Preview:</strong> {text}
-      </p>
+      <p>{text}</p>
     </div>
   );
 }
