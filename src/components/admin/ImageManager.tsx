@@ -47,6 +47,47 @@ function clamp(val: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, val));
 }
 
+async function compressForLocalPreview(file: File): Promise<string> {
+  const rawDataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') resolve(reader.result);
+      else reject(new Error('Unable to read image file.'));
+    };
+    reader.onerror = () => reject(new Error('Failed to read image file.'));
+    reader.readAsDataURL(file);
+  });
+
+  // If already compact (< 260 KB raw file), keep original encoding
+  if (file.size <= 260 * 1024) {
+    return rawDataUrl;
+  }
+
+  return new Promise<string>((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const maxDim = 1400;
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const targetW = Math.max(1, Math.round(img.width * scale));
+      const targetH = Math.max(1, Math.round(img.height * scale));
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve(rawDataUrl);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, targetW, targetH);
+      const outputMime = file.type === 'image/png' ? 'image/webp' : 'image/jpeg';
+      const compressed = canvas.toDataURL(outputMime, 0.82);
+      resolve(compressed.length < rawDataUrl.length ? compressed : rawDataUrl);
+    };
+    img.onerror = () => resolve(rawDataUrl);
+    img.src = rawDataUrl;
+  });
+}
+
 export function ImageManager({
   label,
   value,
@@ -96,7 +137,7 @@ export function ImageManager({
 
     setIsBusy(true);
     try {
-      // Attempt Supabase Storage upload when configured; fall back cleanly to local Data URL
+      // Production Supabase mode: upload strictly to Supabase Storage bucket 'academy-media'
       if (isSupabaseConfigured && rawSupabase) {
         const cleanExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
         const objectPath = `${storageFolder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${cleanExt}`;
@@ -104,39 +145,46 @@ export function ImageManager({
           .from('academy-media')
           .upload(objectPath, file, { upsert: true, contentType: file.type });
 
-        if (!uploadErr) {
-          const { data: urlData } = rawSupabase.storage
-            .from('academy-media')
-            .getPublicUrl(objectPath);
-          if (urlData?.publicUrl) {
-            onChange({
-              src: urlData.publicUrl,
-              transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
-            });
-            setStatusNote('Image uploaded to storage.');
-            return;
-          }
+        if (uploadErr) {
+          setStatusError(
+            `Supabase Storage upload failed: ${uploadErr.message}. Verify the "academy-media" bucket and admin upload policy exist, or apply an HTTPS Image URL instead.`,
+          );
+          return;
         }
+
+        const { data: urlData } = rawSupabase.storage
+          .from('academy-media')
+          .getPublicUrl(objectPath);
+
+        if (!urlData?.publicUrl) {
+          setStatusError(
+            'Upload completed, but no public URL was returned for the "academy-media" bucket.',
+          );
+          return;
+        }
+
+        onChange({
+          src: urlData.publicUrl,
+          transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
+        });
+        setStatusNote(`Uploaded "${file.name}" to Supabase Storage.`);
+        return;
       }
 
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            resolve(reader.result);
-          } else {
-            reject(new Error('Unable to read image file.'));
-          }
-        };
-        reader.onerror = () => reject(new Error('Failed to read image file.'));
-        reader.readAsDataURL(file);
-      });
+      // Unconfigured local preview mode: optimize size cleanly before storing in browser state
+      const optimizedDataUrl = await compressForLocalPreview(file);
+      if (optimizedDataUrl.length > 900_000) {
+        setStatusError(
+          'Compressed image is still too large for browser-only localStorage (>900 KB). Use an Image URL or connect Supabase Storage.',
+        );
+        return;
+      }
 
       onChange({
-        src: dataUrl,
+        src: optimizedDataUrl,
         transform: { ...DEFAULT_IMAGE_TRANSFORM, fit: value.transform.fit },
       });
-      setStatusNote(`Loaded "${file.name}".`);
+      setStatusNote(`Loaded "${file.name}" into local preview.`);
     } catch (err) {
       setStatusError(err instanceof Error ? err.message : 'Image upload failed.');
     } finally {

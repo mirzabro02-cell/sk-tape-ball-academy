@@ -466,13 +466,18 @@ export function AdminSettingsPage() {
                   <div className="space-y-1.5">
                     <p className="font-semibold">
                       {isSupabaseMode
-                        ? 'Supabase Authentication & Admin Role Check Active'
-                        : 'Protected Local Operator Access Active'}
+                        ? 'Supabase Authentication & Admin Role Verification Active'
+                        : 'Local Preview Mode Only (Supabase Unconfigured)'}
                     </p>
                     <p className="text-[#64748B]">
-                      This management portal is not linked from any public page and blocks search
-                      engine indexing via robots meta tags. HTML script injection is blocked across
-                      all text fields, and external links require HTTP/HTTPS protocols.
+                      {isSupabaseMode
+                        ? 'Portal authentication is backed by Supabase Auth with profiles.role = "admin" enforcement. No service_role keys are exposed in client code.'
+                        : 'Supabase environment variables are not configured in this workspace, so portal access uses a browser-local preview gate only. Configure VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, and Row Level Security before production use.'}
+                    </p>
+                    <p className="text-[#64748B]">
+                      The management portal is excluded from public navigation and sets robots{' '}
+                      <code className="font-mono">noindex, nofollow</code>. HTML tags are blocked
+                      across text inputs and external URLs require HTTP/HTTPS protocols.
                     </p>
                   </div>
                 </div>

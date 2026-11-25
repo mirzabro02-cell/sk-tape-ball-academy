@@ -11,6 +11,7 @@ interface StoredOperatorRecord {
   displayName: string;
   salt: string;
   passwordHash: string;
+  kdf?: 'pbkdf2-100k' | 'sha256';
 }
 
 interface ActiveLocalSession {
@@ -22,7 +23,7 @@ interface ActiveLocalSession {
 export interface AdminUserSummary {
   email: string;
   displayName: string;
-  authSource: 'supabase' | 'local-operator';
+  authSource: 'supabase' | 'local-preview';
 }
 
 export interface AdminAuthResult {
@@ -48,11 +49,38 @@ export interface AdminAuthContextValue {
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
 
-async function deriveSaltedHash(password: string, salt: string): Promise<string> {
+async function deriveLegacySha256(password: string, salt: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(`${salt}:${password}`);
   const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function derivePbkdf2Hash(password: string, saltHex: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyMaterial = await window.crypto.subtle.importKey(
+    'raw',
+    encoder.encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits'],
+  );
+  const saltBytes = new Uint8Array(
+    saltHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [],
+  );
+  const derivedBits = await window.crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: saltBytes,
+      iterations: 100_000,
+      hash: 'SHA-256',
+    },
+    keyMaterial,
+    256,
+  );
+  return Array.from(new Uint8Array(derivedBits))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 }
@@ -120,6 +148,26 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
 
+    async function verifySupabaseAdminSession(userId: string, email?: string) {
+      if (!rawSupabase) return null;
+      const { data: profile, error } = await rawSupabase
+        .from('profiles')
+        .select('role, full_name')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (error || profile?.role !== 'admin') {
+        await rawSupabase.auth.signOut();
+        return null;
+      }
+
+      return {
+        email: email ?? 'admin',
+        displayName: (profile.full_name as string | undefined) || 'Academy Administrator',
+        authSource: 'supabase' as const,
+      };
+    }
+
     async function bootstrap() {
       if (isSupabaseConfigured && rawSupabase) {
         try {
@@ -128,23 +176,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           } = await rawSupabase.auth.getSession();
 
           if (session?.user) {
-            const { data: profile } = await rawSupabase
-              .from('profiles')
-              .select('role, full_name')
-              .eq('id', session.user.id)
-              .maybeSingle();
-
-            if (active && profile?.role === 'admin') {
-              setUser({
-                email: session.user.email ?? 'admin',
-                displayName:
-                  (profile.full_name as string | undefined) || 'Academy Administrator',
-                authSource: 'supabase',
-              });
-            }
+            const verified = await verifySupabaseAdminSession(
+              session.user.id,
+              session.user.email,
+            );
+            if (active) setUser(verified);
           }
         } catch {
-          // Leave unauthenticated on lookup failure
+          if (active) setUser(null);
         } finally {
           if (active) setIsLoading(false);
         }
@@ -159,7 +198,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
           setUser({
             email: activeSess.email,
             displayName: activeSess.displayName,
-            authSource: 'local-operator',
+            authSource: 'local-preview',
           });
         }
         setIsLoading(false);
@@ -171,9 +210,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (isSupabaseConfigured && rawSupabase) {
       const {
         data: { subscription },
-      } = rawSupabase.auth.onAuthStateChange((_event, session) => {
-        if (!session?.user) {
-          setUser(null);
+      } = rawSupabase.auth.onAuthStateChange((event, session) => {
+        if (!session?.user || event === 'SIGNED_OUT') {
+          if (active) setUser(null);
+          return;
+        }
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+          void verifySupabaseAdminSession(session.user.id, session.user.email).then((verified) => {
+            if (active) setUser(verified);
+          });
         }
       });
       return () => {
@@ -223,7 +268,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
         await rawSupabase.auth.signOut();
         return {
           ok: false,
-          error: 'This account does not have administrator permissions.',
+          error: 'This account does not have administrator permissions (profiles.role = admin).',
         };
       }
 
@@ -241,11 +286,15 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (!operator) {
       return {
         ok: false,
-        error: 'No local administrator account is configured on this browser yet.',
+        error: 'No local preview operator is configured on this browser yet.',
       };
     }
 
-    const attemptedHash = await deriveSaltedHash(password, operator.salt);
+    const attemptedHash =
+      operator.kdf === 'pbkdf2-100k'
+        ? await derivePbkdf2Hash(password, operator.salt)
+        : await deriveLegacySha256(password, operator.salt);
+
     if (normalizedEmail !== operator.email || attemptedHash !== operator.passwordHash) {
       const nextAttempts = failedAttempts + 1;
       setFailedAttempts(nextAttempts);
@@ -267,7 +316,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setUser({
       email: operator.email,
       displayName: operator.displayName,
-      authSource: 'local-operator',
+      authSource: 'local-preview',
     });
     return { ok: true };
   }
@@ -287,7 +336,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     if (readStoredOperator()) {
       return {
         ok: false,
-        error: 'An operator account is already registered on this browser.',
+        error: 'A local preview operator is already registered on this browser.',
       };
     }
 
@@ -304,13 +353,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     }
 
     const salt = generateSalt();
-    const passwordHash = await deriveSaltedHash(password, salt);
+    const passwordHash = await derivePbkdf2Hash(password, salt);
 
     const record: StoredOperatorRecord = {
       email: normalizedEmail,
       displayName: cleanName,
       salt,
       passwordHash,
+      kdf: 'pbkdf2-100k',
     };
     window.localStorage.setItem(LOCAL_OPERATOR_KEY, JSON.stringify(record));
     window.sessionStorage.setItem(
@@ -325,7 +375,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setUser({
       email: normalizedEmail,
       displayName: cleanName,
-      authSource: 'local-operator',
+      authSource: 'local-preview',
     });
     return { ok: true };
   }

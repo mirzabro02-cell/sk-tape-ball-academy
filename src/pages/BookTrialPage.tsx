@@ -51,10 +51,11 @@ const INITIAL_TRIAL_STATE: TrialFormState = {
 
 export function BookTrialPage() {
   useDocumentTitle('Book Free Trial');
-  const { setTrials } = useAcademyState();
+  const { submitTrial } = useAcademyState();
 
   const [form, setForm] = useState<TrialFormState>(INITIAL_TRIAL_STATE);
   const [errors, setErrors] = useState<TrialFormErrors>({});
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedConfirmation, setSubmittedConfirmation] = useState<{
     studentName: string;
@@ -63,6 +64,7 @@ export function BookTrialPage() {
 
   function updateField<K extends keyof TrialFormState>(field: K, value: TrialFormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    setSubmissionError(null);
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -94,8 +96,9 @@ export function BookTrialPage() {
     return null;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSubmissionError(null);
     const nextErrors: TrialFormErrors = {};
 
     if (!form.studentName.trim() || form.studentName.trim().length < 2) {
@@ -148,33 +151,38 @@ export function BookTrialPage() {
     setErrors({});
     setIsSubmitting(true);
 
-    const requestCode = `SK-TRL-${Math.floor(100000 + Math.random() * 900000)}`;
-    const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.preferredProgram);
-    const studentName = form.studentName.trim();
+    try {
+      const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.preferredProgram);
+      const studentName = form.studentName.trim();
 
-    setTrials((prev) => [
-      {
-        id: `trl-${Date.now()}`,
-        requestCode,
-        playerName: studentName,
-        ageGroup: form.dobOrAge.trim(),
-        contactPlaceholder: form.contactPhone.trim(),
+      const res = await submitTrial({
+        studentName,
+        dobOrAge: form.dobOrAge.trim(),
+        guardianName: form.guardianName.trim(),
+        contactPhone: form.contactPhone.trim(),
+        contactEmail: form.contactEmail.trim(),
         requestedProgram: matchedProgram?.title ?? form.preferredProgram,
         preferredDate: form.preferredDate,
         preferredTimeSlot: form.preferredTime,
-        status: 'Requested (Unconfirmed)',
-        staffNote: form.additionalMessage.trim()
-          ? `Guardian: ${form.guardianName.trim()} · ${form.additionalMessage.trim()}`
-          : `Guardian: ${form.guardianName.trim()} · Level: ${form.previousExperience}`,
-      },
-      ...prev,
-    ]);
+        previousExperience: form.previousExperience,
+        additionalMessage: form.additionalMessage.trim(),
+      });
 
-    window.setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmittedConfirmation({ studentName, requestCode });
+      if (!res.ok || !res.data) {
+        setSubmissionError(
+          res.error ?? 'Could not submit trial request right now. Please try again later.',
+        );
+        return;
+      }
+
+      setSubmittedConfirmation({
+        studentName,
+        requestCode: res.data.trial.requestCode,
+      });
       setForm(INITIAL_TRIAL_STATE);
-    }, 250);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -307,6 +315,16 @@ export function BookTrialPage() {
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>Please fix the highlighted validation errors before submitting.</span>
+            </div>
+          )}
+
+          {submissionError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/35 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{submissionError}</span>
             </div>
           )}
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
 import battingImg from '@/src/assets/images/drill_power_batting_1795439224792.jpg';
@@ -6,6 +6,20 @@ import paceImg from '@/src/assets/images/drill_pace_bowling_1795439224452.jpg';
 import fieldingImg from '@/src/assets/images/drill_fielding_agility_1795439226739.jpg';
 import { OFFICIAL_LOGO_CONFIG } from '@/src/assets/branding';
 import { ACADEMY_BRAND } from '@/src/data/brand';
+import { isSupabaseConfigured } from '@/src/services/supabaseClient';
+import {
+  deleteSupabaseStudent,
+  fetchCoreSupabaseData,
+  insertSupabaseAdmission,
+  insertSupabaseTrialBooking,
+  lookupSupabaseApplicationStatus,
+  updateSupabaseAdmission,
+  updateSupabaseTrialBooking,
+  upsertSupabaseStudent,
+  type RegistrationSubmitInput,
+  type RepositoryActionResult,
+  type TrialSubmitInput,
+} from '@/src/services/supabaseAcademyService';
 import type {
   AdminAchievement,
   AdminApplication,
@@ -23,6 +37,8 @@ import type {
   AdminTestimonial,
   AdminTrialBooking,
   AdminWebsiteContentSection,
+  AdmissionDecisionStatus,
+  TrialBookingStatus,
 } from '@/src/types/admin';
 import { createManagedMedia, type ManagedMediaValue } from '@/src/types/media';
 import { sanitizeExternalUrl } from '@/src/utils/validation';
@@ -423,6 +439,46 @@ function loadInitialState(): AcademyPersistedState {
 
 export interface AcademyStateContextValue {
   state: AcademyPersistedState;
+  isBackendConnected: boolean;
+  isSyncing: boolean;
+  dbError: string | null;
+  storageError: string | null;
+  lastSyncedAt: string | null;
+  clearDbError: () => void;
+  syncCoreRecords: () => Promise<RepositoryActionResult>;
+  submitAdmission: (
+    input: RegistrationSubmitInput,
+  ) => Promise<RepositoryActionResult<{ application: AdminApplication }>>;
+  submitTrial: (
+    input: TrialSubmitInput,
+  ) => Promise<RepositoryActionResult<{ trial: AdminTrialBooking }>>;
+  lookupApplication: (
+    referenceCode: string,
+    contactDigits: string,
+  ) => Promise<RepositoryActionResult<AdminApplication | null>>;
+  saveStudent: (
+    input: Omit<AdminStudent, 'id' | 'joinedLabel'>,
+    existingId?: string,
+  ) => Promise<RepositoryActionResult<AdminStudent>>;
+  removeStudent: (id: string) => Promise<RepositoryActionResult>;
+  reviewAdmission: (
+    id: string,
+    status: AdmissionDecisionStatus,
+    reviewerNotes: string,
+  ) => Promise<RepositoryActionResult<AdminApplication>>;
+  convertAdmissionToStudent: (
+    app: AdminApplication,
+    batch?: AdminBatch | null,
+  ) => Promise<RepositoryActionResult<AdminStudent>>;
+  updateTrialBooking: (
+    id: string,
+    patch: {
+      status: TrialBookingStatus;
+      preferredDate?: string;
+      preferredTimeSlot?: string;
+      staffNote?: string;
+    },
+  ) => Promise<RepositoryActionResult<AdminTrialBooking>>;
   updateSiteSettings: (updater: (prev: AcademySiteSettings) => AcademySiteSettings) => void;
   setCoaches: (updater: AdminCoach[] | ((prev: AdminCoach[]) => AdminCoach[])) => void;
   setPrograms: (updater: AdminProgram[] | ((prev: AdminProgram[]) => AdminProgram[])) => void;
@@ -469,14 +525,21 @@ const AcademyStateContext = createContext<AcademyStateContextValue | null>(null)
 
 export function AcademyStateProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AcademyPersistedState>(loadInitialState);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [dbError, setDbError] = useState<string | null>(null);
+  const [storageError, setStorageError] = useState<string | null>(null);
+  const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
 
   useEffect(() => {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      if (storageError) setStorageError(null);
     } catch {
-      // Ignore quota errors cleanly without crashing UI
+      setStorageError(
+        'Browser local storage quota exceeded. Remove or downsize large uploaded preview images, or configure Supabase Storage.',
+      );
     }
-  }, [state]);
+  }, [state, storageError]);
 
   function updateSlice<K extends keyof AcademyPersistedState>(
     key: K,
@@ -488,6 +551,306 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
       ...prev,
       [key]: typeof updater === 'function' ? updater(prev[key]) : updater,
     }));
+  }
+
+  const syncCoreRecords = useCallback(async (): Promise<RepositoryActionResult> => {
+    if (!isSupabaseConfigured) {
+      return { ok: true };
+    }
+    setIsSyncing(true);
+    setDbError(null);
+    try {
+      const res = await fetchCoreSupabaseData();
+      if (!res.ok || !res.data) {
+        const msg = res.error ?? 'Failed to load database records from Supabase.';
+        setDbError(msg);
+        return { ok: false, error: msg, schemaMissingHint: res.schemaMissingHint };
+      }
+      setState((prev) => ({
+        ...prev,
+        students: res.data!.students,
+        applications: res.data!.applications,
+        trials: res.data!.trials,
+      }));
+      setLastSyncedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      return { ok: true };
+    } finally {
+      setIsSyncing(false);
+    }
+  }, []);
+
+  async function submitAdmission(
+    input: RegistrationSubmitInput,
+  ): Promise<RepositoryActionResult<{ application: AdminApplication }>> {
+    if (isSupabaseConfigured) {
+      const res = await insertSupabaseAdmission(input);
+      if (!res.ok || !res.data) {
+        setDbError(res.error ?? 'Admission submission failed.');
+        return res;
+      }
+      setState((prev) => ({
+        ...prev,
+        applications: [res.data!.application, ...prev.applications],
+      }));
+      return res;
+    }
+
+    const localRef = `LOCAL-APP-${Math.floor(100000 + Math.random() * 900000)}`;
+    const localApp: AdminApplication = {
+      id: `app-${Date.now()}`,
+      referencePlaceholder: localRef,
+      applicantName: input.studentName,
+      age: input.age,
+      isMinor: input.isMinor,
+      guardianName: input.guardianName,
+      contactPlaceholder: input.whatsappNumber || input.guardianPhone,
+      requestedProgram: input.requestedProgram,
+      experienceLevel: input.previousExperience,
+      submittedLabel: new Date().toLocaleDateString('en-PK', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+      status: 'Pending',
+      reviewerNotes: input.additionalMessage
+        ? `Applicant note: ${input.additionalMessage} (Window: ${input.preferredBatch})`
+        : `Preferred window: ${input.preferredBatch} · City/Area: ${input.cityArea}`,
+      convertedToStudent: false,
+    };
+    setState((prev) => ({ ...prev, applications: [localApp, ...prev.applications] }));
+    return { ok: true, data: { application: localApp } };
+  }
+
+  async function submitTrial(
+    input: TrialSubmitInput,
+  ): Promise<RepositoryActionResult<{ trial: AdminTrialBooking }>> {
+    if (isSupabaseConfigured) {
+      const res = await insertSupabaseTrialBooking(input);
+      if (!res.ok || !res.data) {
+        setDbError(res.error ?? 'Trial booking submission failed.');
+        return res;
+      }
+      setState((prev) => ({ ...prev, trials: [res.data!.trial, ...prev.trials] }));
+      return res;
+    }
+
+    const localCode = `LOCAL-TRL-${Math.floor(100000 + Math.random() * 900000)}`;
+    const localTrial: AdminTrialBooking = {
+      id: `trl-${Date.now()}`,
+      requestCode: localCode,
+      playerName: input.studentName,
+      ageGroup: input.dobOrAge,
+      contactPlaceholder: input.contactPhone,
+      requestedProgram: input.requestedProgram,
+      preferredDate: input.preferredDate,
+      preferredTimeSlot: input.preferredTimeSlot,
+      status: 'Requested (Unconfirmed)',
+      staffNote: input.additionalMessage
+        ? `Guardian: ${input.guardianName} · ${input.additionalMessage}`
+        : `Guardian: ${input.guardianName} · Level: ${input.previousExperience}`,
+    };
+    setState((prev) => ({ ...prev, trials: [localTrial, ...prev.trials] }));
+    return { ok: true, data: { trial: localTrial } };
+  }
+
+  async function lookupApplication(
+    referenceCode: string,
+    contactDigits: string,
+  ): Promise<RepositoryActionResult<AdminApplication | null>> {
+    if (isSupabaseConfigured) {
+      return lookupSupabaseApplicationStatus(referenceCode, contactDigits);
+    }
+
+    const targetRef = referenceCode.trim().toLowerCase();
+    const found = state.applications.find((app) => {
+      const refMatch = app.referencePlaceholder.trim().toLowerCase() === targetRef;
+      if (!refMatch) return false;
+      if (!contactDigits) return true;
+      const storedDigits = app.contactPlaceholder.replace(/\D/g, '');
+      return !storedDigits || storedDigits.endsWith(contactDigits.slice(-7));
+    });
+    return { ok: true, data: found ?? null };
+  }
+
+  async function saveStudent(
+    input: Omit<AdminStudent, 'id' | 'joinedLabel'>,
+    existingId?: string,
+  ): Promise<RepositoryActionResult<AdminStudent>> {
+    if (isSupabaseConfigured) {
+      const res = await upsertSupabaseStudent(input, existingId);
+      if (!res.ok || !res.data) {
+        setDbError(res.error ?? 'Failed to save student.');
+        return res;
+      }
+      const saved = res.data;
+      setState((prev) => ({
+        ...prev,
+        students: existingId
+          ? prev.students.map((s) => (s.id === existingId ? saved : s))
+          : [saved, ...prev.students],
+      }));
+      return res;
+    }
+
+    if (existingId) {
+      let updatedRecord: AdminStudent | undefined;
+      setState((prev) => ({
+        ...prev,
+        students: prev.students.map((item) => {
+          if (item.id === existingId) {
+            updatedRecord = { ...item, ...input };
+            return updatedRecord;
+          }
+          return item;
+        }),
+      }));
+      return { ok: true, data: updatedRecord };
+    }
+
+    const localStudent: AdminStudent = {
+      id: `stu-${Date.now()}`,
+      joinedLabel: new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      }),
+      ...input,
+    };
+    setState((prev) => ({ ...prev, students: [localStudent, ...prev.students] }));
+    return { ok: true, data: localStudent };
+  }
+
+  async function removeStudent(id: string): Promise<RepositoryActionResult> {
+    if (isSupabaseConfigured) {
+      const res = await deleteSupabaseStudent(id);
+      if (!res.ok) {
+        setDbError(res.error ?? 'Failed to remove student.');
+        return res;
+      }
+    }
+    setState((prev) => ({
+      ...prev,
+      students: prev.students.filter((s) => s.id !== id),
+    }));
+    return { ok: true };
+  }
+
+  async function reviewAdmission(
+    id: string,
+    status: AdmissionDecisionStatus,
+    reviewerNotes: string,
+  ): Promise<RepositoryActionResult<AdminApplication>> {
+    if (isSupabaseConfigured) {
+      const res = await updateSupabaseAdmission(id, { status, reviewerNotes });
+      if (!res.ok || !res.data) {
+        setDbError(res.error ?? 'Failed to update admission status.');
+        return res;
+      }
+      setState((prev) => ({
+        ...prev,
+        applications: prev.applications.map((a) => (a.id === id ? res.data! : a)),
+      }));
+      return res;
+    }
+
+    let updated: AdminApplication | undefined;
+    setState((prev) => ({
+      ...prev,
+      applications: prev.applications.map((a) => {
+        if (a.id === id) {
+          updated = { ...a, status, reviewerNotes };
+          return updated;
+        }
+        return a;
+      }),
+    }));
+    return { ok: true, data: updated };
+  }
+
+  async function convertAdmissionToStudent(
+    app: AdminApplication,
+    batch?: AdminBatch | null,
+  ): Promise<RepositoryActionResult<AdminStudent>> {
+    const nextCode = `SK-${String(state.students.length + 1).padStart(4, '0')}`;
+    const studentPayload: Omit<AdminStudent, 'id' | 'joinedLabel'> = {
+      studentCode: nextCode,
+      fullName: app.applicantName,
+      ageGroup: app.isMinor ? `Age ${app.age} (Minor)` : `Age ${app.age}`,
+      contactPlaceholder: app.contactPlaceholder,
+      guardianName: app.guardianName,
+      program: app.requestedProgram,
+      batchId: batch?.id ?? '',
+      batchName: batch?.name ?? 'Unassigned',
+      status: 'Active',
+      attendanceRate: 100,
+      notes: app.reviewerNotes || `Converted from application ${app.referencePlaceholder}.`,
+    };
+
+    const studentRes = await saveStudent(studentPayload);
+    if (!studentRes.ok || !studentRes.data) {
+      return studentRes;
+    }
+
+    if (isSupabaseConfigured) {
+      const admRes = await updateSupabaseAdmission(app.id, { convertedToStudent: true });
+      if (admRes.ok && admRes.data) {
+        setState((prev) => ({
+          ...prev,
+          applications: prev.applications.map((a) => (a.id === app.id ? admRes.data! : a)),
+        }));
+      }
+    } else {
+      setState((prev) => ({
+        ...prev,
+        applications: prev.applications.map((a) =>
+          a.id === app.id ? { ...a, convertedToStudent: true } : a,
+        ),
+      }));
+    }
+
+    return studentRes;
+  }
+
+  async function updateTrialBooking(
+    id: string,
+    patch: {
+      status: TrialBookingStatus;
+      preferredDate?: string;
+      preferredTimeSlot?: string;
+      staffNote?: string;
+    },
+  ): Promise<RepositoryActionResult<AdminTrialBooking>> {
+    if (isSupabaseConfigured) {
+      const res = await updateSupabaseTrialBooking(id, patch);
+      if (!res.ok || !res.data) {
+        setDbError(res.error ?? 'Failed to update trial booking.');
+        return res;
+      }
+      setState((prev) => ({
+        ...prev,
+        trials: prev.trials.map((t) => (t.id === id ? res.data! : t)),
+      }));
+      return res;
+    }
+
+    let updated: AdminTrialBooking | undefined;
+    setState((prev) => ({
+      ...prev,
+      trials: prev.trials.map((t) => {
+        if (t.id === id) {
+          updated = {
+            ...t,
+            status: patch.status,
+            preferredDate: patch.preferredDate ?? t.preferredDate,
+            preferredTimeSlot: patch.preferredTimeSlot ?? t.preferredTimeSlot,
+            staffNote: patch.staffNote ?? t.staffNote,
+          };
+          return updated;
+        }
+        return t;
+      }),
+    }));
+    return { ok: true, data: updated };
   }
 
   function getSafeWhatsAppHref(): string | null {
@@ -507,6 +870,21 @@ export function AcademyStateProvider({ children }: { children: ReactNode }) {
     <AcademyStateContext.Provider
       value={{
         state,
+        isBackendConnected: isSupabaseConfigured,
+        isSyncing,
+        dbError,
+        storageError,
+        lastSyncedAt,
+        clearDbError: () => setDbError(null),
+        syncCoreRecords,
+        submitAdmission,
+        submitTrial,
+        lookupApplication,
+        saveStudent,
+        removeStudent,
+        reviewAdmission,
+        convertAdmissionToStudent,
+        updateTrialBooking,
         updateSiteSettings: (updater) =>
           setState((prev) => ({ ...prev, siteSettings: updater(prev.siteSettings) })),
         setCoaches: (u) => updateSlice('coaches', u),

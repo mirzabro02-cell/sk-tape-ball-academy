@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminBatch, BatchStatus } from '@/src/types/admin';
+import { containsUnsafeHtml } from '@/src/utils/validation';
 import {
   AdminConfirmDialog,
   AdminEmptyState,
@@ -26,7 +27,7 @@ const BATCH_STATUS_BADGE: Record<BatchStatus, 'success' | 'warning' | 'danger' |
 export function AdminBatchesPage() {
   useDocumentTitle('Batch Management');
   const { showToast } = useAdminToast();
-  const { state, setBatches } = useAcademyState();
+  const { state, setBatches, setStudents } = useAcademyState();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<AdminBatch | null>(null);
@@ -43,6 +44,7 @@ export function AdminBatchesPage() {
   const [capacity, setCapacity] = useState('15');
   const [timingPlaceholder, setTimingPlaceholder] = useState('');
   const [status, setStatus] = useState<BatchStatus>('Open');
+  const [formError, setFormError] = useState<string | null>(null);
 
   function openCreate() {
     setEditing(null);
@@ -52,6 +54,7 @@ export function AdminBatchesPage() {
     setCapacity('15');
     setTimingPlaceholder('');
     setStatus('Open');
+    setFormError(null);
     setFormOpen(true);
   }
 
@@ -63,12 +66,22 @@ export function AdminBatchesPage() {
     setCapacity(String(batch.capacity));
     setTimingPlaceholder(batch.timingPlaceholder);
     setStatus(batch.status);
+    setFormError(null);
     setFormOpen(true);
   }
 
   function handleSaveBatch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim()) {
+      setFormError('Batch name is required.');
+      return;
+    }
+    if (containsUnsafeHtml([name, timingPlaceholder])) {
+      setFormError('HTML tags (< or >) are not permitted.');
+      return;
+    }
+    setFormError(null);
+    const trimmedName = name.trim();
     const coach = state.coaches.find((c) => c.id === coachId);
     const parsedCap = Math.max(1, Number(capacity) || 12);
 
@@ -78,7 +91,7 @@ export function AdminBatchesPage() {
           b.id === editing.id
             ? {
                 ...b,
-                name: name.trim(),
+                name: trimmedName,
                 programTitle,
                 coachId,
                 coachName: coach?.fullName ?? 'To Be Assigned',
@@ -89,11 +102,16 @@ export function AdminBatchesPage() {
             : b,
         ),
       );
-      showToast('Batch Updated', `${name.trim()} updated.`);
+      if (editing.name !== trimmedName) {
+        setStudents((prev) =>
+          prev.map((s) => (s.batchId === editing.id ? { ...s, batchName: trimmedName } : s)),
+        );
+      }
+      showToast('Batch Updated', `${trimmedName} updated.`);
     } else {
       const next: AdminBatch = {
         id: `batch-${Date.now()}`,
-        name: name.trim(),
+        name: trimmedName,
         programTitle,
         coachId,
         coachName: coach?.fullName ?? 'To Be Assigned',
@@ -115,16 +133,32 @@ export function AdminBatchesPage() {
 
   function handleSaveAssignedStudents() {
     if (!assigningBatch) return;
+    const assignedSet = new Set(selectedStudentIds);
     setBatches((prev) =>
-      prev.map((b) =>
-        b.id === assigningBatch.id
-          ? {
-              ...b,
-              assignedStudentIds: selectedStudentIds,
-              status: selectedStudentIds.length >= b.capacity ? 'Full' : b.status,
-            }
-          : b,
-      ),
+      prev.map((b) => {
+        if (b.id === assigningBatch.id) {
+          return {
+            ...b,
+            assignedStudentIds: selectedStudentIds,
+            status: selectedStudentIds.length >= b.capacity ? 'Full' : b.status,
+          };
+        }
+        return {
+          ...b,
+          assignedStudentIds: b.assignedStudentIds.filter((sid) => !assignedSet.has(sid)),
+        };
+      }),
+    );
+    setStudents((prev) =>
+      prev.map((stu) => {
+        if (assignedSet.has(stu.id)) {
+          return { ...stu, batchId: assigningBatch.id, batchName: assigningBatch.name };
+        }
+        if (stu.batchId === assigningBatch.id) {
+          return { ...stu, batchId: '', batchName: 'Unassigned' };
+        }
+        return stu;
+      }),
     );
     showToast(
       'Batch Roster Updated',
@@ -293,6 +327,7 @@ export function AdminBatchesPage() {
             onChange={(e) => setTimingPlaceholder(e.target.value)}
             placeholder="e.g. Mon, Wed, Fri · 6:00 PM – 8:00 PM"
           />
+          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
@@ -374,6 +409,11 @@ export function AdminBatchesPage() {
         onConfirm={() => {
           if (!deleteTarget) return;
           setBatches((prev) => prev.filter((b) => b.id !== deleteTarget.id));
+          setStudents((prev) =>
+            prev.map((s) =>
+              s.batchId === deleteTarget.id ? { ...s, batchId: '', batchName: 'Unassigned' } : s,
+            ),
+          );
           showToast('Batch Deleted', `${deleteTarget.name} removed.`, 'warning');
         }}
         title="Delete Training Batch"

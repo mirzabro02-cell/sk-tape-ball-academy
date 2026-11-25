@@ -70,10 +70,11 @@ const INITIAL_STATE: RegistrationFormState = {
 export function RegisterPage() {
   useDocumentTitle('Student Registration');
   const navigate = useNavigate();
-  const { setApplications } = useAcademyState();
+  const { submitAdmission } = useAcademyState();
 
   const [form, setForm] = useState<RegistrationFormState>(INITIAL_STATE);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const calculatedAge = useMemo(
@@ -87,6 +88,7 @@ export function RegisterPage() {
     value: RegistrationFormState[K],
   ) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    setSubmissionError(null);
     if (errors[field]) {
       setErrors((prev) => {
         const next = { ...prev };
@@ -171,8 +173,9 @@ export function RegisterPage() {
     return nextErrors;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setSubmissionError(null);
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -182,42 +185,49 @@ export function RegisterPage() {
     setErrors({});
     setIsSubmitting(true);
 
-    const refCode = `SK-APP-${Math.floor(100000 + Math.random() * 900000)}`;
-    const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.selectedProgram);
-    const programLabel = matchedProgram?.title ?? form.selectedProgram;
-    const studentName = form.studentName.trim();
+    try {
+      const matchedProgram = TRAINING_PROGRAMS_DATA.find((p) => p.slug === form.selectedProgram);
+      const programLabel = matchedProgram?.title ?? form.selectedProgram;
+      const studentName = form.studentName.trim();
 
-    setApplications((prev) => [
-      {
-        id: `app-${Date.now()}`,
-        referencePlaceholder: refCode,
-        applicantName: studentName,
+      const res = await submitAdmission({
+        studentName,
+        dateOfBirth: form.dateOfBirth,
         age: calculatedAge ?? 0,
         isMinor,
+        gender: form.gender,
+        cityArea: form.cityArea.trim(),
+        studentPhone: form.studentPhone.trim(),
+        studentEmail: form.studentEmail.trim(),
         guardianName: form.guardianName.trim(),
-        contactPlaceholder: form.whatsappNumber.trim() || form.guardianPhone.trim(),
+        relationship: form.relationship,
+        guardianPhone: form.guardianPhone.trim(),
+        whatsappNumber: form.whatsappNumber.trim(),
+        guardianEmail: form.guardianEmail.trim(),
         requestedProgram: programLabel,
-        experienceLevel: form.previousExperience,
-        submittedLabel: new Date().toLocaleDateString('en-PK', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        }),
-        status: 'Pending',
-        reviewerNotes: form.additionalMessage.trim()
-          ? `Applicant note: ${form.additionalMessage.trim()} (Window: ${form.preferredBatch})`
-          : `Preferred window: ${form.preferredBatch} · City/Area: ${form.cityArea.trim()}`,
-        convertedToStudent: false,
-      },
-      ...prev,
-    ]);
+        previousExperience: form.previousExperience,
+        preferredBatch: form.preferredBatch,
+        additionalMessage: form.additionalMessage.trim(),
+        guardianConsent: form.guardianConsent,
+        privacyConsent: form.privacyConsent,
+        photographyConsent: form.photographyConsent,
+      });
 
-    window.setTimeout(() => {
-      setIsSubmitting(false);
+      if (!res.ok || !res.data) {
+        setSubmissionError(
+          res.error ??
+            'Could not save registration right now. Please verify database connectivity or contact admissions.',
+        );
+        return;
+      }
+
+      const issuedRef = res.data.application.referencePlaceholder;
       navigate(
-        `/registration-confirmation?ref=${encodeURIComponent(refCode)}&name=${encodeURIComponent(studentName)}`,
+        `/registration-confirmation?ref=${encodeURIComponent(issuedRef)}&name=${encodeURIComponent(studentName)}`,
       );
-    }, 250);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -520,6 +530,16 @@ export function RegisterPage() {
             >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>Please review and resolve the highlighted validation errors above.</span>
+            </div>
+          )}
+
+          {submissionError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/35 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{submissionError}</span>
             </div>
           )}
 

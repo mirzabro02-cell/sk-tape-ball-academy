@@ -10,12 +10,14 @@ import type {
 } from '@/src/types/admin';
 import { AdminDonutBreakdown } from '@/src/components/admin/AdminCharts';
 import {
+  AdminConfirmDialog,
   AdminEmptyState,
   AdminModal,
   AdminPageHeader,
   AdminStatCard,
   AdminStatusBadge,
 } from '@/src/components/admin/AdminPrimitives';
+import { containsUnsafeHtml } from '@/src/utils/validation';
 import { useAdminToast } from '@/src/components/admin/AdminToastContext';
 import { Button } from '@/src/components/ui/Button';
 import { Card } from '@/src/components/ui/Card';
@@ -38,6 +40,7 @@ export function AdminFeesPage() {
   const [packageModalOpen, setPackageModalOpen] = useState(false);
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [deletePkgTarget, setDeletePkgTarget] = useState<AdminFeePackage | null>(null);
 
   // Fee Package Form
   const [pkgName, setPkgName] = useState('');
@@ -45,6 +48,7 @@ export function AdminFeesPage() {
   const [pkgCycle, setPkgCycle] = useState('Monthly');
   const [pkgAmount, setPkgAmount] = useState('');
   const [pkgStatus, setPkgStatus] = useState<'Active' | 'Draft'>('Active');
+  const [pkgError, setPkgError] = useState<string | null>(null);
 
   // New Invoice Record Form
   const [invStudentName, setInvStudentName] = useState('');
@@ -52,12 +56,14 @@ export function AdminFeesPage() {
   const [invPackageName, setInvPackageName] = useState('');
   const [invAmount, setInvAmount] = useState('');
   const [invDueDate, setInvDueDate] = useState('');
+  const [invError, setInvError] = useState<string | null>(null);
 
   // Payment Entry Form
   const [selectedRecordId, setSelectedRecordId] = useState('');
   const [amountNote, setAmountNote] = useState('');
   const [methodNote, setMethodNote] = useState('Cash / Academy Desk');
   const [paymentNotes, setPaymentNotes] = useState('');
+  const [payError, setPayError] = useState<string | null>(null);
 
   const counts = useMemo(() => {
     return {
@@ -74,7 +80,15 @@ export function AdminFeesPage() {
 
   function handleSavePackage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!pkgName.trim() || !pkgAmount.trim()) return;
+    if (!pkgName.trim() || !pkgAmount.trim()) {
+      setPkgError('Package title and fee amount are required.');
+      return;
+    }
+    if (containsUnsafeHtml([pkgName, pkgScope, pkgCycle, pkgAmount])) {
+      setPkgError('HTML tags (< or >) are not permitted.');
+      return;
+    }
+    setPkgError(null);
     const item: AdminFeePackage = {
       id: `pkg-${Date.now()}`,
       name: pkgName.trim(),
@@ -92,7 +106,15 @@ export function AdminFeesPage() {
 
   function handleCreateInvoice(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!invStudentName.trim() || !invAmount.trim()) return;
+    if (!invStudentName.trim() || !invAmount.trim()) {
+      setInvError('Student full name and invoice amount are required.');
+      return;
+    }
+    if (containsUnsafeHtml([invStudentName, invPackageName, invAmount, invDueDate])) {
+      setInvError('HTML tags (< or >) are not permitted.');
+      return;
+    }
+    setInvError(null);
     const rec: AdminFeeRecord = {
       id: `fee-${Date.now()}`,
       invoiceCode: `INV-${String(state.feeRecords.length + 1).padStart(4, '0')}`,
@@ -114,7 +136,19 @@ export function AdminFeesPage() {
   function handleRecordPayment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const target = state.feeRecords.find((r) => r.id === selectedRecordId);
-    if (!target) return;
+    if (!target) {
+      setPayError('Please select a valid invoice record.');
+      return;
+    }
+    if (!amountNote.trim() || !methodNote.trim()) {
+      setPayError('Payment amount and method are required.');
+      return;
+    }
+    if (containsUnsafeHtml([amountNote, methodNote, paymentNotes])) {
+      setPayError('HTML tags (< or >) are not permitted.');
+      return;
+    }
+    setPayError(null);
 
     setFeeRecords((prev) =>
       prev.map((r) =>
@@ -158,7 +192,10 @@ export function AdminFeesPage() {
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setPackageModalOpen(true)}
+              onClick={() => {
+                setPkgError(null);
+                setPackageModalOpen(true);
+              }}
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
               <span>Add Fee Package</span>
@@ -167,7 +204,10 @@ export function AdminFeesPage() {
               type="button"
               variant="secondary"
               size="sm"
-              onClick={() => setInvoiceModalOpen(true)}
+              onClick={() => {
+                setInvError(null);
+                setInvoiceModalOpen(true);
+              }}
             >
               <Plus className="h-4 w-4" aria-hidden="true" />
               <span>Add Invoice</span>
@@ -178,6 +218,7 @@ export function AdminFeesPage() {
                 variant="primary"
                 size="sm"
                 onClick={() => {
+                  setPayError(null);
                   setSelectedRecordId(state.feeRecords[0]?.id ?? '');
                   setAmountNote(state.feeRecords[0]?.amountPlaceholder ?? '');
                   setPaymentModalOpen(true);
@@ -243,22 +284,22 @@ export function AdminFeesPage() {
             description="Add an official fee package once pricing and billing cycles are finalized."
           />
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3 items-start">
             {state.feePackages.map((pkg) => (
               <div
                 key={pkg.id}
                 className="rounded-[12px] border border-[#E2E8F0] bg-[#F5F7FA] p-4 space-y-2 text-xs"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold text-[#071A36]">{pkg.name}</p>
-                  <div className="flex items-center gap-1.5">
+                  <p className="min-w-0 break-words font-bold text-[#071A36]">{pkg.name}</p>
+                  <div className="flex shrink-0 items-center gap-1.5">
                     <AdminStatusBadge
                       label={pkg.status}
                       variant={pkg.status === 'Active' ? 'success' : 'neutral'}
                     />
                     <button
                       type="button"
-                      onClick={() => setFeePackages((prev) => prev.filter((p) => p.id !== pkg.id))}
+                      onClick={() => setDeletePkgTarget(pkg)}
                       aria-label={`Remove ${pkg.name}`}
                       className="text-[#C8202B]/70 hover:text-[#C8202B] cursor-pointer"
                     >
@@ -415,6 +456,7 @@ export function AdminFeesPage() {
               { value: 'Draft', label: 'Draft' },
             ]}
           />
+          {pkgError && <p className="text-xs font-semibold text-[#C8202B]">{pkgError}</p>}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setPackageModalOpen(false)}>
               Cancel
@@ -466,6 +508,7 @@ export function AdminFeesPage() {
             onChange={(e) => setInvDueDate(e.target.value)}
             placeholder="e.g. 05 Dec 2026"
           />
+          {invError && <p className="text-xs font-semibold text-[#C8202B]">{invError}</p>}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setInvoiceModalOpen(false)}>
               Cancel
@@ -510,6 +553,7 @@ export function AdminFeesPage() {
             value={paymentNotes}
             onChange={(e) => setPaymentNotes(e.target.value)}
           />
+          {payError && <p className="text-xs font-semibold text-[#C8202B]">{payError}</p>}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button
               type="button"
@@ -525,6 +569,20 @@ export function AdminFeesPage() {
           </div>
         </form>
       </AdminModal>
+
+      <AdminConfirmDialog
+        open={Boolean(deletePkgTarget)}
+        onClose={() => setDeletePkgTarget(null)}
+        onConfirm={() => {
+          if (!deletePkgTarget) return;
+          setFeePackages((prev) => prev.filter((p) => p.id !== deletePkgTarget.id));
+          showToast('Fee Package Deleted', `${deletePkgTarget.name} removed.`, 'warning');
+        }}
+        title="Delete Fee Package"
+        message={`Remove fee package "${deletePkgTarget?.name ?? ''}"? Existing student invoices will not be altered.`}
+        confirmLabel="Delete Package"
+        tone="danger"
+      />
     </div>
   );
 }

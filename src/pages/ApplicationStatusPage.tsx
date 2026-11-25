@@ -58,18 +58,20 @@ const STATUS_BADGE_STYLES: Record<
 
 export function ApplicationStatusPage() {
   useDocumentTitle('Application Status Tracker');
-  const { state } = useAcademyState();
+  const { lookupApplication } = useAcademyState();
 
   const [reference, setReference] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [errors, setErrors] = useState<LookupErrors>({});
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [matchedApplication, setMatchedApplication] = useState<AdminApplication | null>(null);
   const [searchedEmpty, setSearchedEmpty] = useState(false);
 
   function validateLookup(): LookupErrors {
     const nextErrors: LookupErrors = {};
     if (!reference.trim() || reference.trim().length < 4) {
-      nextErrors.reference = 'Please enter your application reference ID (e.g., SK-APP-123456).';
+      nextErrors.reference = 'Please enter your application reference ID (e.g., ADM-26-01001).';
     }
     if (contactPhone.trim() && !isValidPhoneNumber(contactPhone)) {
       nextErrors.contactPhone = 'Enter a valid phone number (7–15 digits).';
@@ -77,10 +79,11 @@ export function ApplicationStatusPage() {
     return nextErrors;
   }
 
-  function handleLookupSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleLookupSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMatchedApplication(null);
     setSearchedEmpty(false);
+    setLookupError(null);
 
     const nextErrors = validateLookup();
     if (Object.keys(nextErrors).length > 0) {
@@ -89,21 +92,21 @@ export function ApplicationStatusPage() {
     }
 
     setErrors({});
-    const targetRef = reference.trim().toLowerCase();
-    const targetDigits = contactPhone.replace(/\D/g, '');
-
-    const found = state.applications.find((app) => {
-      const refMatch = app.referencePlaceholder.trim().toLowerCase() === targetRef;
-      if (!refMatch) return false;
-      if (!targetDigits) return true;
-      const storedDigits = app.contactPlaceholder.replace(/\D/g, '');
-      return !storedDigits || storedDigits.endsWith(targetDigits.slice(-7));
-    });
-
-    if (found) {
-      setMatchedApplication(found);
-    } else {
-      setSearchedEmpty(true);
+    setIsSearching(true);
+    try {
+      const targetDigits = contactPhone.replace(/\D/g, '');
+      const res = await lookupApplication(reference.trim(), targetDigits);
+      if (!res.ok) {
+        setLookupError(res.error ?? 'Unable to look up application status.');
+        return;
+      }
+      if (res.data) {
+        setMatchedApplication(res.data);
+      } else {
+        setSearchedEmpty(true);
+      }
+    } finally {
+      setIsSearching(false);
     }
   }
 
@@ -122,10 +125,11 @@ export function ApplicationStatusPage() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Input
               label="Application Reference"
-              placeholder="e.g., SK-APP-123456"
+              placeholder="e.g., ADM-26-01001"
               value={reference}
               onChange={(e) => {
                 setReference(e.target.value);
+                setLookupError(null);
                 if (errors.reference) {
                   setErrors((prev) => ({ ...prev, reference: undefined }));
                 }
@@ -141,6 +145,7 @@ export function ApplicationStatusPage() {
               value={contactPhone}
               onChange={(e) => {
                 setContactPhone(e.target.value);
+                setLookupError(null);
                 if (errors.contactPhone) {
                   setErrors((prev) => ({ ...prev, contactPhone: undefined }));
                 }
@@ -149,10 +154,20 @@ export function ApplicationStatusPage() {
             />
           </div>
 
+          {lookupError && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-[10px] border border-[#C8202B]/30 bg-[#C8202B]/5 px-4 py-3 text-sm text-[#C8202B]"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{lookupError}</span>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Button type="submit" variant="primary" size="lg" className="gap-2">
+            <Button type="submit" variant="primary" size="lg" className="gap-2" disabled={isSearching}>
               <Search className="h-4 w-4" aria-hidden="true" />
-              <span>Track Application</span>
+              <span>{isSearching ? 'Checking Status...' : 'Track Application'}</span>
             </Button>
 
             <Link

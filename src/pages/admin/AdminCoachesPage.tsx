@@ -203,7 +203,7 @@ export function AdminCoachesPage() {
               placeholder="Search coaches by name, role, or specialty..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white pl-10 pr-4 text-sm text-[#071A36]"
             />
           </div>
           <div className="sm:col-span-4">
@@ -211,7 +211,7 @@ export function AdminCoachesPage() {
               aria-label="Filter coaches by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as 'All' | CoachStatus)}
-              className="h-11 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
+              className="h-10 w-full rounded-[10px] border border-[#E2E8F0] bg-white px-3 text-sm text-[#071A36]"
             >
               <option value="All">All Statuses</option>
               <option value="Active">Active</option>
@@ -239,7 +239,7 @@ export function AdminCoachesPage() {
             }
           />
         ) : (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 items-start">
             {filteredCoaches.map((coach) => (
               <div
                 key={coach.id}
@@ -284,7 +284,7 @@ export function AdminCoachesPage() {
                   )}
                 </div>
 
-                <div className="flex items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E2E8F0] pt-3">
                   <button
                     type="button"
                     onClick={() => setDeleteTarget(coach)}
@@ -294,7 +294,7 @@ export function AdminCoachesPage() {
                     <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   </button>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1.5">
                     <Button
                       type="button"
                       variant="outline"

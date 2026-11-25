@@ -37,25 +37,28 @@ export const FOOTER_PRIMARY_LINKS = [
   { label: 'About Academy', path: '/about' },
   { label: 'Training Programs', path: '/programs' },
   { label: 'Coaches', path: '/coaches' },
-  { label: 'Admissions', path: '/admissions' },
+  { label: 'Facilities', path: '/facilities' },
   { label: 'Matches & Events', path: '/matches' },
-  { label: 'Contact', path: '/contact' },
+  { label: 'Gallery', path: '/gallery' },
+] as const;
+
+export const FOOTER_ADMISSIONS_LINKS = [
+  { label: 'Admissions Guide', path: '/admissions' },
+  { label: 'Book Free Trial', path: '/book-trial' },
+  { label: 'Register Now', path: '/register' },
+  { label: 'Track Application', path: '/application-status' },
+  { label: 'Training Schedule', path: '/schedule' },
+  { label: 'Fees & Plans', path: '/fees' },
+  { label: 'FAQs & Contact', path: '/faqs' },
 ] as const;
 
 export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
-    heading: 'Navigation',
+    heading: 'Academy',
     links: [...FOOTER_PRIMARY_LINKS],
   },
   {
     heading: 'Admissions & Explore',
-    links: [
-      { label: 'Book Free Trial', path: '/book-trial' },
-      { label: 'Register Now', path: '/register' },
-      { label: 'Fee Information', path: '/fees' },
-      { label: 'Training Schedule', path: '/schedule' },
-      { label: 'Gallery', path: '/gallery' },
-      { label: 'FAQs', path: '/faqs' },
-    ],
+    links: [...FOOTER_ADMISSIONS_LINKS],
   },
 ];

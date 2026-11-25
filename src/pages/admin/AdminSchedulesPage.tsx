@@ -4,6 +4,7 @@ import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { SCHEDULE_DAYS, type ScheduleDay } from '@/src/data/activitiesContent';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
 import type { AdminScheduleItem } from '@/src/types/admin';
+import { containsUnsafeHtml } from '@/src/utils/validation';
 import {
   AdminConfirmDialog,
   AdminEmptyState,
@@ -31,6 +32,7 @@ export function AdminSchedulesPage() {
   const [batchId, setBatchId] = useState(state.batches[0]?.id ?? '');
   const [coachName, setCoachName] = useState(state.coaches[0]?.fullName ?? '');
   const [groundZone, setGroundZone] = useState('Main Practice Nets');
+  const [formError, setFormError] = useState<string | null>(null);
 
   function openAdd(defaultDay?: ScheduleDay) {
     setEditing(null);
@@ -39,6 +41,7 @@ export function AdminSchedulesPage() {
     setBatchId(state.batches[0]?.id ?? '');
     setCoachName(state.coaches[0]?.fullName ?? 'To Be Assigned');
     setGroundZone('Main Practice Nets');
+    setFormError(null);
     setFormOpen(true);
   }
 
@@ -49,12 +52,20 @@ export function AdminSchedulesPage() {
     setBatchId(item.batchId);
     setCoachName(item.coachName);
     setGroundZone(item.groundZone);
+    setFormError(null);
     setFormOpen(true);
   }
 
   function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!timePlaceholder.trim()) return;
+    if (!timePlaceholder.trim()) {
+      setFormError('Session timing is required.');
+      return;
+    }
+    if (containsUnsafeHtml([timePlaceholder, coachName, groundZone])) {
+      setFormError('HTML tags (< or >) are not permitted.');
+      return;
+    }
     const batch = state.batches.find((b) => b.id === batchId);
     const batchName = batch?.name ?? 'General Training Group';
     const programTitle = batch?.programTitle ?? (state.programs[0]?.title ?? 'Training Session');
@@ -100,7 +111,7 @@ export function AdminSchedulesPage() {
         title="Schedule Management"
         description="Configure weekly training days, timings, ground zones, and supervising coaches."
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="inline-flex rounded-[10px] border border-[#E2E8F0] bg-white p-1">
               <button
                 type="button"
@@ -145,7 +156,7 @@ export function AdminSchedulesPage() {
           />
         </Card>
       ) : viewMode === 'calendar' ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 items-start">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 items-start">
           {SCHEDULE_DAYS.map((dayName) => {
             const items = state.schedules.filter((s) => s.day === dayName);
             return (
@@ -171,8 +182,8 @@ export function AdminSchedulesPage() {
                         className="rounded-[10px] border border-[#E2E8F0] bg-[#F5F7FA] p-3 space-y-1 text-xs"
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <span className="font-bold text-[#071A36]">{slot.programTitle}</span>
-                          <div className="flex items-center gap-1.5">
+                          <span className="min-w-0 break-words font-bold text-[#071A36]">{slot.programTitle}</span>
+                          <div className="flex shrink-0 items-center gap-1.5">
                             <button
                               type="button"
                               onClick={() => openEdit(slot)}
@@ -306,6 +317,7 @@ export function AdminSchedulesPage() {
             onChange={(e) => setGroundZone(e.target.value)}
             placeholder="e.g. Sabzazar Ground — Practice Lanes"
           />
+          {formError && <p className="text-xs font-semibold text-[#C8202B]">{formError}</p>}
           <div className="flex justify-end gap-3 border-t border-[#E2E8F0] pt-4">
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel

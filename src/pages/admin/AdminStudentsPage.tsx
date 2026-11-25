@@ -28,7 +28,7 @@ const STATUS_BADGE_MAP: Record<StudentStatus, 'success' | 'warning' | 'danger' |
 export function AdminStudentsPage() {
   useDocumentTitle('Student Management');
   const { showToast } = useAdminToast();
-  const { state, setStudents } = useAcademyState();
+  const { state, saveStudent, removeStudent } = useAcademyState();
 
   const programOptions = useMemo(() => {
     const titles = state.programs.map((p) => p.title);
@@ -58,6 +58,7 @@ export function AdminStudentsPage() {
     notes: '',
   });
   const [formError, setFormError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [profileStudent, setProfileStudent] = useState<AdminStudent | null>(null);
   const [assignStudent, setAssignStudent] = useState<AdminStudent | null>(null);
@@ -122,8 +123,9 @@ export function AdminStudentsPage() {
     setFormOpen(true);
   }
 
-  function handleSaveStudent(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveStudent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setFormError(null);
     if (!formState.fullName.trim() || !formState.guardianName.trim()) {
       setFormError('Student name and guardian or primary contact name are required.');
       return;
@@ -132,27 +134,11 @@ export function AdminStudentsPage() {
     const matchedBatch = batchOptions.find((b) => b.id === formState.batchId);
     const batchName = matchedBatch?.name ?? (formState.batchId ? formState.batchName : 'Unassigned');
 
-    if (editingStudent) {
-      setStudents((prev) =>
-        prev.map((item) =>
-          item.id === editingStudent.id
-            ? {
-                ...item,
-                ...formState,
-                fullName: formState.fullName.trim(),
-                guardianName: formState.guardianName.trim(),
-                contactPlaceholder: formState.contactPlaceholder.trim(),
-                batchName,
-              }
-            : item,
-        ),
-      );
-      showToast('Student Updated', `${formState.fullName.trim()} saved.`);
-    } else {
+    setIsSaving(true);
+    try {
       const nextIndex = state.students.length + 1;
-      const newEntry: AdminStudent = {
-        id: `stu-${Date.now()}`,
-        studentCode: `SK-${String(nextIndex).padStart(4, '0')}`,
+      const payload: Omit<AdminStudent, 'id' | 'joinedLabel'> = {
+        studentCode: editingStudent?.studentCode ?? `SK-${String(nextIndex).padStart(4, '0')}`,
         fullName: formState.fullName.trim(),
         ageGroup: formState.ageGroup,
         contactPlaceholder: formState.contactPlaceholder.trim(),
@@ -161,18 +147,26 @@ export function AdminStudentsPage() {
         batchId: formState.batchId,
         batchName,
         status: formState.status,
-        joinedLabel: new Date().toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        }),
-        attendanceRate: 100,
+        attendanceRate: editingStudent?.attendanceRate ?? 100,
         notes: formState.notes.trim(),
       };
-      setStudents((prev) => [newEntry, ...prev]);
-      showToast('Student Added', `${newEntry.fullName} added to academy roster.`);
+
+      const res = await saveStudent(payload, editingStudent?.id);
+      if (!res.ok) {
+        setFormError(res.error ?? 'Failed to save student record.');
+        return;
+      }
+
+      showToast(
+        editingStudent ? 'Student Updated' : 'Student Added',
+        editingStudent
+          ? `${payload.fullName} saved.`
+          : `${payload.fullName} added to academy roster.`,
+      );
+      setFormOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-    setFormOpen(false);
   }
 
   function openAssignModal(student: AdminStudent) {
@@ -181,24 +175,37 @@ export function AdminStudentsPage() {
     setAssignBatchId(student.batchId || batchOptions[0]?.id || '');
   }
 
-  function handleSaveAssignment(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveAssignment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!assignStudent) return;
     const matchedBatch = batchOptions.find((b) => b.id === assignBatchId);
-    setStudents((prev) =>
-      prev.map((item) =>
-        item.id === assignStudent.id
-          ? {
-              ...item,
-              program: assignProgram,
-              batchId: assignBatchId,
-              batchName: matchedBatch?.name ?? 'Unassigned',
-            }
-          : item,
-      ),
-    );
-    showToast('Placement Updated', `${assignStudent.fullName} assigned to ${assignProgram}.`);
-    setAssignStudent(null);
+    setIsSaving(true);
+    try {
+      const res = await saveStudent(
+        {
+          studentCode: assignStudent.studentCode,
+          fullName: assignStudent.fullName,
+          ageGroup: assignStudent.ageGroup,
+          contactPlaceholder: assignStudent.contactPlaceholder,
+          guardianName: assignStudent.guardianName,
+          program: assignProgram,
+          batchId: assignBatchId,
+          batchName: matchedBatch?.name ?? 'Unassigned',
+          status: assignStudent.status,
+          attendanceRate: assignStudent.attendanceRate,
+          notes: assignStudent.notes,
+        },
+        assignStudent.id,
+      );
+      if (!res.ok) {
+        showToast('Placement Error', res.error ?? 'Unable to update batch assignment.', 'warning');
+        return;
+      }
+      showToast('Placement Updated', `${assignStudent.fullName} assigned to ${assignProgram}.`);
+      setAssignStudent(null);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -338,7 +345,7 @@ export function AdminStudentsPage() {
                         <AdminStatusBadge label={stu.status} variant={STATUS_BADGE_MAP[stu.status]} />
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <div className="inline-flex items-center justify-end gap-1.5">
+                        <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
                           <button
                             type="button"
                             onClick={() => setProfileStudent(stu)}
@@ -471,8 +478,12 @@ export function AdminStudentsPage() {
             <Button type="button" variant="outline" size="sm" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm">
-              {editingStudent ? 'Save Changes' : 'Create Student Record'}
+            <Button type="submit" variant="primary" size="sm" disabled={isSaving}>
+              {isSaving
+                ? 'Saving...'
+                : editingStudent
+                  ? 'Save Changes'
+                  : 'Create Student Record'}
             </Button>
           </div>
         </form>
@@ -556,8 +567,8 @@ export function AdminStudentsPage() {
             <Button type="button" variant="outline" size="sm" onClick={() => setAssignStudent(null)}>
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Apply Placement
+            <Button type="submit" variant="primary" size="sm" disabled={isSaving}>
+              {isSaving ? 'Applying...' : 'Apply Placement'}
             </Button>
           </div>
         </form>
@@ -568,8 +579,14 @@ export function AdminStudentsPage() {
         onClose={() => setDeleteTarget(null)}
         onConfirm={() => {
           if (!deleteTarget) return;
-          setStudents((prev) => prev.filter((s) => s.id !== deleteTarget.id));
-          showToast('Student Removed', `${deleteTarget.fullName} removed from roster.`, 'warning');
+          const target = deleteTarget;
+          void removeStudent(target.id).then((res) => {
+            if (res.ok) {
+              showToast('Student Removed', `${target.fullName} removed from roster.`, 'warning');
+            } else {
+              showToast('Remove Failed', res.error ?? 'Could not remove student.', 'warning');
+            }
+          });
         }}
         title="Remove Student Record"
         message={`Remove ${deleteTarget?.fullName ?? 'this student'} from the academy roster?`}

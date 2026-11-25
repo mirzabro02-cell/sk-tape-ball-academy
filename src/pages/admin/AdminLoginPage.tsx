@@ -91,21 +91,31 @@ export function AdminLoginPage() {
         </div>
 
         <Card padding="lg" className="bg-white text-[#071A36] border-[#E2E8F0]">
+          {!isSupabaseMode && (
+            <div className="mb-4 rounded-[10px] border border-[#D9A52E]/60 bg-[#D9A52E]/10 px-3.5 py-2.5 text-[11px] leading-relaxed text-[#071A36]">
+              <strong className="font-bold">Local Preview Mode (Supabase Unconfigured):</strong>{' '}
+              Browser-only operator login is active for offline/preview testing. Configure{' '}
+              <code className="font-mono">VITE_SUPABASE_URL</code> and{' '}
+              <code className="font-mono">VITE_SUPABASE_ANON_KEY</code> to enforce production
+              Supabase Auth (<code className="font-mono">profiles.role = admin</code>).
+            </div>
+          )}
+
           <div className="space-y-1.5 border-b border-[#E2E8F0] pb-4 mb-5">
             <div className="flex items-center gap-2 text-xs font-bold text-[#071A36]">
               <Lock className="h-4 w-4 text-[#D9A52E]" aria-hidden="true" />
               <span>
                 {isFirstTimeSetup
-                  ? 'Initial Administrator Setup'
+                  ? 'Initial Local Preview Operator Setup'
                   : 'Administrator Sign In'}
               </span>
             </div>
             <p className="text-xs leading-relaxed text-[#64748B]">
               {isFirstTimeSetup
-                ? 'Set your private administrator email and password to protect access to the academy management portal on this browser.'
+                ? 'Set a local preview email and password for this browser while Supabase is unconfigured.'
                 : isSupabaseMode
-                  ? 'Sign in with a verified administrator account connected to Supabase.'
-                  : 'Enter your registered administrator credentials to access the academy management portal.'}
+                  ? 'Sign in with your Supabase administrator account (verified via profiles.role = admin).'
+                  : 'Enter your local preview operator credentials configured on this browser.'}
             </p>
           </div>
 

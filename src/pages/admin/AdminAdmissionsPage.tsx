@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react';
 import { Eye, Search, UserPlus } from 'lucide-react';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
-import type { AdminApplication, AdminStudent, AdmissionDecisionStatus } from '@/src/types/admin';
+import type { AdminApplication, AdmissionDecisionStatus } from '@/src/types/admin';
 import {
   AdminEmptyState,
   AdminModal,
@@ -38,7 +38,7 @@ const ADMISSION_BADGE: Record<
 export function AdminAdmissionsPage() {
   useDocumentTitle('Admission Management');
   const { showToast } = useAdminToast();
-  const { state, setApplications, setStudents } = useAcademyState();
+  const { state, reviewAdmission, convertAdmissionToStudent } = useAcademyState();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | AdmissionDecisionStatus>('All');
@@ -46,6 +46,7 @@ export function AdminAdmissionsPage() {
   const [reviewingApp, setReviewingApp] = useState<AdminApplication | null>(null);
   const [decisionStatus, setDecisionStatus] = useState<AdmissionDecisionStatus>('Under Review');
   const [reviewerNotes, setReviewerNotes] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const [convertApp, setConvertApp] = useState<AdminApplication | null>(null);
   const [targetBatchId, setTargetBatchId] = useState(state.batches[0]?.id ?? '');
@@ -69,60 +70,51 @@ export function AdminAdmissionsPage() {
     setReviewerNotes(app.reviewerNotes);
   }
 
-  function handleSaveDecision(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveDecision(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!reviewingApp) return;
 
-    setApplications((prev) =>
-      prev.map((a) =>
-        a.id === reviewingApp.id
-          ? { ...a, status: decisionStatus, reviewerNotes }
-          : a,
-      ),
-    );
-    showToast(
-      'Application Updated',
-      `${reviewingApp.applicantName} set to "${decisionStatus}".`,
-    );
-    setReviewingApp(null);
+    setIsSaving(true);
+    try {
+      const res = await reviewAdmission(reviewingApp.id, decisionStatus, reviewerNotes);
+      if (!res.ok) {
+        showToast('Update Failed', res.error ?? 'Could not save admission decision.', 'warning');
+        return;
+      }
+      showToast(
+        'Application Updated',
+        `${reviewingApp.applicantName} set to "${decisionStatus}".`,
+      );
+      setReviewingApp(null);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
-  function handleConvertToStudent() {
+  async function handleConvertToStudent() {
     if (!convertApp) return;
-    const batch = state.batches.find((b) => b.id === targetBatchId);
-    const nextCode = `SK-${String(state.students.length + 1).padStart(4, '0')}`;
+    const batch = state.batches.find((b) => b.id === targetBatchId) ?? null;
 
-    const newStudent: AdminStudent = {
-      id: `stu-${Date.now()}`,
-      studentCode: nextCode,
-      fullName: convertApp.applicantName,
-      ageGroup: convertApp.isMinor ? `Age ${convertApp.age} (Minor)` : `Age ${convertApp.age}`,
-      contactPlaceholder: convertApp.contactPlaceholder,
-      guardianName: convertApp.guardianName,
-      program: convertApp.requestedProgram,
-      batchId: batch?.id ?? '',
-      batchName: batch?.name ?? 'Unassigned',
-      status: 'Active',
-      joinedLabel: new Date().toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      }),
-      attendanceRate: 100,
-      notes: convertApp.reviewerNotes || `Converted from application ${convertApp.referencePlaceholder}.`,
-    };
+    setIsSaving(true);
+    try {
+      const res = await convertAdmissionToStudent(convertApp, batch);
+      if (!res.ok || !res.data) {
+        showToast(
+          'Enrollment Failed',
+          res.error ?? 'Could not enroll applicant into Student Roster.',
+          'warning',
+        );
+        return;
+      }
 
-    setStudents((prev) => [newStudent, ...prev]);
-    setApplications((prev) =>
-      prev.map((a) =>
-        a.id === convertApp.id ? { ...a, convertedToStudent: true } : a,
-      ),
-    );
-    showToast(
-      'Applicant Enrolled as Student',
-      `${convertApp.applicantName} added to the Student Roster (${nextCode}).`,
-    );
-    setConvertApp(null);
+      showToast(
+        'Applicant Enrolled as Student',
+        `${convertApp.applicantName} added to the Student Roster (${res.data.studentCode}).`,
+      );
+      setConvertApp(null);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -305,8 +297,8 @@ export function AdminAdmissionsPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" size="sm">
-                Save Decision
+              <Button type="submit" variant="primary" size="sm" disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save Decision'}
               </Button>
             </div>
           </form>
@@ -343,8 +335,14 @@ export function AdminAdmissionsPage() {
               >
                 Cancel
               </Button>
-              <Button type="button" variant="primary" size="sm" onClick={handleConvertToStudent}>
-                Confirm Student Enrollment
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                disabled={isSaving}
+                onClick={() => void handleConvertToStudent()}
+              >
+                {isSaving ? 'Enrolling...' : 'Confirm Student Enrollment'}
               </Button>
             </div>
           </div>

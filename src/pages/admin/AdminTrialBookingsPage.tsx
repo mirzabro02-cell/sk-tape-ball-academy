@@ -26,13 +26,14 @@ const TRIAL_BADGE: Record<TrialBookingStatus, 'warning' | 'success' | 'navy' | '
 export function AdminTrialBookingsPage() {
   useDocumentTitle('Trial Booking Management');
   const { showToast } = useAdminToast();
-  const { state, setTrials } = useAcademyState();
+  const { state, updateTrialBooking } = useAcademyState();
 
   const [statusFilter, setStatusFilter] = useState<'All' | TrialBookingStatus>('All');
   const [rescheduleTarget, setRescheduleTarget] = useState<AdminTrialBooking | null>(null);
   const [newDate, setNewDate] = useState('');
   const [newTimeSlot, setNewTimeSlot] = useState('');
   const [staffNote, setStaffNote] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const [confirmTarget, setConfirmTarget] = useState<AdminTrialBooking | null>(null);
   const [rejectTarget, setRejectTarget] = useState<AdminTrialBooking | null>(null);
@@ -49,29 +50,31 @@ export function AdminTrialBookingsPage() {
     setStaffNote(trial.staffNote);
   }
 
-  function handleSaveReschedule(event: FormEvent<HTMLFormElement>) {
+  async function handleSaveReschedule(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!rescheduleTarget || !newDate) return;
 
-    setTrials((prev) =>
-      prev.map((t) =>
-        t.id === rescheduleTarget.id
-          ? {
-              ...t,
-              preferredDate: newDate,
-              preferredTimeSlot: newTimeSlot.trim() || t.preferredTimeSlot,
-              staffNote: staffNote.trim(),
-              status: 'Rescheduled',
-            }
-          : t,
-      ),
-    );
-    showToast(
-      'Trial Rescheduled',
-      `${rescheduleTarget.playerName} rescheduled to ${newDate}.`,
-      'info',
-    );
-    setRescheduleTarget(null);
+    setIsSaving(true);
+    try {
+      const res = await updateTrialBooking(rescheduleTarget.id, {
+        status: 'Rescheduled',
+        preferredDate: newDate,
+        preferredTimeSlot: newTimeSlot.trim() || rescheduleTarget.preferredTimeSlot,
+        staffNote: staffNote.trim(),
+      });
+      if (!res.ok) {
+        showToast('Reschedule Failed', res.error ?? 'Unable to reschedule trial booking.', 'warning');
+        return;
+      }
+      showToast(
+        'Trial Rescheduled',
+        `${rescheduleTarget.playerName} rescheduled to ${newDate}.`,
+        'info',
+      );
+      setRescheduleTarget(null);
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -239,8 +242,8 @@ export function AdminTrialBookingsPage() {
             >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" size="sm">
-              Save Reschedule
+            <Button type="submit" variant="primary" size="sm" disabled={isSaving}>
+              {isSaving ? 'Saving...' : 'Save Reschedule'}
             </Button>
           </div>
         </form>
@@ -251,10 +254,14 @@ export function AdminTrialBookingsPage() {
         onClose={() => setConfirmTarget(null)}
         onConfirm={() => {
           if (!confirmTarget) return;
-          setTrials((prev) =>
-            prev.map((t) => (t.id === confirmTarget.id ? { ...t, status: 'Confirmed' } : t)),
-          );
-          showToast('Trial Confirmed', `${confirmTarget.playerName} marked Confirmed.`);
+          const target = confirmTarget;
+          void updateTrialBooking(target.id, { status: 'Confirmed' }).then((res) => {
+            if (res.ok) {
+              showToast('Trial Confirmed', `${target.playerName} marked Confirmed.`);
+            } else {
+              showToast('Confirm Failed', res.error ?? 'Could not confirm trial.', 'warning');
+            }
+          });
         }}
         title="Confirm Trial Booking Request"
         message={`Confirm trial request for ${confirmTarget?.playerName ?? ''} on ${confirmTarget?.preferredDate ?? ''}?`}
@@ -267,10 +274,14 @@ export function AdminTrialBookingsPage() {
         onClose={() => setRejectTarget(null)}
         onConfirm={() => {
           if (!rejectTarget) return;
-          setTrials((prev) =>
-            prev.map((t) => (t.id === rejectTarget.id ? { ...t, status: 'Rejected' } : t)),
-          );
-          showToast('Trial Rejected', `${rejectTarget.playerName} marked Rejected.`, 'warning');
+          const target = rejectTarget;
+          void updateTrialBooking(target.id, { status: 'Rejected' }).then((res) => {
+            if (res.ok) {
+              showToast('Trial Rejected', `${target.playerName} marked Rejected.`, 'warning');
+            } else {
+              showToast('Reject Failed', res.error ?? 'Could not update trial status.', 'warning');
+            }
+          });
         }}
         title="Reject Trial Request"
         message={`Reject trial request ${rejectTarget?.requestCode ?? ''}? You can propose another date via Reschedule instead.`}

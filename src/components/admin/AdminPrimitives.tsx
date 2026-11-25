@@ -10,6 +10,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { Button } from '@/src/components/ui/Button';
+import { useScrollLock } from '@/src/hooks/useScrollLock';
 import { cn } from '@/src/utils/cn';
 
 export function AdminDemoNotice({
@@ -36,8 +37,8 @@ export function AdminPageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="space-y-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-1 min-w-0">
         <h1 className="text-2xl font-extrabold tracking-tight text-[#071A36]">{title}</h1>
         <p className="text-sm text-[#64748B]">{description}</p>
       </div>
@@ -162,6 +163,8 @@ export function AdminModal({
   children: ReactNode;
   maxWidth?: 'md' | 'lg' | 'xl';
 }) {
+  useScrollLock(open);
+
   useEffect(() => {
     if (!open) return;
     const handleEsc = (e: KeyboardEvent) => {
