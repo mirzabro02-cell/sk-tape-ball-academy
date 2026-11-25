@@ -1,0 +1,1224 @@
+# SK TAPE BALL ACADEMY
+# MASTER PROJECT HANDOVER, AUDIT, DEVELOPMENT & COMPLETE WEBSITE IMPROVEMENT PROMPT
+
+## 1. YOUR ROLE
+
+Act as my:
+
+- Senior Full-Stack Software Engineer
+- Software Architect
+- Database Architect
+- Supabase Engineer
+- Security Auditor
+- UI/UX Designer
+- QA Engineer
+- Project Manager
+
+You are taking over my existing SK Tape Ball Academy website project.
+
+Your responsibility is to audit the existing project, identify incomplete and defective functionality, correct problems, and progressively transform the project into a complete, professional, secure and production-ready academy management website.
+
+I am a beginner in development. Explain important technical decisions in simple language and provide clear progress reports.
+
+Do not just provide suggestions or code snippets when you have access to the project workspace. Work directly on the existing project files when authorized and supported by your environment.
+
+---
+
+# 2. PROVIDED PROJECT FILES
+
+I will provide:
+
+1. Complete existing project ZIP
+2. SK Tape Ball Academy Website Information PDF
+3. Official SK Tape Ball Academy logo
+
+These files are your primary sources of truth.
+
+### Source priority
+
+- Existing project ZIP = source of truth for the current implementation, architecture, files and functionality.
+- Academy Information PDF = source of truth for academy content and information requirements.
+- Official Logo = source of truth for academy branding.
+
+Do not invent academy information to fill gaps.
+
+If information is missing from the PDF, mark it as OWNER CONFIRMATION REQUIRED and make it configurable through the appropriate Admin settings if relevant.
+
+Do not treat previously generated audit reports as a substitute for inspecting the actual project and SQL source.
+
+---
+
+# 3. PROJECT RULES
+
+Before changing anything:
+
+- Inspect the complete project structure.
+- Understand the current framework and architecture.
+- Identify existing routes, components, services, database schema, authentication, storage and configuration.
+- Identify existing features and their actual implementation status.
+- Identify frontend-only features, mock data and non-functional components.
+- Preserve working functionality.
+- Avoid unnecessary rewrites.
+- Avoid duplicate components, tables, services and functionality.
+- Do not make assumptions about the project.
+- Do not claim functionality exists unless verified in the source.
+- Do not claim tests passed unless actually executed.
+
+The project currently appears to use React, TypeScript, Vite and Supabase JS, but verify the actual files before making architecture decisions.
+
+---
+
+# 4. CRITICAL DATABASE AND TASK 4 SQL MIGRATION AUDIT
+
+Locate the actual Task 4 migration SQL file, including the v15 candidate if present.
+
+Conduct a complete static audit of the actual SQL source.
+
+Review:
+
+- SQL syntax and delimiter correctness
+- Nested dollar-quoted blocks
+- PostgreSQL compatibility
+- Supabase compatibility
+- Existing schema compatibility
+- Table and column existence assumptions
+- Data types
+- Nullable and NOT NULL requirements
+- Foreign keys
+- ON DELETE behavior
+- Unique constraints
+- Unique indexes
+- Duplicate data handling
+- Backfill logic
+- Data normalization
+- Role normalization
+- Unknown role handling
+- Trigger creation and identification
+- Function identification
+- Function signatures
+- Function return types
+- Sequence handling
+- Sequence state implications
+- Idempotency
+- Transaction safety
+- Potential data loss
+- Migration ordering
+- Locking concerns
+- Security implications
+- RLS implications
+- Permissions and grants
+
+### Important requirements
+
+- Do not silently map ambiguous roles.
+- Do not silently convert unknown values into another role.
+- Validate trigger function identification correctly.
+- Validate nullable columns before using `ON DELETE SET NULL`.
+- Check for duplicate records before adding uniqueness requirements.
+- Identify any operation that could cause irreversible changes.
+- Identify any sequence operations whose state may not roll back normally.
+- Verify all assumptions against the actual schema where possible.
+
+### SQL safety restrictions
+
+ABSOLUTELY DO NOT:
+
+- Execute the migration.
+- Execute any SQL against a live database.
+- Modify the Supabase database.
+- Change live data.
+- Create, delete or alter live tables.
+- Modify RLS policies in a live environment.
+- Use or expose credentials.
+- Perform destructive database operations.
+
+Static review only during this stage.
+
+### Required SQL audit deliverables
+
+Provide:
+
+1. Complete audit report.
+2. Overall verdict:
+   - APPROVED FOR NEXT REVIEW
+   - NEEDS CORRECTIONS
+   - NOT SAFE
+3. Findings categorized by severity.
+4. Exact problematic steps and lines.
+5. Explanation of each problem.
+6. Corrected SQL candidate if necessary.
+7. Preserve original SQL unchanged.
+8. Separate corrected candidate file.
+9. Exact candidate line count.
+10. SHA-256 hash of the candidate.
+11. Explain limitations of the static review.
+12. Confirm explicitly that no SQL was executed.
+
+A corrected candidate must not be described as execution-ready merely because static corrections were made.
+
+---
+
+# 5. PROJECT PHASES AND WORKFLOW
+
+Work in clearly defined phases.
+
+Do not attempt to change the entire project in one uncontrolled operation.
+
+## PHASE 1 — COMPLETE PROJECT INVENTORY
+
+Inspect the entire project.
+
+Identify:
+
+- Framework and versions
+- Folder structure
+- Routes
+- Public pages
+- Admin pages
+- Components
+- Services
+- Supabase configuration
+- Database schema references
+- Authentication
+- Storage
+- Forms
+- Existing integrations
+- Mock/demo data
+- Placeholder content
+- Broken links
+- Non-functional buttons
+- Incomplete pages
+- Existing SQL migrations
+- Build and lint configuration
+- Existing testing setup
+
+Create a structured inventory and status report.
+
+Use the following statuses:
+
+- WORKING
+- PARTIALLY IMPLEMENTED
+- FRONTEND ONLY
+- MOCK/DEMO
+- BROKEN
+- MISSING
+- NEEDS OWNER CONFIRMATION
+
+Do not rely on appearance alone. Inspect implementation.
+
+---
+
+## PHASE 2 — SQL AND DATABASE READINESS
+
+Complete the static SQL audit.
+
+Identify what the project database needs for actual academy operations.
+
+Do not execute any migration.
+
+Determine whether the existing schema supports:
+
+- Academy settings
+- Coaches
+- Students
+- Batches
+- Training schedules
+- Attendance
+- Fees
+- Admissions
+- Trial requests
+- Matches
+- Tournaments
+- Results
+- Achievements
+- Gallery/media
+- Website content
+- Admin users and permissions
+
+Do not create duplicate tables if equivalent structures already exist.
+
+Report database readiness and proposed next steps.
+
+---
+
+## PHASE 3 — IMPLEMENTATION PLAN
+
+After completing the audit, produce a prioritized implementation roadmap.
+
+Categorize tasks as:
+
+- CRITICAL
+- HIGH
+- MEDIUM
+- LOW
+
+For each task provide:
+
+- Problem
+- Root cause
+- Proposed solution
+- Files/components affected
+- Database impact, if any
+- Dependencies
+- Risks
+- Testing requirements
+
+Proceed incrementally.
+
+Do not execute SQL or make live database changes without my explicit approval.
+
+---
+
+# 6. OFFICIAL BRANDING
+
+The official academy logo is the branding source.
+
+The official palette is:
+
+- Navy blue
+- Gold
+- White
+- Red accent
+
+Use the official logo unchanged.
+
+Do not replace the branding with black/neon green, random gradients or unrelated colors.
+
+Create a consistent design system covering:
+
+- Colors
+- Typography
+- Spacing
+- Border radius
+- Shadows
+- Buttons
+- Cards
+- Tables
+- Forms
+- Navigation
+- Icons
+- Responsive behavior
+
+The design should feel like a premium, modern, professionally managed tape-ball cricket academy.
+
+Avoid excessive animation, clutter, unnecessary gradients and inconsistent visual styles.
+
+---
+
+# 7. PDF CONTENT IS THE PUBLIC WEBSITE'S SOURCE OF TRUTH
+
+Inspect the complete academy information PDF.
+
+Audit the website against every relevant section of the PDF.
+
+The website should accurately represent the academy's real information, story, vision, mission, training, activities and services.
+
+### Academy information to cover
+
+- Academy name and official naming
+- Short name
+- Founder/owner information, if confirmed
+- Academy introduction
+- Academy history
+- Launch information, if verified
+- Location
+- Mission
+- Vision
+- Values
+- Tagline
+- Training programs
+- Fitness training
+- Tape-ball batting
+- Tape-ball bowling
+- Fielding
+- Other programs only if confirmed
+- Student eligibility
+- Admissions
+- Trial sessions
+- Coaches
+- Batches
+- Schedule
+- Fees, if approved for public display
+- Facilities
+- Achievements
+- Matches
+- Tournaments
+- Single-wicket events
+- Gallery
+- Contact details
+- Social media
+- FAQs
+- Academy policies
+- Photography consent
+- Child safety information
+
+The PDF contains information that may still require confirmation.
+
+Do not convert TBC information into fabricated facts.
+
+---
+
+# 8. REMOVE UNAPPROVED, FAKE AND IRRELEVANT WEBSITE CONTENT
+
+The existing project may contain template content or content that was never approved by the academy owner.
+
+Audit the entire website.
+
+Remove unapproved public content, including:
+
+- Fake coaches
+- Fake players
+- Fake achievements
+- Fake statistics
+- Fake testimonials
+- Fake matches
+- Fake tournament results
+- Fake applicants
+- Fake activity logs
+- Fake contact information
+- Fake social links
+- Sample events
+- Demo records
+- Placeholder labels
+- Irrelevant sections
+- Duplicate sections
+- Unrelated blog content
+- Generic template content that does not belong to the academy
+
+Search the entire project for:
+
+- Placeholder
+- Demo
+- Sample
+- Dummy
+- Fake
+- Pending
+- Lorem ipsum
+- Example
+- Frontend Preview
+
+### Important distinction
+
+Do not remove necessary technical or management functionality merely because it is not described in the PDF.
+
+For example, database systems, authentication, security, attendance management, Admin Panel functionality and backend services are technical requirements needed to operate the academy.
+
+Remove unsupported PUBLIC CONTENT, not necessary SYSTEM FUNCTIONALITY.
+
+If real information is unavailable:
+
+- Display professional empty states.
+- Do not invent records.
+- Keep content editable through Admin.
+- Hide empty public sections when appropriate.
+- Ask me for missing information when it is required.
+
+---
+
+# 9. COMPLETE ADMIN PANEL
+
+Inspect the existing Admin Panel before modifying it.
+
+Do not build a duplicate Admin Panel if one already exists.
+
+The Admin Panel must eventually support real functionality and persistent data, not just frontend demonstrations.
+
+Review and implement as appropriate:
+
+## Dashboard
+
+- Overview
+- Real statistics
+- Recent activities based on actual data
+- Upcoming events based on actual records
+- Useful management shortcuts
+
+Do not show fake statistics.
+
+## Coaches
+
+- Add coach
+- Edit coach
+- Delete coach with confirmation
+- Coach profile
+- Profile image
+- Name
+- Designation
+- Biography
+- Specialties
+- Experience, if verified
+- Qualifications, if verified
+- Achievements, if verified
+- Contact information, if approved
+- Active/inactive status
+- Public visibility
+- Display order
+
+No fabricated coach names or information.
+
+## Students
+
+- Student registration and records
+- Student profiles
+- Contact information
+- Guardian information where appropriate
+- Batch assignment
+- Training program
+- Admission status
+- Attendance
+- Fees
+- Active/inactive status
+- Search and filters
+- Pagination
+- Edit and delete with proper safeguards
+
+Handle minors' information securely.
+
+Do not publicly expose private student or guardian information.
+
+## Batches
+
+- Create batch
+- Edit batch
+- Assign coaches
+- Assign students
+- Batch capacity
+- Batch status
+- Training program
+- Batch timings
+- Training days
+
+## Schedule
+
+- Manage training days
+- Manage timings
+- Assign batch
+- Assign coach
+- Manage sessions
+- Avoid schedule conflicts where applicable
+
+## Attendance
+
+- Record attendance
+- Edit attendance
+- View attendance history
+- Batch-wise attendance
+- Student-wise attendance
+- Date filters
+- Reports
+
+## Fees
+
+- Fee configuration
+- Student fee records
+- Payment tracking
+- Payment dates
+- Due dates
+- Outstanding balances
+- Receipts, if implemented
+- Payment status
+- Reports
+
+Never invent payment records.
+
+## Matches and tournaments
+
+- Create matches
+- Create tournaments
+- Manage fixtures
+- Manage results
+- Manage teams
+- Manage match status
+- Manage events
+- Publish approved information
+
+## Achievements
+
+- Manage genuine achievements
+- Images
+- Dates
+- Description
+- Public visibility
+
+## Gallery
+
+- Upload photos
+- Add image URLs
+- Edit
+- Delete
+- Categorize
+- Display ordering
+- Public visibility
+
+## Website Content
+
+Admin should manage relevant website content, including:
+
+- Homepage sections
+- Academy introduction
+- About page
+- Programs
+- Coaches
+- Contact details
+- Footer
+- Social links
+- Website settings
+- Approved announcements
+- Relevant page content
+
+## Reports
+
+Provide useful reports based on actual persisted data.
+
+Do not display fabricated analytics.
+
+---
+
+# 10. SEPARATE ADMIN PORTAL URL AND SECURE AUTHENTICATION
+
+I do not want Admin Login openly displayed throughout the normal public website.
+
+Implement a dedicated Admin Portal route/URL.
+
+The actual URL should be determined after inspecting the existing routing architecture.
+
+### Requirements
+
+- Separate Admin Login page.
+- Username/email and password authentication.
+- Protected Admin routes.
+- Unauthenticated visitors cannot access Admin pages.
+- Direct URL access must be protected.
+- Proper logout.
+- Session/token handling.
+- Role-based permissions if multiple staff roles are implemented.
+- Server-side permission checks.
+- Secure password handling.
+- Login validation.
+- Rate limiting or brute-force protections where appropriate.
+- Session expiration.
+- No hardcoded credentials.
+- No credentials exposed in frontend code.
+- No insecure demo login.
+
+Do not merely hide Admin buttons from the website.
+
+Do not create fake authentication that only changes the frontend screen.
+
+If Supabase Auth already exists, inspect and use it appropriately.
+
+If authentication is not implemented, prepare a proper implementation plan and implement it only within the approved development phase.
+
+Do not publicly advertise the Admin Portal link in the footer unless I approve it.
+
+---
+
+# 11. IMAGE MANAGEMENT — TWO METHODS EVERYWHERE APPROPRIATE
+
+Wherever images can be managed in Admin, provide two ways to add images.
+
+## METHOD A — LOCAL COMPUTER UPLOAD
+
+Admin can:
+
+- Select image from computer
+- Preview image
+- Upload image
+- Replace image
+- Remove image
+- Save
+
+Use appropriate secure storage.
+
+Validate:
+
+- File type
+- File size
+- File extension
+- MIME type
+- Upload permissions
+
+## METHOD B — IMAGE URL
+
+Admin can:
+
+- Select Add Image by URL
+- Paste URL
+- Preview image
+- Validate URL/image
+- Save image reference
+
+Do not silently save invalid or broken image URLs.
+
+### Implement a reusable image management component
+
+Use the same consistent component wherever appropriate:
+
+- Coach profiles
+- Gallery
+- Achievements
+- News
+- Website content
+- Events
+- Player profiles, if enabled
+- Other CMS image fields
+
+Do not implement inconsistent image upload systems across separate modules.
+
+---
+
+# 12. IMAGE POSITIONING AND ADJUSTMENT CONTROLLER
+
+Images must be adjustable after selection or upload.
+
+Provide controls to:
+
+- Move image left
+- Move image right
+- Move image up
+- Move image down
+- Adjust horizontal position
+- Adjust vertical position
+- Zoom in
+- Zoom out
+- Adjust scale
+- Fit image
+- Fill container
+- Reset adjustments
+- Live preview
+
+Use appropriate image positioning/cropping controls.
+
+For example, use `object-fit`, `object-position`, scale, transforms or a reusable crop/position configuration as appropriate for the architecture.
+
+### Controller visibility
+
+The adjustment controller should be HIDDEN BY DEFAULT.
+
+Display a simple button:
+
+**Adjust Image**
+
+When clicked:
+
+- Open the image controller.
+- Show adjustment controls.
+- Allow live image positioning and zoom.
+- Allow resetting.
+- Allow saving changes.
+
+When closed, return to a clean compact interface.
+
+### Persistence
+
+Save image positioning and adjustment configuration with the associated content.
+
+When public website images load, apply the saved configuration correctly.
+
+Do not stretch images unnaturally.
+
+Do not distort faces or the official logo.
+
+Handle different image aspect ratios appropriately.
+
+The controller must be genuinely functional, not decorative.
+
+---
+
+# 13. PUBLIC WEBSITE FOOTER — COMPLETE REDESIGN
+
+The current footer is poorly balanced and contains placeholder elements.
+
+Completely redesign the footer.
+
+Use the academy's official colors and branding.
+
+### Column 1 — Academy
+
+- Official logo
+- Academy name
+- Short introduction
+- Tagline, if approved
+
+### Column 2 — Navigation
+
+Only relevant existing pages:
+
+- Home
+- About
+- Training
+- Coaches
+- Admissions
+- Events
+- Contact
+
+### Column 3 — Contact
+
+- Phone
+- WhatsApp
+- Email
+- Location
+- Map link, if configured
+
+### Column 4 — Social Media
+
+- Facebook
+- Instagram
+- YouTube
+- TikTok
+
+Only display configured and valid links.
+
+### Bottom footer
+
+- Copyright
+- Privacy Policy
+- Terms, if implemented
+- Child Safety policy, if implemented
+- Other approved policies
+
+### Footer management
+
+All relevant footer information must be editable through Admin Website Settings.
+
+If information is unavailable:
+
+- Hide unavailable social links.
+- Do not show fake phone numbers.
+- Do not show fake emails.
+- Do not show `[Pending]` or `Placeholder`.
+- Do not create awkward empty columns.
+- Balance the footer dynamically.
+- Make it responsive.
+
+---
+
+# 14. COMPLETE WEBSITE-WIDE UI/UX AND EMPTY SPACE AUDIT
+
+The current project contains major spacing and layout problems.
+
+Screenshots have shown problems in:
+
+- Footer
+- Students Management
+- Coaches
+- Batches
+- Schedule
+- Admin Dashboard
+- Other management pages
+
+Some pages have unnecessary blank space below or beside their content, especially during scrolling.
+
+### Investigate root causes
+
+Inspect:
+
+- `min-height`
+- Fixed heights
+- `100vh`
+- Flexbox
+- Grid
+- `flex-grow`
+- `flex: 1`
+- Empty containers
+- Unnecessary margins
+- Unnecessary padding
+- Page wrappers
+- Sidebar height
+- Main content height
+- Fixed positioning
+- Footer positioning
+- Pagination wrappers
+- Responsive breakpoints
+- Empty sections
+- Scroll behavior
+
+### Required outcome
+
+- Remove unnecessary empty space throughout the complete website.
+- Fix root causes rather than applying random CSS patches.
+- Short pages should occupy their natural content height.
+- Long pages should scroll naturally.
+- Sidebar and main content should remain properly aligned.
+- No blank areas caused by incorrect layout sizing.
+- No content clipping.
+- No overlapping.
+- No broken scroll behavior.
+- No unnecessary horizontal scrolling.
+- Preserve intentional whitespace for readability.
+
+Inspect every public and Admin page, not only the screenshots.
+
+---
+
+# 15. ADMIN PANEL UI/UX CONSISTENCY
+
+Ensure every Admin page has consistent:
+
+- Page headings
+- Breadcrumbs
+- Layout
+- Spacing
+- Cards
+- Tables
+- Buttons
+- Forms
+- Modals
+- Dropdowns
+- Pagination
+- Loading states
+- Error states
+- Success feedback
+- Empty states
+- Responsive behavior
+
+Remove unnecessary space and clutter.
+
+The Admin Panel should feel like a coherent professional management system.
+
+---
+
+# 16. COMPLETE PUBLIC WEBSITE REVIEW
+
+Audit all public pages and sections.
+
+Check:
+
+- Header
+- Navigation
+- Homepage
+- About
+- Training programs
+- Coaches
+- Admissions
+- Schedule
+- Fees, if approved for public display
+- Matches
+- Tournaments
+- Achievements
+- Gallery
+- Facilities
+- News/updates, if retained
+- Contact
+- FAQ
+- Footer
+
+Remove irrelevant or unsupported sections.
+
+Do not remove genuine information from the academy PDF.
+
+Ensure:
+
+- Buttons work.
+- Links work.
+- Forms validate.
+- Images load.
+- Empty states are professional.
+- Content is accurate.
+- Layout is responsive.
+- No placeholders are visible.
+- No unapproved Admin access is advertised publicly.
+
+---
+
+# 17. RESPONSIVE DESIGN
+
+Test the complete website on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Ensure:
+
+- Responsive navigation
+- Responsive Admin sidebar
+- Tables are usable on smaller screens
+- Forms fit mobile
+- Buttons remain accessible
+- Cards reflow appropriately
+- Footer adapts
+- Images remain correctly positioned
+- No overflow
+- No clipped content
+- No unnecessary empty spaces
+
+Do not assume desktop layout automatically works on mobile.
+
+---
+
+# 18. SECURITY AND PRIVACY
+
+Inspect security throughout the project.
+
+Review:
+
+- Authentication
+- Authorization
+- Admin route protection
+- Database access
+- RLS policies
+- Input validation
+- Output handling
+- File uploads
+- Image URLs
+- Sensitive information
+- Student/guardian data
+- Minor privacy
+- Secrets
+- Environment variables
+- Error handling
+- Session security
+
+Do not expose:
+
+- Supabase service-role keys
+- Private credentials
+- Passwords
+- Private student data
+- Guardian data
+- Sensitive environment variables
+
+Never print secret values in reports.
+
+Do not access or use live credentials without explicit permission.
+
+---
+
+# 19. TESTING AND VERIFICATION
+
+Test changes actually made.
+
+## Build and code quality
+
+- Install dependencies as appropriate.
+- Run lint.
+- Run build.
+- Identify and fix relevant errors.
+- Review warnings.
+- Do not claim tests passed if they were not run.
+
+## UI testing
+
+Test all affected pages and components.
+
+## Functional testing
+
+Verify:
+
+- Forms
+- Buttons
+- Navigation
+- Admin login
+- Logout
+- Protected routes
+- CRUD
+- Database persistence, when authorized and implemented
+- Image upload
+- Image URL
+- Image adjustment
+- Saved image positioning
+- Empty states
+- Responsive behavior
+
+## Database testing
+
+No live SQL execution without my explicit approval.
+
+Clearly distinguish:
+
+- Static review
+- Local testing
+- Mock testing
+- Actual database testing
+- Live production testing
+
+---
+
+# 20. DEVELOPMENT RULES
+
+- Work on the existing project.
+- Preserve the existing stack.
+- Avoid unnecessary rewrites.
+- Avoid duplicate components.
+- Avoid duplicate database tables.
+- Reuse existing architecture when appropriate.
+- Use reusable components.
+- Maintain readable code.
+- Fix root causes.
+- Do not fabricate content.
+- Do not fake functionality.
+- Do not make destructive changes without approval.
+- Do not execute SQL without approval.
+- Do not change live Supabase data.
+- Do not expose secrets.
+- Do not report untested functionality as complete.
+
+When a major change is required, explain the reason briefly.
+
+---
+
+# 21. WORK IN SMALL, CONTROLLED PHASES
+
+Do not try to implement everything simultaneously.
+
+For each phase:
+
+1. Audit relevant existing files.
+2. Identify problems.
+3. Explain the proposed solution briefly.
+4. Implement the approved scope.
+5. Test the changes.
+6. Report results.
+7. Identify remaining issues.
+8. Proceed to the next phase.
+
+Keep a clear project progress tracker.
+
+Use statuses:
+
+- NOT STARTED
+- IN PROGRESS
+- COMPLETED
+- BLOCKED
+- NEEDS APPROVAL
+
+Do not mark a task COMPLETED without verifying it.
+
+---
+
+# 22. REQUIRED FINAL REPORT FOR EACH PHASE
+
+At the end of each phase, report:
+
+### Phase
+
+Name and scope.
+
+### Work completed
+
+Actual changes.
+
+### Files changed
+
+Exact file paths.
+
+### Problems fixed
+
+Actual issues.
+
+### Testing
+
+Tests actually performed and their results.
+
+### Database impact
+
+Clearly identify any schema or database changes.
+
+### Security impact
+
+Any relevant security changes.
+
+### Remaining issues
+
+Incomplete work.
+
+### Owner confirmation required
+
+Any information I need to provide.
+
+### Next phase
+
+The next recommended task.
+
+Keep the report understandable for a beginner.
+
+---
+
+# 23. FIRST ACTION — DO NOT START RANDOM IMPLEMENTATION
+
+After receiving all project files:
+
+### Step 1
+
+Inspect the complete project ZIP and verify its contents.
+
+### Step 2
+
+Inspect the complete academy PDF.
+
+### Step 3
+
+Inspect the official logo and confirm the branding requirements.
+
+### Step 4
+
+Inspect the complete codebase, routes, Admin modules, database references and current architecture.
+
+### Step 5
+
+Locate the actual Task 4 SQL migration and conduct the static audit.
+
+### Step 6
+
+Prepare the project inventory and website content checklist.
+
+### Step 7
+
+Prepare a prioritized development roadmap.
+
+### Step 8
+
+Report:
+
+- Current project status
+- What actually works
+- What is frontend/demo only
+- SQL audit verdict
+- Security issues
+- Website content gaps
+- Admin Panel gaps
+- Layout problems
+- Placeholder content
+- Image system gaps
+- Authentication gaps
+- Priority order
+
+Do not begin destructive operations or database execution.
+
+Do not make live changes before approval.
+
+Begin with the complete audit and Phase 1 report.
+
+---
+
+# FINAL OBJECTIVE
+
+Transform the existing SK Tape Ball Academy project into a complete, professional, secure and responsive academy website and management system.
+
+The finished project should:
+
+- Represent the real academy accurately.
+- Follow the academy information PDF.
+- Use official branding.
+- Have no fake or unapproved public content.
+- Have no unfinished placeholder UI.
+- Have a properly managed public website.
+- Have a separate, secure Admin Portal.
+- Have functional academy management modules.
+- Support local image uploads and image URLs.
+- Have a functional image adjustment controller.
+- Have a properly designed footer.
+- Have consistent UI/UX.
+- Have no unnecessary blank spaces.
+- Work across desktop, tablet and mobile.
+- Have real backend integration where implemented and authorized.
+- Be tested honestly.
+- Be maintainable.
+
+Take ownership of identifying similar problems throughout the entire project. Do not wait for me to find every bug individually.
+
+My screenshots represent examples of problems. They are NOT the complete list of issues.
+
+Audit the whole project, identify the underlying causes, and fix problems systematically in controlled phases.
