@@ -84,7 +84,7 @@ export function AdminCoachesPage() {
     setStatus('Active');
     setPublished(true);
     setBio('');
-    setPortraitMedia(createManagedMedia(null));
+    setPortraitMedia(createManagedMedia(null, { fit: 'cover', posX: 50, posY: 25, scale: 1 }));
     setFormError(null);
     setFormOpen(true);
   }
@@ -99,7 +99,12 @@ export function AdminCoachesPage() {
     setStatus(coach.status);
     setPublished(coach.published ?? true);
     setBio(coach.bio);
-    setPortraitMedia(createManagedMedia(coach.imageSrc, coach.imageTransform));
+    setPortraitMedia(
+      createManagedMedia(
+        coach.imageSrc,
+        coach.imageTransform ?? { fit: 'cover', posX: 50, posY: 25, scale: 1 },
+      ),
+    );
     setFormError(null);
     setFormOpen(true);
   }
@@ -265,7 +270,7 @@ export function AdminCoachesPage() {
                           {coach.fullName}
                         </h2>
                         <p className="text-xs text-[#64748B] dark:text-[#A3B4CC] truncate">
-                          {coach.roleTitle}
+                          {coach.roleTitle} · {coach.published ?? true ? 'Published' : 'Hidden'}
                         </p>
                       </div>
                     </div>
@@ -354,10 +359,12 @@ export function AdminCoachesPage() {
         <form onSubmit={handleSave} className="space-y-4">
           <ImageManager
             label="Coach Portrait"
+            emptyPlaceholderLabel="Add Coach Photo"
             value={portraitMedia}
             onChange={setPortraitMedia}
-            aspectRatio="square"
-            helperText="Upload a coach photo or paste an image URL, then adjust framing if needed."
+            aspectRatio="4/5"
+            defaultTransform={{ fit: 'cover', posX: 50, posY: 25, scale: 1 }}
+            helperText="Upload an optional approved coach photo or paste an image URL, then adjust framing if needed."
             storageFolder="coaches"
           />
 

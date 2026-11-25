@@ -1,4 +1,5 @@
 import { Activity, Crosshair, Target, Zap } from 'lucide-react';
+import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
@@ -7,6 +8,7 @@ import paceImg from '@/src/assets/images/drill_pace_bowling_1795439224452.jpg';
 import fieldingImg from '@/src/assets/images/drill_fielding_agility_1795439226739.jpg';
 import { useAcademyState } from '@/src/context/AcademyStateContext';
 import { useDocumentTitle } from '@/src/hooks/useDocumentTitle';
+import { useReducedMotion } from '@/src/hooks/useReducedMotion';
 import { sanitizeConfirmedText } from '@/src/utils/validation';
 import { PageContainer } from '@/src/components/layout/PageContainer';
 import { Card } from '@/src/components/ui/Card';
@@ -77,6 +79,7 @@ export function ProgramsPage() {
   useDocumentTitle('Training Programs');
   const { state } = useAcademyState();
   const { siteSettings } = state;
+  const prefersReduced = useReducedMotion();
 
   const academyName = sanitizeConfirmedText(siteSettings.academyName) || 'SK Tape Ball Academy';
 
@@ -168,46 +171,65 @@ export function ProgramsPage() {
         <PageContainer className="mt-10 sm:mt-14">
           <section aria-label="Core Training Areas">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-              {visiblePrograms.map((program) => {
+              {visiblePrograms.map((program, index) => {
                 const Icon = program.icon;
 
                 return (
-                  <Card
+                  <motion.div
                     key={program.id}
-                    padding="none"
-                    className="h-full overflow-hidden flex flex-col"
+                    initial={prefersReduced ? false : { opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: prefersReduced ? 0 : 0.32,
+                      delay: prefersReduced ? 0 : index * 0.06,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="h-full"
                   >
-                    <div className="aspect-[16/10] w-full overflow-hidden border-b border-[#E2E8F0] bg-[#07152C] dark:border-white/10">
-                      <MediaImage
-                        src={program.imageSrc}
-                        alt={program.imageAlt}
-                        transform={program.imageTransform}
-                        fallbackLabel={program.title}
-                        className="h-full w-full"
-                      />
-                    </div>
-
-                    <div className="flex flex-1 flex-col gap-3 p-6">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-xs font-bold tracking-wider text-[#C8202B] dark:text-[#D5A83C] tabular-nums">
-                          {program.code}
-                        </span>
-                        <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#07152C] text-[#D5A83C] dark:border dark:border-white/10 dark:bg-[#162B4D]">
-                          <Icon className="h-4 w-4" aria-hidden="true" />
+                    <article
+                      tabIndex={0}
+                      aria-label={program.title}
+                      className="group h-full touch-manipulation rounded-[16px] outline-none focus-visible:ring-2 focus-visible:ring-[#D5A83C] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-canvas)]"
+                    >
+                      <Card
+                        padding="none"
+                        className="h-full overflow-hidden flex flex-col transition-[transform,border-color,box-shadow] duration-200 ease-out group-hover:-translate-y-1 group-hover:border-[#D5A83C]/80 group-hover:shadow-[0_16px_36px_-16px_rgba(213,168,60,0.38)] group-focus-visible:-translate-y-1 group-focus-visible:border-[#D5A83C]/85 group-focus-visible:shadow-[0_16px_36px_-16px_rgba(213,168,60,0.42)] group-active:scale-[0.99] group-active:border-[#D5A83C]/80 group-active:shadow-[0_12px_28px_-14px_rgba(213,168,60,0.34)] dark:group-hover:border-[#D5A83C]/75 dark:group-focus-visible:border-[#D5A83C]/85 motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-focus-visible:translate-y-0 motion-reduce:group-active:scale-100"
+                      >
+                        <div className="aspect-[16/10] w-full overflow-hidden border-b border-[#E2E8F0] bg-[#07152C] dark:border-white/10">
+                          <div className="h-full w-full transition-transform duration-300 ease-out group-hover:scale-[1.04] group-focus-visible:scale-[1.04] group-active:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100 motion-reduce:group-focus-visible:scale-100 motion-reduce:group-active:scale-100">
+                            <MediaImage
+                              src={program.imageSrc}
+                              alt={program.imageAlt}
+                              transform={program.imageTransform}
+                              fallbackLabel={program.title}
+                              className="h-full w-full"
+                            />
+                          </div>
                         </div>
-                      </div>
 
-                      <h2 className="text-xl font-bold tracking-tight text-[#07152C] dark:text-white">
-                        {program.title}
-                      </h2>
+                        <div className="flex flex-1 flex-col gap-3 p-6">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-mono text-xs font-bold tracking-wider text-[#C8202B] dark:text-[#D5A83C] tabular-nums">
+                              {program.code}
+                            </span>
+                            <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#07152C] text-[#D5A83C] transition-colors duration-200 group-hover:bg-[#102342] group-focus-visible:bg-[#102342] dark:border dark:border-white/10 dark:bg-[#162B4D] dark:group-hover:border-[#D5A83C]/45">
+                              <Icon className="h-4 w-4" aria-hidden="true" />
+                            </div>
+                          </div>
 
-                      {program.description && (
-                        <p className="text-sm leading-relaxed text-[#475569] dark:text-[#C8D5E8]">
-                          {program.description}
-                        </p>
-                      )}
-                    </div>
-                  </Card>
+                          <h2 className="text-xl font-bold tracking-tight text-[#07152C] dark:text-white">
+                            {program.title}
+                          </h2>
+
+                          {program.description && (
+                            <p className="text-sm leading-relaxed text-[#475569] dark:text-[#C8D5E8]">
+                              {program.description}
+                            </p>
+                          )}
+                        </div>
+                      </Card>
+                    </article>
+                  </motion.div>
                 );
               })}
             </div>
