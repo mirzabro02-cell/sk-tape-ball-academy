@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace https://sktapeballacademy.example.com with official production domain upon deployment -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://sktapeballacademy.example.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/about</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs</loc><priority>0.9</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/batting</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/fast-bowling</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/spin-bowling</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/fielding</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/wicket-keeping</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/fitness-agility</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/beginner</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/advanced</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/programs/personal-coaching</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/coaches</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/facilities</loc><priority>0.7</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/schedule</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/matches</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/achievements</loc><priority>0.7</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/gallery</loc><priority>0.7</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/admissions</loc><priority>0.9</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/fees</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/faqs</loc><priority>0.7</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/contact</loc><priority>0.8</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/register</loc><priority>0.9</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/book-trial</loc><priority>0.9</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/application-status</loc><priority>0.6</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/privacy-policy</loc><priority>0.4</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/terms</loc><priority>0.4</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/admission-policy</loc><priority>0.4</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/refund-policy</loc><priority>0.4</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/child-safety</loc><priority>0.4</priority></url>
+  <url><loc>https://sktapeballacademy.example.com/photography-consent</loc><priority>0.4</priority></url>
+</urlset>

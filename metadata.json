@@ -1,0 +1,6 @@
+{
+  "name": "SK Tape Ball Academy",
+  "description": "Official web platform for SK Tape Ball Academy. Build Your Game. Master Your Skills.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

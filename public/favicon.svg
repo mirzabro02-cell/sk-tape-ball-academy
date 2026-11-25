@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SK Tape Ball Academy">
+  <rect width="64" height="64" rx="14" fill="#071A36" />
+  <rect x="3" y="3" width="58" height="58" rx="11" fill="none" stroke="#D9A52E" stroke-width="2.5" />
+  <text
+    x="32"
+    y="40"
+    text-anchor="middle"
+    font-family="system-ui, -apple-system, sans-serif"
+    font-size="24"
+    font-weight="800"
+    fill="#D9A52E"
+    letter-spacing="1"
+  >
+    SK
+  </text>
+</svg>
