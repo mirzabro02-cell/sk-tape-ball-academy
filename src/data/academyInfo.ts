@@ -5,21 +5,20 @@ export const ABOUT_PAGE_CONTENT = {
   kicker: 'About Us',
   title: 'SK Tape Ball Academy',
   heroDescription:
-    'WHERE DREAMS MEET OPPORTUNITIES. Structured fitness, batting, bowling, and fielding development in Sabzazar, Lahore.',
+    'WHERE DREAMS MEET OPPORTUNITIES. Founded by Sami Khan to give committed tape ball cricketers organized training and genuine guidance.',
   overview: [
-    'SK Tape Ball Academy was established from founder Sami Khan’s personal cricket journey. Through the ups and downs of his career, he experienced limited resources, fewer opportunities, and a lack of proper cricket awareness and guidance.',
+    'SK Tape Ball Academy grew from Sami Khan’s personal cricket journey. He experienced limited resources, fewer opportunities, and a lack of proper cricket awareness and guidance.',
     'These challenges inspired him to create a platform where young cricketers can access quality training, professional coaching, and meaningful opportunities.',
-    'Launched in Faisalabad on 18 August 2024 and operating in Sabzazar, Lahore, the academy aims to help talented players develop so their dreams are not held back simply because they lack guidance or resources.',
   ],
   mission: {
     title: 'Our Mission',
     description:
-      'To provide players with organized, quality tape-ball cricket training; improve their fitness and cricketing skills; build discipline, confidence, and sportsmanship; and create a pathway through which committed players can develop their potential and access cricket opportunities.',
+      'Provide organized, quality tape-ball cricket training; improve fitness and cricket skills; build discipline, confidence, and sportsmanship; and help committed players develop their potential and access cricket opportunities.',
   },
   vision: {
     title: 'Our Vision',
     description:
-      'To develop SK Tape Ball Academy into a recognized, modern, and professionally managed cricket training platform; introduce structured coaching and player-development systems; identify and nurture emerging talent; and provide players with platforms to compete, improve, and progress.',
+      'Develop SK Tape Ball Academy into a recognized, modern, professionally managed cricket training platform; introduce structured coaching and player-development systems; nurture emerging talent; and help players compete, improve, and progress.',
   },
   values: [
     'Discipline',

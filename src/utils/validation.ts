@@ -122,3 +122,17 @@ export function validateImageFile(file: File): string | null {
   return null;
 }
 
+const UNCONFIRMED_PATTERN = /^(to be confirmed|to be provided|tbd|n\/a|pending confirmation)\.?$/i;
+
+export function sanitizeConfirmedText(value?: string | null): string {
+  const trimmed = value?.trim() ?? '';
+  if (!trimmed) {
+    return '';
+  }
+  if (UNCONFIRMED_PATTERN.test(trimmed) || /\bto be confirmed\b/i.test(trimmed)) {
+    return '';
+  }
+  return trimmed;
+}
+
+

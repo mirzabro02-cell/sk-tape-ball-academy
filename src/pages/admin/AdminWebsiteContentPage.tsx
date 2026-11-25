@@ -25,6 +25,11 @@ export function AdminWebsiteContentPage() {
   const sections = state.websiteSections;
   const [selectedId, setSelectedId] = useState(sections[0]?.id ?? 'hero');
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [valuesDraft, setValuesDraft] = useState(state.siteSettings.aboutValues.join(', '));
+
+  useEffect(() => {
+    setValuesDraft(state.siteSettings.aboutValues.join(', '));
+  }, [state.siteSettings.aboutValues]);
 
   useScrollLock(previewModalOpen);
 
@@ -65,20 +70,41 @@ export function AdminWebsiteContentPage() {
 
   function saveCurrentSection(publish = false) {
     if (!activeSection) return;
-    if (
-      containsUnsafeHtml([
-        activeSection.headline,
-        activeSection.subheadline,
-        activeSection.ctaLabel,
-        activeSection.bodyNotes,
-      ])
-    ) {
+    const fieldsToCheck = [
+      activeSection.headline,
+      activeSection.subheadline,
+      activeSection.ctaLabel,
+      activeSection.bodyNotes,
+    ];
+    if (activeSection.id === 'about') {
+      fieldsToCheck.push(
+        state.siteSettings.founderName,
+        state.siteSettings.founderRole,
+        state.siteSettings.aboutStory,
+        state.siteSettings.aboutMission,
+        state.siteSettings.aboutVision,
+        valuesDraft,
+      );
+    }
+
+    if (containsUnsafeHtml(fieldsToCheck)) {
       showToast(
         'Blocked Unsafe Input',
         'HTML tags (< or >) are not permitted in website text.',
         'warning',
       );
       return;
+    }
+
+    if (activeSection.id === 'about') {
+      const parsedValues = valuesDraft
+        .split(/[,\n]+/)
+        .map((v) => v.trim())
+        .filter(Boolean);
+      updateSiteSettings((prev) => ({
+        ...prev,
+        aboutValues: parsedValues,
+      }));
     }
 
     setWebsiteSections((prev) =>
@@ -306,9 +332,100 @@ export function AdminWebsiteContentPage() {
               )}
 
               {activeSection.id === 'about' && (
-                <div className="border-t border-[#E2E8F0] pt-4 dark:border-white/10">
+                <div className="space-y-5 border-t border-[#E2E8F0] pt-4 dark:border-white/10">
                   <ImageManager
-                    label="About Section Image"
+                    label="Owner Photo (Sami Khan)"
+                    helperText="Upload an actual portrait of Founder / Owner Sami Khan for the public About page. When empty, no portrait or placeholder frame is shown."
+                    value={state.siteSettings.ownerMedia}
+                    onChange={(ownerMedia) =>
+                      updateSiteSettings((prev) => ({ ...prev, ownerMedia }))
+                    }
+                    aspectRatio="4/3"
+                    storageFolder="owner"
+                  />
+
+                  <div className="space-y-4 rounded-[14px] border border-[#E2E8F0] bg-[#F5F7FA]/60 p-4 dark:border-white/10 dark:bg-[#07152C]/60">
+                    <div>
+                      <h3 className="text-sm font-bold text-[#07152C] dark:text-white">
+                        About Page — Founder Profile, Story, Mission &amp; Vision
+                      </h3>
+                      <p className="text-xs text-[#64748B] dark:text-[#A3B4CC]">
+                        Leave any unconfirmed field empty to hide it cleanly on the public About page.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Input
+                        label="Founder / Owner Name"
+                        value={state.siteSettings.founderName}
+                        onChange={(e) =>
+                          updateSiteSettings((prev) => ({
+                            ...prev,
+                            founderName: e.target.value,
+                          }))
+                        }
+                      />
+                      <Input
+                        label="Owner Role Title"
+                        value={state.siteSettings.founderRole}
+                        onChange={(e) =>
+                          updateSiteSettings((prev) => ({
+                            ...prev,
+                            founderRole: e.target.value,
+                          }))
+                        }
+                        placeholder="Founder / Owner"
+                      />
+                    </div>
+
+                    <Textarea
+                      label="Founder Story (Separate paragraphs with a blank line)"
+                      value={state.siteSettings.aboutStory}
+                      onChange={(e) =>
+                        updateSiteSettings((prev) => ({
+                          ...prev,
+                          aboutStory: e.target.value,
+                        }))
+                      }
+                      rows={4}
+                    />
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Textarea
+                        label="Academy Mission"
+                        value={state.siteSettings.aboutMission}
+                        onChange={(e) =>
+                          updateSiteSettings((prev) => ({
+                            ...prev,
+                            aboutMission: e.target.value,
+                          }))
+                        }
+                        rows={4}
+                      />
+                      <Textarea
+                        label="Academy Vision"
+                        value={state.siteSettings.aboutVision}
+                        onChange={(e) =>
+                          updateSiteSettings((prev) => ({
+                            ...prev,
+                            aboutVision: e.target.value,
+                          }))
+                        }
+                        rows={4}
+                      />
+                    </div>
+
+                    <Input
+                      label="Core Academy Values (Comma-separated)"
+                      value={valuesDraft}
+                      onChange={(e) => setValuesDraft(e.target.value)}
+                      placeholder="Discipline, Hard Work, Consistency, Fitness..."
+                    />
+                  </div>
+
+                  <ImageManager
+                    label="Homepage Academy Ground Visual"
+                    helperText="General academy training ground image shown on the Homepage introduction section."
                     value={state.siteSettings.aboutMedia}
                     onChange={(aboutMedia) =>
                       updateSiteSettings((prev) => ({ ...prev, aboutMedia }))
@@ -413,8 +530,8 @@ export function AdminWebsiteContentPage() {
                 <Button type="button" variant="outlineLight" size="sm" onClick={() => setPreviewModalOpen(false)}>
                   Close Preview
                 </Button>
-                <Button to="/" variant="primary" size="sm">
-                  Open Live Homepage
+                <Button to={activeSection.id === 'about' ? '/about' : '/'} variant="primary" size="sm">
+                  {activeSection.id === 'about' ? 'Open Live About Page' : 'Open Live Homepage'}
                 </Button>
               </div>
             </div>

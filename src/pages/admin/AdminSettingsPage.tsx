@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { AlertCircle, Save, ShieldCheck } from 'lucide-react';
 import heroImg from '@/src/assets/images/hero_cricket_academy_1795439223672.jpg';
 import lanesImg from '@/src/assets/images/academy_training_lanes_1795439225599.jpg';
@@ -52,12 +52,24 @@ export function AdminSettingsPage() {
   const [tagline, setTagline] = useState(state.siteSettings.tagline);
   const [footerBio, setFooterBio] = useState(state.siteSettings.footerBio);
   const [founderName, setFounderName] = useState(state.siteSettings.founderName);
+  const [founderRole, setFounderRole] = useState(state.siteSettings.founderRole);
   const [launchedNote, setLaunchedNote] = useState(state.siteSettings.launchedNote);
   const [showPublicFees, setShowPublicFees] = useState(state.siteSettings.showPublicFees);
 
   const [logo, setLogo] = useState(state.siteSettings.logo);
   const [heroMedia, setHeroMedia] = useState(state.siteSettings.heroMedia);
   const [aboutMedia, setAboutMedia] = useState(state.siteSettings.aboutMedia);
+  const [ownerMedia, setOwnerMedia] = useState(state.siteSettings.ownerMedia);
+
+  useEffect(() => {
+    setFounderName(state.siteSettings.founderName);
+    setFounderRole(state.siteSettings.founderRole);
+    setOwnerMedia(state.siteSettings.ownerMedia);
+  }, [
+    state.siteSettings.founderName,
+    state.siteSettings.founderRole,
+    state.siteSettings.ownerMedia,
+  ]);
 
   const [phone, setPhone] = useState(state.siteSettings.phone);
   const [whatsappUrlOrNumber, setWhatsappUrlOrNumber] = useState(
@@ -97,6 +109,7 @@ export function AdminSettingsPage() {
       tagline,
       footerBio,
       founderName,
+      founderRole,
       launchedNote,
       phone,
       whatsappUrlOrNumber,
@@ -142,11 +155,13 @@ export function AdminSettingsPage() {
       tagline: tagline.trim() || prev.tagline,
       footerBio: footerBio.trim(),
       founderName: founderName.trim(),
+      founderRole: founderRole.trim(),
       launchedNote: launchedNote.trim(),
       showPublicFees,
       logo,
       heroMedia,
       aboutMedia,
+      ownerMedia,
       phone: phone.trim(),
       whatsappUrlOrNumber: whatsappUrlOrNumber.trim(),
       email: email.trim(),
@@ -225,9 +240,14 @@ export function AdminSettingsPage() {
                     required
                   />
                   <Input
-                    label="Founder / Owner"
+                    label="Founder / Owner Name"
                     value={founderName}
                     onChange={(e) => setFounderName(e.target.value)}
+                  />
+                  <Input
+                    label="Owner Role Title"
+                    value={founderRole}
+                    onChange={(e) => setFounderRole(e.target.value)}
                   />
                   <Input
                     label="Launch Note"
@@ -299,6 +319,14 @@ export function AdminSettingsPage() {
                     storageFolder="about"
                   />
                 </div>
+                <ImageManager
+                  label="Owner Photo (Sami Khan)"
+                  helperText="Featured portrait on the public About page. Leave empty when no photo is uploaded."
+                  value={ownerMedia}
+                  onChange={setOwnerMedia}
+                  aspectRatio="4/3"
+                  storageFolder="owner"
+                />
               </div>
             )}
 

@@ -17,7 +17,7 @@ export function MainLayout() {
     return <MaintenancePage />;
   }
 
-  const isHomePage = location.pathname === '/';
+  const isEdgeToEdgePage = location.pathname === '/' || location.pathname === '/about';
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-clip bg-[var(--bg-canvas)] text-[var(--text-primary)] transition-colors duration-200">
@@ -40,9 +40,9 @@ export function MainLayout() {
 
       <main
         id="main-content"
-        className={isHomePage ? 'flex-1 pb-12 sm:pb-16' : 'flex-1 pt-5 pb-12 sm:pt-8 sm:pb-16'}
+        className={isEdgeToEdgePage ? 'flex-1 pb-12 sm:pb-16' : 'flex-1 pt-5 pb-12 sm:pt-8 sm:pb-16'}
       >
-        {isHomePage ? (
+        {isEdgeToEdgePage ? (
           <PageTransition key={location.pathname}>
             <Outlet />
           </PageTransition>

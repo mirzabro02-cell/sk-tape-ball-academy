@@ -62,7 +62,12 @@ export interface AcademySiteSettings {
   tagline: string;
   footerBio: string;
   founderName: string;
+  founderRole: string;
   launchedNote: string;
+  aboutStory: string;
+  aboutMission: string;
+  aboutVision: string;
+  aboutValues: string[];
   phone: string;
   whatsappUrlOrNumber: string;
   email: string;
@@ -73,6 +78,7 @@ export interface AcademySiteSettings {
   logo: ManagedMediaValue;
   heroMedia: ManagedMediaValue;
   aboutMedia: ManagedMediaValue;
+  ownerMedia: ManagedMediaValue;
   maintenance: AcademyMaintenanceSettings;
   showPublicFees: boolean;
   seoTitle: string;
@@ -111,7 +117,25 @@ const DEFAULT_SITE_SETTINGS: AcademySiteSettings = {
   footerBio:
     'Dedicated tape ball cricket coaching focused on athletic fitness, structured batting methods, bowling precision, and disciplined fielding in Sabzazar, Lahore.',
   founderName: ACADEMY_BRAND.founderName,
+  founderRole: 'Founder / Owner',
   launchedNote: ACADEMY_BRAND.launchedNote,
+  aboutStory:
+    'SK Tape Ball Academy grew from Sami Khan’s personal cricket journey. He experienced limited resources, fewer opportunities, and a lack of proper cricket awareness and guidance.\n\nThese challenges inspired him to create a platform where young cricketers can access quality training, professional coaching, and meaningful opportunities.',
+  aboutMission:
+    'Provide organized, quality tape-ball cricket training; improve fitness and cricket skills; build discipline, confidence, and sportsmanship; and help committed players develop their potential and access cricket opportunities.',
+  aboutVision:
+    'Develop SK Tape Ball Academy into a recognized, modern, professionally managed cricket training platform; introduce structured coaching and player-development systems; nurture emerging talent; and help players compete, improve, and progress.',
+  aboutValues: [
+    'Discipline',
+    'Hard Work',
+    'Consistency',
+    'Fitness',
+    'Teamwork',
+    'Respect',
+    'Sportsmanship',
+    'Commitment',
+    'Equal Opportunity',
+  ],
   phone: '',
   whatsappUrlOrNumber: '',
   email: '',
@@ -127,6 +151,7 @@ const DEFAULT_SITE_SETTINGS: AcademySiteSettings = {
   logo: createManagedMedia(OFFICIAL_LOGO_CONFIG.src, { fit: 'contain', posX: 50, posY: 50, scale: 1 }),
   heroMedia: createManagedMedia(HERO_STADIUM_VISUAL, { fit: 'cover', posX: 70, posY: 35, scale: 1 }),
   aboutMedia: createManagedMedia(lanesImg, { fit: 'cover', posX: 50, posY: 50, scale: 1 }),
+  ownerMedia: createManagedMedia(null, { fit: 'cover', posX: 50, posY: 25, scale: 1 }),
   maintenance: {
     enabled: false,
     heading: "We're Under Maintenance",
@@ -481,6 +506,10 @@ function mergeLoadedState(raw: Partial<AcademyPersistedState> | null): AcademyPe
         ? raw.siteSettings.heroMedia
         : DEFAULT_SITE_SETTINGS.heroMedia,
       aboutMedia: raw.siteSettings?.aboutMedia ?? DEFAULT_SITE_SETTINGS.aboutMedia,
+      ownerMedia: raw.siteSettings?.ownerMedia ?? DEFAULT_SITE_SETTINGS.ownerMedia,
+      aboutValues: Array.isArray(raw.siteSettings?.aboutValues)
+        ? raw.siteSettings.aboutValues
+        : DEFAULT_SITE_SETTINGS.aboutValues,
       maintenance: {
         ...DEFAULT_SITE_SETTINGS.maintenance,
         ...(raw.siteSettings?.maintenance ?? {}),
